@@ -1,5 +1,5 @@
 import { usePageContext } from "$/context/pageContext"
-import { signal } from "kaioken"
+import { ElementProps, signal, useLayoutEffect, useRef } from "kaioken"
 import { tutorials, TutorialItem } from "./meta"
 import { ChevronRightIcon } from "$/components/icons/ChevronRightIcon"
 
@@ -7,9 +7,17 @@ const navCollapsed = signal(true)
 
 export function TutorialNav() {
   const { urlPathname } = usePageContext()
+  const prevPathname = useRef(urlPathname)
+  useLayoutEffect(() => {
+    if (urlPathname !== prevPathname.current) {
+      navCollapsed.value = true
+      prevPathname.current = urlPathname
+    }
+  }, [urlPathname])
+
   if (!navCollapsed.value) {
     return (
-      <ul className="flex flex-col gap-1 p-2 py-1 bg-white/5">
+      <ul className="flex flex-col gap-1 p-2 py-1 bg-white/2.5 border border-white/5">
         {tutorials.map((tutorial) => (
           <TutorialNavItem key={tutorial.title} item={tutorial} />
         ))}
@@ -25,10 +33,8 @@ export function TutorialNav() {
     return (
       <button
         type="button"
-        className="flex items-center gap-1 p-2 py-1 bg-white/5"
-        onclick={() => {
-          navCollapsed.value = !navCollapsed.value
-        }}
+        className="flex items-center gap-1 p-2 py-1 bg-white/2.5 border border-white/5"
+        onclick={() => (navCollapsed.value = !navCollapsed.value)}
       >
         {activeTopLevelTutorial.title}
         <ChevronRightIcon />
@@ -47,7 +53,7 @@ export function TutorialNav() {
   return (
     <button
       type="button"
-      className="flex items-center gap-1 p-2 py-1 bg-white/5"
+      className="flex items-center gap-1 p-2 py-1 bg-white/2.5 border border-white/5"
       onclick={() => {
         navCollapsed.value = !navCollapsed.value
       }}
@@ -62,27 +68,31 @@ export function TutorialNav() {
 function TutorialNavItem({
   item,
   prefix = "",
+  depth = 0,
 }: {
   item: TutorialItem
   prefix?: string
+  depth?: number
 }) {
   const { urlPathname } = usePageContext()
   if ("sections" in item) {
     const active = urlPathname.startsWith(prefix + item.route)
+    const detailsProps: ElementProps<"details"> = active ? { open: true } : {}
     return (
-      <li>
-        <span className={["text-light", active && "font-bold"]}>
-          {item.title}
-        </span>
-        <ul className="pl-4">
-          {item.sections.map((section) => (
-            <TutorialNavItem
-              key={section.title}
-              item={section}
-              prefix={item.route}
-            />
-          ))}
-        </ul>
+      <li className="px-2 py-1 bg-white/2.5 border border-white/5">
+        <details {...detailsProps}>
+          <summary className="text-light cursor-pointer">{item.title}</summary>
+          <ul className="pl-4">
+            {item.sections.map((section) => (
+              <TutorialNavItem
+                key={section.title}
+                item={section}
+                prefix={item.route}
+                depth={depth + 1}
+              />
+            ))}
+          </ul>
+        </details>
       </li>
     )
   }
@@ -96,10 +106,11 @@ function TutorialNavItem({
           isActive && "font-bold",
         ]}
         href={prefix + item.route}
-        onclick={() => (navCollapsed.value = true)}
       >
         {item.title}
-        {isActive && <ChevronRightIcon style="transform: rotate(90deg)" />}
+        {isActive && depth === 0 && (
+          <ChevronRightIcon style="transform: rotate(90deg)" />
+        )}
       </a>
     </li>
   )
