@@ -1,9 +1,6 @@
-// import "./CodeMirror.css"
-//import "./material.css"
 import { useRef, useEffect, type ElementProps } from "kaioken"
 import { EditorState, type Extension } from "@codemirror/state"
-import { oneDark } from "@codemirror/theme-one-dark"
-import { EditorView, basicSetup } from "codemirror"
+import { EditorView } from "codemirror"
 import { kaiokenTheme } from "$/codeMirrorTheme"
 import { kaiokenSetup } from "$/codeMirrorExtensions"
 
