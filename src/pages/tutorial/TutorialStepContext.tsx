@@ -6,6 +6,5 @@ export type TutorialStep = {
 }
 
 export function useTutorialStep() {
-  const context = usePageContext()
-  return (context.exports.step ?? null) as TutorialStep | null
+  return usePageContext().exports.step as TutorialStep
 }

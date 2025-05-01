@@ -103,8 +103,8 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite-plugin-kaioken:
-        specifier: 0.18.0
-        version: 0.18.0(kaioken@0.38.1)
+        specifier: 0.18.1
+        version: 0.18.1(kaioken@0.38.1)
 
 packages:
 
@@ -1497,8 +1497,8 @@ packages:
       vite:
         optional: true
 
-  vite-plugin-kaioken@0.18.0:
-    resolution: {integrity: sha512-FYVxQPDvbaai41LgCOausZuezA4fbR+Xqyb435WXG73zWSi5Bujpa4VM4FFbVX1K9kMPwf6OXMVAIkS574lXaw==}
+  vite-plugin-kaioken@0.18.1:
+    resolution: {integrity: sha512-6t3VHqLYC+K9DXXMk2LTwKM+dOj/tMdDIbsRdOBBQpbH/DlbnuPQv+E4B2DSa/NUQmmk8TRvHFb/+yFI/LNnrg==}
     peerDependencies:
       kaioken: '>=0.38.0-1'
 
@@ -3247,7 +3247,7 @@ snapshots:
     optionalDependencies:
       vite: 6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)
 
-  vite-plugin-kaioken@0.18.0(kaioken@0.38.1):
+  vite-plugin-kaioken@0.18.1(kaioken@0.38.1):
     dependencies:
       kaioken: 0.38.1
       magic-string: 0.30.17

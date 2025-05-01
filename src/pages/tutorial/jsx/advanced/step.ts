@@ -1,4 +1,4 @@
-import { TutorialStep } from "../TutorialStepContext"
+import { TutorialStep } from "../../TutorialStepContext"
 
 export const step: TutorialStep = {
   files: {

@@ -9,11 +9,11 @@ import {
 import { FILES_MAP } from "./filesMap"
 import { useDebounceThrottle } from "$/utils"
 
-interface CodeSanboxProps extends ElementProps<"div"> {
+interface CodeSandboxProps extends ElementProps<"div"> {
   files: Record<string, string>
   readonly?: boolean
 }
-export default function CodeSandbox(props: CodeSanboxProps) {
+export default function CodeSandbox(props: CodeSandboxProps) {
   return (
     <NodeBoxProvider
       fallback={
@@ -39,7 +39,7 @@ function WorkerStatusDisplayText() {
   }
 }
 
-function CodeSandboxImpl({ files, readonly, ...props }: CodeSanboxProps) {
+function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
   const [prevWrittenFiles, setPrevWrittenFiles] = useState<Record<
     string,
     string
@@ -109,9 +109,8 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSanboxProps) {
 
   const code = files[selectedFile]
 
-  const { className, ...rest } = props
   return (
-    <div className={`${className || ""}`} {...rest}>
+    <div {...props}>
       <div className="flex-grow flex flex-col h-1/2">
         <TabGroup
           items={Object.keys(files)}

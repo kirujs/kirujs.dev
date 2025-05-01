@@ -16,9 +16,6 @@ export default defineConfig({
       $: path.resolve(__dirname, "src"),
     },
   },
-  esbuild: {
-    sourcemap: false,
-  },
   plugins: [
     //     {
     //       name: "cf: emit '_headers' file",

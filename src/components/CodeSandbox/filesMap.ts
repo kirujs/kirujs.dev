@@ -7,7 +7,7 @@ const PACKAGE_JSON = JSON.stringify({
     dev: "vite",
   },
   dependencies: {
-    kaioken: ">=0.30.0",
+    kaioken: ">=0.38.0",
     "esbuild-wasm": "latest",
     "@rollup/wasm-node": "latest",
   },
