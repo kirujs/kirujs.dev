@@ -9,7 +9,7 @@ export function Page() {
     <div className="w-full h-full overflow-x-hidden">
       <section>
         <Container className="min-h-[100vh] flex flex-col items-center justify-center h-full pt-60">
-          <h1 className="text-6xl xs:text-8xl sm:text-9xl font-bold !leading-snug text-shadow text-light">
+          <h1 className="text-6xl xs:text-8xl sm:text-9xl font-bold leading-snug! text-shadow text-light">
             Kaioken
           </h1>
           <p className="text-lg mb-6 xs:text-xl sm:text-2xl font-light text-center text-shadow text-light">

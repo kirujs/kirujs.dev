@@ -1,5 +1,5 @@
 ```jsx
-import { Router, Route, Link } from "kaioken"
+import { Router, Route, Link } from "kaioken/router"
 import { LoginPage } from "./LoginPage"
 import { UserList } from "./UserList"
 import { UserPage } from "./UserPage"

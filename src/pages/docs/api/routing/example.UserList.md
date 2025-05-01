@@ -1,5 +1,6 @@
 ```jsx
-import { Link, useRouter, useAsync } from "kaioken"
+import { Link, useRouter } from "kaioken/router"
+import { useAsync } from "kaioken"
 
 export function UserList() {
   const { query, setQuery } = useRouter()

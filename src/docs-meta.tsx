@@ -10,11 +10,23 @@ export type DocPageLink = {
   href: string
   disabled?: boolean
   keywords?: string[]
+  isNew?: boolean
 }
 
 type DocSectionLink = {
   title: string
   id: string
+}
+
+const API_RELEASE_DATES = {
+  SWR: new Date("2025-05-01").getTime(),
+  FORM: new Date("2025-05-01").getTime(),
+}
+
+const NEW_API_DURATION = 30 * 24 * 60 * 60 * 1000 // 30 days
+
+const isAPINew = (api: keyof typeof API_RELEASE_DATES) => {
+  return Date.now() < API_RELEASE_DATES[api] + NEW_API_DURATION
 }
 
 export const docMeta: DocItem[] = [
@@ -29,6 +41,10 @@ export const docMeta: DocItem[] = [
       {
         title: "Roadmap",
         id: "roadmap",
+      },
+      {
+        title: "Ecosystem",
+        id: "ecosystem",
       },
     ],
   },
@@ -59,6 +75,16 @@ export const docMeta: DocItem[] = [
         keywords: ["createContext"],
       },
       {
+        title: "Form",
+        href: "/docs/api/form",
+        keywords: ["form", "useForm"],
+        isNew: isAPINew("FORM"),
+      },
+      {
+        title: "Lazy",
+        href: "/docs/api/lazy",
+      },
+      {
         title: "Memo",
         href: "/docs/api/memo",
       },
@@ -80,6 +106,12 @@ export const docMeta: DocItem[] = [
         title: "Store",
         href: "/docs/api/store",
         keywords: ["createStore", "useStore", "MethodFactory", "state"],
+      },
+      {
+        title: "SWR",
+        href: "/docs/api/swr",
+        keywords: ["swr", "useSWR", "fetcher", "mutate", "revalidate", "cache"],
+        isNew: isAPINew("SWR"),
       },
       {
         title: "Transition",
@@ -105,6 +137,14 @@ export const docMeta: DocItem[] = [
       {
         title: "useEffect",
         href: "/docs/hooks/useEffect",
+      },
+      {
+        title: "useEffectEvent",
+        href: "/docs/hooks/useEffectEvent",
+      },
+      {
+        title: "useId",
+        href: "/docs/hooks/useId",
       },
       {
         title: "useLayoutEffect",

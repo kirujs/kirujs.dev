@@ -1,3 +1,4 @@
+import { DocsSectionHeader } from "$/components/DocsSectionHeader"
 import { ExternalLink } from "$/components/atoms/ExternalLink"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 import { HighlightOnLoad } from "$/components/HighlightOnLoad"
@@ -14,14 +15,14 @@ import PnpmInstallBash from "./bash.manual.pnpm.md"
 import YarnInstallBash from "./bash.manual.yarn.md"
 import MountCode from "./mountCode.md"
 import MountCodeTS from "./mountCode.ts.md"
-import { siteCodeLang } from "$/state/langToggle"
+import { siteCodeLang } from "$/state/siteCodeLang"
 
 # Getting started
 
-<HighlightOnLoad hash="#start-a-new-project">
-  <div className="docs-section-header mb-5">
-    <a id="start-a-new-project" href="#start-a-new-project">Start a new project</a>
-  </div>
+<HighlightOnLoad id="start-a-new-project">
+  <DocsSectionHeader href="#start-a-new-project">
+    Start a new project
+  </DocsSectionHeader>
   <div>
     <div className="not-prose">
       <PackageManagerSelector />
@@ -40,12 +41,12 @@ import { siteCodeLang } from "$/state/langToggle"
   </div>
 </HighlightOnLoad>
 
-<HighlightOnLoad hash="#add-to-an-existing-project">
-  <div className="docs-section-header mb-5">
-    <a id="add-to-an-existing-project" href="#add-to-an-existing-project">Add to an existing project</a>
-  </div>
+<HighlightOnLoad id="add-to-an-existing-project">
+  <DocsSectionHeader href="#add-to-an-existing-project">
+    Add to an existing project
+  </DocsSectionHeader>
 
-  <CalloutBlock>
+  <CalloutBlock fontSize="normal">
     <span>The following example demonstrates adding Kaioken to a <ExternalLink href="https://vitejs.dev/">Vite</ExternalLink> project.</span>
   </CalloutBlock>
 
@@ -114,10 +115,11 @@ import { siteCodeLang } from "$/state/langToggle"
 
 </HighlightOnLoad>
 
-<HighlightOnLoad hash="#getting-help">
-  <div className="docs-section-header">
-    <a id="getting-help" href="#getting-help">Getting help</a>
-  </div>
+<HighlightOnLoad id="getting-help">
+  <DocsSectionHeader href="#getting-help">
+    Getting help
+  </DocsSectionHeader>
+
   Reach out to us or get involved on <ExternalLink href="https://discord.gg/yspvgXegvs">Discord</ExternalLink>
 
 </HighlightOnLoad>

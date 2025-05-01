@@ -8,13 +8,6 @@ export function isLinkActive(href: string, urlPath: string) {
   )
 }
 
-export function isMac() {
-  return (
-    "window" in globalThis &&
-    navigator.userAgent.toUpperCase().indexOf("MAC OS") !== -1
-  )
-}
-
 export function isClickEventFromKeyboard(e: Event) {
   return e && "detail" in e && e.detail === 0
 }

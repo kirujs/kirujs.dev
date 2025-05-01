@@ -1,5 +1,5 @@
 ```jsx
-import { useRouter } from "kaioken"
+import { useRouter } from "kaioken/router"
 
 export function UserPage() {
   const { params } = useRouter()

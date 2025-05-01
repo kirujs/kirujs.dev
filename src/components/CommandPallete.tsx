@@ -12,11 +12,11 @@ import { DialogHeader } from "./dialog/DialogHeader"
 import { Input } from "./atoms/Input"
 import { DocPageLink, docMeta } from "$/docs-meta"
 import { DialogBody } from "./dialog/DialogBody"
-import { SITE_LINKS } from "$/constants"
+import { OS, SITE_LINKS } from "$/constants"
 import { SearchIcon } from "./icons/SearchIcon"
 import { CloseIcon } from "./icons/CloseIcon"
 import { usePageContext } from "$/context/pageContext"
-import { isLinkActive, isMac } from "$/utils"
+import { isLinkActive } from "$/utils"
 import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
 
 export function CommandPallete() {
@@ -44,7 +44,7 @@ export function CommandPallete() {
 
   function handleKeyboardEvent(e: KeyboardEvent) {
     const isHandled =
-      e.key.toLowerCase() === "k" && (isMac() ? e.metaKey : e.ctrlKey)
+      e.key.toLowerCase() === "k" && (OS === "mac" ? e.metaKey : e.ctrlKey)
     if (!isHandled) return
 
     e.preventDefault()
@@ -114,7 +114,7 @@ function CommandPalleteDisplay() {
         <Input
           type="text"
           placeholder="Search..."
-          className="w-full pl-8 bg-black bg-opacity-20 font-normal text-base"
+          className="w-full pl-8 bg-black/20 font-normal text-base"
           ref={searchInputRef}
         />
         <button
@@ -125,7 +125,7 @@ function CommandPalleteDisplay() {
           <CloseIcon width="1em" height="1em" />
         </button>
       </DialogHeader>
-      <DialogBody className="bg-black bg-opacity-10 border border-white border-opacity-5 rounded max-h-[400px] overflow-y-auto scroll-py-20">
+      <DialogBody className="bg-black/10 border border-white/5 rounded-sm max-h-[400px] overflow-y-auto scroll-py-20">
         <div className="flex flex-col gap-2">
           <CommandPalleteGroup
             title="Links"
@@ -208,7 +208,7 @@ function CommandPalleteItem({
   }, [item.href, urlPathname, setOpen])
   if (item.disabled) {
     return (
-      <a className="w-full text-muted bg-white bg-opacity-[1%] border border-white border-opacity-5 p-2 rounded focus:bg-opacity-5 hover:bg-opacity-5">
+      <a className="w-full text-muted bg-white/[1%] border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5">
         <span className="w-full flex justify-between items-center text-xs">
           {item.title}
           <span className="badge">Upcoming</span>
@@ -220,15 +220,20 @@ function CommandPalleteItem({
   }
   return (
     <a
-      className="w-full text-muted bg-white bg-opacity-[1%] border border-white border-opacity-5 p-2 rounded focus:bg-opacity-5 hover:bg-opacity-5"
+      className="w-full text-muted bg-white/[1%] border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5"
       href={item.href}
       onclick={onLinkClick}
       target={external ? "_blank" : "_self"}
     >
-      <span className="flex gap-1 items-center text-sm font-light">
-        {item.title}
-        {external ? <ExternalLinkIcon width=".85rem" height=".85rem" /> : ""}
-      </span>
+      <div className="flex items-start justify-between">
+        <span className="flex gap-1 items-center text-sm font-light">
+          {item.title}{" "}
+          {external ? <ExternalLinkIcon width=".85rem" height=".85rem" /> : ""}
+        </span>
+        {item.isNew && (
+          <span className="badge px-1 py-0.5 rounded-sm">New</span>
+        )}
+      </div>
       <CommandPalleteBadges item={item} />
     </a>
   )

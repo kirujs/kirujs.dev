@@ -4,7 +4,8 @@
 In Kaioken, the dependency array is a crucial part of the 
 <a href="/docs/hooks/useAsync">useAsync</a>, 
 <a href="/docs/hooks/useCallback">useCallback</a>, 
-<a href="/docs/hooks/useEffect">useEffect</a>, and 
+<a href="/docs/hooks/useEffect">useEffect</a>, 
+<a href="/docs/hooks/useLayoutEffect">useLayoutEffect</a>, and 
 <a href="/docs/hooks/useMemo">useMemo</a> hooks. 
 It allows you to specify dependencies that the hook 
 should watch for changes. When any of the dependencies 
@@ -34,7 +35,8 @@ array and its significance:
     indicates that the hook should only run once, 
     during the initial render. It's useful for scenarios 
     where you want to perform an action only once or where 
-    the hook's logic doesn't depend on any external values.
+    the hook's logic doesn't depend on any external values. 
+    This is only valid for `useEffect` and `useLayoutEffect`. 
   </li>
 </ol>
 
@@ -45,5 +47,6 @@ array and its significance:
   <li><a href="/docs/hooks/useAsync">useAsync</a></li>
   <li><a href="/docs/hooks/useCallback">useCallback</a></li>
   <li><a href="/docs/hooks/useEffect">useEffect</a></li>
+  <li><a href="/docs/hooks/useLayoutEffect">useLayoutEffect</a></li>
   <li><a href="/docs/hooks/useMemo">useMemo</a></li>
 </ul>

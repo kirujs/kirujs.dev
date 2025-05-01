@@ -1,0 +1,23 @@
+import ExampleCode from "./example.md"
+import ExampleCodeTS from "./example.ts.md"
+import { ExternalLink } from "$/components/atoms/ExternalLink"
+import { CalloutBlock } from "$/components/atoms/CalloutBlock"
+import { siteCodeLang } from "$/state/siteCodeLang"
+
+# SWR
+
+Kaioken's `SWR` API provides an easy-to-use layer of abstraction over data fetching and caching.
+
+Inspired by <ExternalLink href="https://swr.vercel.app/" >Vercel's SWR</ExternalLink>, 
+it offers a declarative approach to data fetching and caching, 
+making it easy to manage data fetching, mutations, caching and invalidation.
+
+
+### Example
+<CalloutBlock>
+  The below demonstrates multiple components using the same resource
+  fetched by the `useSWR` hook. Only one request is made to the server,
+  and the data is cached for future requests.
+</CalloutBlock>
+
+{siteCodeLang.value === "js" ? <ExampleCode /> : <ExampleCodeTS />}

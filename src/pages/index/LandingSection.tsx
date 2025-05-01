@@ -23,7 +23,7 @@ type LandingSectionCardProps = {
 }
 function LandingSectionCard({ iconSrc, text }: LandingSectionCardProps) {
   return (
-    <div className="flex flex-col md:basis-1/4 flex-grow items-center text-center gap-4 rounded-xl glass-container p-6">
+    <div className="flex flex-col md:basis-1/4 grow items-center text-center gap-4 rounded-xl glass-container p-6">
       <img src={iconSrc} className="w-12 h-12 opacity-60" alt={text} />
       <p className="text-lg font-thin">{text}</p>
     </div>

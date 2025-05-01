@@ -1,22 +1,54 @@
 /* This CSS is common to all pages */
 
-@import url("utils.css");
-@import url("dialog.css");
-@import url("scrollbars.css");
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('utils.css') layer(base);
+@import url('dialog.css') layer(base);
+@import url('scrollbars.css') layer(base);
+@import 'tailwindcss';
 
-.glass-container {
-  @apply border border-white border-opacity-5 bg-white bg-opacity-5 shadow-lg backdrop-blur-md
+@plugin '@tailwindcss/typography';
+
+@theme {
+  --color-primary: crimson;
+  --color-primary-light: #ec1b43;
+  --color-info: #322a2c;
+  --color-dark: #151313;
+  --color-light: #fffafa;
+  --color-light-highlight: #fbf6f6;
+
+  --color-stone-750: #332f2f;
+
+  --spacing-xs: 0.125rem;
+
+  --breakpoint-xs: 460px;
+
+  --background-image-theme-gradient: linear-gradient(153deg,
+      #9913548a,
+      #ed143d7d);
 }
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+
 
 * {
   box-sizing: border-box;
-}
-
-.text-shadow {
-  text-shadow: 1px 1px 3px #0007;
 }
 
 
@@ -57,15 +89,15 @@ body {
   margin: 0;
 }
 
-.prose {
-  color: (var(--color-dark))
-}
-
 a {
   text-decoration: none;
 }
 
-.prose a {
+button {
+  cursor: pointer;
+}
+
+.prose a:not(.text-light) {
   color: #ea495e !important
 }
 
@@ -78,14 +110,57 @@ a {
   margin-bottom: .25rem;
 }
 
+@media screen and (max-width: 480px) {
+  .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: 1.75rem;
+  }
+}
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):not(:has(span)) {
+  background-color: #0e0e0ea3;
+  border-radius: .25rem;
+  padding: .25rem .5rem;
+}
+
+
+.callout-block code {
+  background-color: #0e0e0e63;
+  border-radius: .25rem;
+  padding: .125rem .25rem;
+  font-size: 87.5%;
+}
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):before,
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):after {
+  content: none;
+}
+
+.prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *))::marker {
+  color: #bbb;
+}
+
+.prose :where(hr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  border-color: #fffc;
+  border-width: 2px;
+  opacity: .5;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .docs-section-header a {
   color: #fff !important;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1.5em;
+  font-size: 1.25em;
   margin-top: 2em;
   margin-bottom: 1em;
   line-height: 1.3333333;
+}
+
+@media screen and (min-width: 480px) {
+  .docs-section-header a {
+    font-size: 1.5em;
+  }
 }
 
 .docs-section {
@@ -113,30 +188,6 @@ a {
 .docs-section.highlight:after {
   opacity: .066
 }
-
-/* .token.attr-value,
-.token.char,
-.token.regex,
-.token.string,
-.token.variable {
-  color: #ef9a65ff !important;
-} */
-
-.prose :where(code):not(:where([class~=not-prose], [class~=not-prose] *)):not(pre.shiki > code) {
-  background-color: #2f2f2f !important;
-  padding: 0.125rem 0.25rem;
-  border-radius: .25rem;
-  font-weight: 400;
-}
-
-.prose :where(code):not(:where([class~=not-prose], [class~=not-prose] *)):before {
-  content: ""
-}
-
-.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
-  content: "";
-}
-
 
 pre.shiki {
   font-weight: 400;
@@ -168,23 +219,12 @@ pre.shiki span[style="color: rgb(133, 232, 157);"] {
   color: #e8585c !important;
 }
 
-pre.shiki span.line.diff {
-  padding: 1px 2px;
+/** comments: */
+pre.shiki span[style="color:#6A737D;"],
+pre.shiki span[style="color: rgb(106, 115, 125);"] {
+  color: #939192 !important;
 }
 
-/** inline diff ~~  */
-pre.shiki span[style="color:#E1E4E8;background-color:#173a4f;"] {
-  padding: 1px 2px;
-}
-
-/** inline diff ++  */
-pre.shiki span[style="color:#E1E4E8;background-color:#174327;"] {
-  padding: 1px 2px;
-}
-
-pre.shiki span[style="color:#B392F0;background-color:#174327;"] {
-  padding: 1px 2px;
-}
 
 pre.shiki span.line.diff.remove {
   background-color: #512525;

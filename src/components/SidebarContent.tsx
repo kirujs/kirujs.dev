@@ -2,7 +2,7 @@ import { usePageContext } from "$/context/pageContext"
 import { DocItem as DocItemMeta, docMeta } from "$/docs-meta"
 import { useNavDrawer } from "$/state/navDrawer"
 import { isLinkActive } from "$/utils"
-import { ElementProps } from "kaioken"
+import { ElementProps, unwrap } from "kaioken"
 
 export function SidebarContent() {
   const { urlPathname } = usePageContext()
@@ -45,9 +45,15 @@ export function SidebarContent() {
                       open &&
                       setOpen(false)
                     }
-                    className={`${isLinkActive(page.href, urlPathname) ? "text-light" : ""}`}
+                    className={[
+                      isLinkActive(page.href, urlPathname) && "text-light",
+                      "flex items-center justify-between",
+                    ]}
                   >
-                    {page.title}
+                    {page.title}{" "}
+                    {page.isNew && (
+                      <span className="badge p-0.5 px-1">New</span>
+                    )}
                   </Link>
                 )
               )}
@@ -82,7 +88,7 @@ function LinkList({ children }: ElementProps<"div">) {
 
 function Link({ children, className, ...props }: ElementProps<"a">) {
   return (
-    <a className={`text-muted ${className || ""}`} {...props}>
+    <a className={["text-muted", unwrap(className)].flat()} {...props}>
       {children}
     </a>
   )

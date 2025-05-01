@@ -1,3 +1,3 @@
 ```ts
-(path:string) => void
+(to: string, options?: { replace?: boolean }) => null
 ```

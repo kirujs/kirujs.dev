@@ -5,9 +5,15 @@ function App() {
   const [productId, setProductId] = useState(1)
 
   // Use useAsync to run an async function whenever the productId changes
-  const { data, loading, error, invalidate } = useAsync<Product>(async () => {
-    return (await fetch(`https://dummyjson.com/products/${productId}`)).json()
-  }, [productId])
+  const { data, loading, error, invalidate } = useAsync<Product>(
+    async ({ abortSignal }) => {
+      const response = await fetch(`https://dummyjson.com/products/${productId}`, {
+        signal: abortSignal,
+      })
+      return await response.json()
+    }
+    [productId]
+  )
 
   return (
     <div>
@@ -15,7 +21,7 @@ function App() {
       {data ? (
         <ProductCard product={data} invalidate={invalidate} />
       ) : loading ? (
-        <Spinner />
+        <p>loading...</p>
       ) : (
         <p>{error.message}</p>
       )}

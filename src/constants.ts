@@ -15,3 +15,9 @@ export const SITE_LINKS = [
     external: true,
   },
 ]
+
+export const OS =
+  "window" in globalThis &&
+  navigator.userAgent.toUpperCase().indexOf("MAC OS") !== -1
+    ? "mac"
+    : "other"

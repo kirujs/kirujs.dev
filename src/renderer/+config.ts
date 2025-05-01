@@ -16,4 +16,7 @@ export default {
       env: { server: true, client: true },
     },
   },
+  prerender: {
+    noExtraDir: true,
+  },
 } satisfies Config

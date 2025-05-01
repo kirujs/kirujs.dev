@@ -1,5 +1,5 @@
 ```ts
-type UseAsyncResult<T> = (
+type UseAsyncState<T> = (
   | /** loading*/ {
       data: null
       loading: true

@@ -1,4 +1,5 @@
-import { siteCodeLang } from "$/state/langToggle"
+import { match } from "lit-match"
+import { siteCodeLang } from "$/state/siteCodeLang"
 import { selectedTab } from "./selectedTab"
 import { TabGroup } from "$/components/TabGroup"
 import ExampleApp from "./example.App.md"
@@ -21,7 +22,16 @@ custom external store where you need to synchronize the Kaioken component with t
       value={selectedTab.value}
       itemSuffix={(item) => `.${siteCodeLang.value}${item === "App" ? "x" : ""}`}
     />
-    {selectedTab.value === "App" ? (<ExampleApp />)
-          : siteCodeLang.value === "js" ? (<ExampleCounterStore />) : (<ExampleCounterStoreTS />)}
+    {match(siteCodeLang.value)
+        .with("js", () => {
+          return match(selectedTab.value)
+            .with("App", () => <ExampleApp />)
+            .else(() => <ExampleCounterStore />)
+        })
+        .else(() => {
+          return match(selectedTab.value)
+            .with("App", () => <ExampleApp />)
+            .else(() => <ExampleCounterStoreTS />)
+        })}
   </div>
 </div>

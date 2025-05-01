@@ -1,14 +1,14 @@
 import { CodePreview } from "$/components/CodePreview"
-import { memoTypePreview } from "$/components/previews/memo.type.preview"
-import { siteCodeLang } from "$/state/langToggle"
+import { siteCodeLang } from "$/state/siteCodeLang"
 import ExampleCode from "./example.md"
 import ExampleCodeTS from "./example.ts.md"
 
 # Memo
 
-<CodePreview data={memoTypePreview} /> is a higher-order component that's used for optimizing the performance 
+`memo` is a higher-order component that's used for optimizing the performance 
 of components by preventing unnecessary re-renders. 
-By default it will perform an identity check for the props passed. If the props don't change, it will not re-render.
+When a parent component re-renders, an identity check is performed for each of the props passed. 
+If none have changed, it will not re-render.
 You can override this behavior by passing a different `compare` function.
 
 ### Example

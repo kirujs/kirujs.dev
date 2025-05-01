@@ -1,30 +1,58 @@
 import { ExternalLink } from "$/components/atoms/ExternalLink"
+import { DocsSectionHeader } from "$/components/DocsSectionHeader"
 import { HighlightOnLoad } from "$/components/HighlightOnLoad"
+import { EcosystemTiles } from "./EcosystemTiles"
 
 # Introduction
 
-<HighlightOnLoad hash="#about-kaioken">
-  <div className="docs-section-header">
-    <a id="about-kaioken" href="#about-kaioken">About Kaioken</a>
-  </div>
+<HighlightOnLoad id="about-kaioken">
+  <DocsSectionHeader href="#about-kaioken">
+    About Kaioken
+  </DocsSectionHeader>
 
-  Kaioken was made to provide developers with a way to build apps with the expressivity and customizability that React does,
-  but with a much smaller footprint and more features.
+  Kaioken is a lightweight framework designed to empower developers to build applications 
+  with expressivity and customizability. It offers a rich feature set while maintaining a 
+  smaller footprint, allowing for efficient and flexible development. We are committed to 
+  continuous evolution based on community feedback and contributions.
 
-  Kaioken will remain <ExternalLink href="https://github.com/CrimsonChi/kaioken" >open source</ExternalLink> forever and welcomes your ideas and contributions!
+  Kaioken will always be <ExternalLink href="https://github.com/CrimsonChi/kaioken" >open-source</ExternalLink>, and we encourage developers to share their ideas and 
+  collaborate on improving the framework.
 
-  <p className="text-xl">
-    <a href="/docs/getting-started">Get started with Kaioken</a>
-  </p>
+  
+
 </HighlightOnLoad>
 
-<HighlightOnLoad hash="#roadmap">
-  <div className="docs-section-header">
-    <a id="roadmap" href="#roadmap">Roadmap</a>
-  </div>
-  There aren't any dates set in stone but the following items are on Kaioken's horizon:
+<HighlightOnLoad id="roadmap">
+  <DocsSectionHeader href="#roadmap">
+    Roadmap
+  </DocsSectionHeader>
 
-  - Fully managed <ExternalLink href="https://vike.dev" >Vike</ExternalLink> integration
-    for server-side rendering & static site generation
-  - Component declaration API with support for <ExternalLink href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components">Web Components</ExternalLink>
+  There aren't any dates set in stone but rest assured, the following items will be on 
+  Kaioken's horizon:
+
+  - **Full-Stack Rendering:** We aim to enhance support for server-side rendering (SSR) and 
+  static site generation (SSG). While current integrations exist with tools like <ExternalLink href="https://vike.dev" >Vike</ExternalLink>, 
+  we are working on building our own native solution to simplify these processes.
+
+  - **Compiled Component Declaration API:** This feature will support <ExternalLink href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components">Web Components</ExternalLink>, 
+  enabling developers to create components easily and optimize rendering. The API will 
+  focus on performance and integration with existing web technologies. 
+
+  - \***Insert suggestions here**\*: Let us know what you think of Kaioken and what you would 
+  like to see in the future! 
+ 
+
+</HighlightOnLoad>
+
+<HighlightOnLoad id="ecosystem">
+  <DocsSectionHeader href="#ecosystem">
+    Ecosystem
+  </DocsSectionHeader>
+  
+  Some of our honorable mentions from the community, in no particular order:
+  <EcosystemTiles />
+
+If you want your library or package to be part of this list,
+  <ExternalLink href="https://discord.gg/yspvgXegvs">join the community</ExternalLink>
+and let us know about it!
 </HighlightOnLoad>

@@ -1,16 +1,15 @@
 import { createContext, useContext } from "kaioken"
+import type { PageContext } from "vike/types"
 
-export { usePageContext, PageContextProvider }
+export { PageContextProvider, usePageContext }
 
-const Context = createContext<Vike.PageContext & { isClient: boolean }>(
-  null as any
-)
+const Context = createContext<PageContext & { isClient: boolean }>(null as any)
 
 function PageContextProvider({
   pageContext,
   children,
 }: {
-  pageContext: Vike.PageContext
+  pageContext: PageContext
   children: JSX.Children
 }) {
   return (

@@ -39,6 +39,14 @@ button.reset {
   background-color: #333;
 }
 
+.badge.badge-success {
+  font-size: 10px;
+  padding: 2px 5px;
+  text-transform: unset;
+  color: #f1f1f1;
+  background-color: #161;
+}
+
 .link-button {
   padding: .5rem 1rem;
   background: var(--color-light);
@@ -51,4 +59,12 @@ button.reset {
   color: #ea495e !important;
   font-weight: 500;
   margin-bottom: 0 !important;
+}
+
+.text-shadow {
+  text-shadow: 1px 1px 3px #0007;
+}
+
+.glass-container {
+  @apply border border-white/5 bg-white/5 shadow-lg backdrop-blur-md;
 }

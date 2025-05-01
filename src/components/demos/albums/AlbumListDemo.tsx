@@ -1,4 +1,4 @@
-import { siteCodeLang } from "$/state/langToggle"
+import { siteCodeLang } from "$/state/siteCodeLang"
 import { CodeDemo } from "../CodeDemo"
 import { DemoComponentWrapper } from "../DemoComponentWrapper"
 import { AlbumItem } from "./AlbumItem"

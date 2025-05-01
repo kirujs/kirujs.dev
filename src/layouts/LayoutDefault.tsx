@@ -8,7 +8,7 @@ import { Portal } from "kaioken"
 export function LayoutDefault({ children }: { children: JSX.Children }) {
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-neutral-950 bg-opacity-40 backdrop-blur-md border-b border-b-white border-opacity-10">
+      <header className="fixed top-0 w-full z-50 bg-neutral-950/40 backdrop-blur-md border-b border-b-white/10">
         <Container>
           <Navbar />
         </Container>

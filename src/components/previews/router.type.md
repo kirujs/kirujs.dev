@@ -1,3 +1,6 @@
 ```ts
-(props: { basePath?: string }) => JSX.Element
+(props: { 
+  basePath?: string; 
+  transition?: boolean 
+}) => JSX.Element
 ```
