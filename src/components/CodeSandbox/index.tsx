@@ -69,24 +69,18 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSanboxProps) {
   }
 
   const init = async () => {
-    if (!previewIframeRef.current) return
     const shell = nodeBox.shell.create()
     if (prevWrittenFiles === null) {
       await nodeBox.fs.init({ ...FILES_MAP })
     }
-    if (!previewIframeRef.current) return
-    //await cleanupRemovedFiles(prevWrittenFiles ?? {}, files)
     await writeFiles(files)
     setPrevWrittenFiles(files)
     if (prevWrittenFiles !== null) return
 
-    if (!previewIframeRef.current) return
     await shell.runCommand("node", ["startVite.js"])
     try {
-      if (!previewIframeRef.current) return
       const previewInfo = await nodeBox.preview.waitForPort(3000, 10_000)
-      if (!previewIframeRef.current) return
-      previewIframeRef.current.setAttribute("src", previewInfo.url)
+      previewIframeRef.current!.setAttribute("src", previewInfo.url)
     } catch (error) {
       console.error("err", error)
     }

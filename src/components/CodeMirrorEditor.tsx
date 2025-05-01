@@ -3,6 +3,9 @@ import { EditorState, type Extension } from "@codemirror/state"
 import { EditorView } from "codemirror"
 import { kaiokenTheme } from "$/codeMirrorTheme"
 import { kaiokenSetup } from "$/codeMirrorExtensions"
+import { indentWithTab } from "@codemirror/commands"
+
+import { keymap } from "@codemirror/view"
 
 export interface CodeMirrorComponentProps extends ElementProps<"div"> {
   readonly?: boolean
@@ -31,6 +34,7 @@ export function CodeMirrorComponent({
       kaiokenTheme,
       //myTheme,
       EditorState.readOnly.of(!!readonly),
+      keymap.of([indentWithTab]),
       ...(includeBasicExtensions ? [kaiokenSetup] : []), // Basic setup for editing
       ...(userExtensions ?? []),
       ...(onContentChanged
@@ -51,6 +55,8 @@ export function CodeMirrorComponent({
       }),
       parent: elementRef.current,
     })
+
+    cmInstance.current.setTabFocusMode(false)
 
     return () => cmInstance.current?.destroy()
   }, [userExtensions, includeBasicExtensions, onContentChanged])

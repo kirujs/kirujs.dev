@@ -1,19 +1,14 @@
 import { redirect } from "vike/abort"
 import CodeSandbox from "$/components/CodeSandbox"
-import { useTutorialStep } from "./TutorialStepContext"
 import { usePageContext } from "$/context/pageContext"
+import { useTutorialStep } from "./TutorialStepContext"
 
 export function TutorialSandbox() {
-  const ctx = useTutorialStep()
-  const step = ctx?.step.current
-  if (!step) {
-    throw redirect("/tutorial/introduction")
-  }
-
+  const step = useTutorialStep()
   return (
     <CodeSandbox
       key={usePageContext().urlPathname}
-      files={step.files}
+      files={step?.files ?? {}}
       className="h-full flex flex-col"
     />
   )

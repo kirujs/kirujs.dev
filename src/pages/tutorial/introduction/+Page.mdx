@@ -1,29 +1,11 @@
-import { useTutorialStep } from "../TutorialStepContext"
+export { step } from "./step"
 
-## Welcome to Kaioken. This is a tutorial on how to use it.
+## Welcome to the Kaioken Tutorial!
 
-Kaioken is a framework for building user interfaces. 
-It is unopinionated and easy to use. 
-It is very flexible and has excellent documentation.
+This is a series of scenarios and challenges prepared to help you learn Kaioken.
+
+By the end, you'll be a master of Kaioken and able to create apps that are fast, efficient, and fun. Enjoy!
 
 <div className="flex">
   <a href="/tutorial/your-first-app" className="link-button mb-40">Next: Your First App</a>
 </div>
-
-{useTutorialStep({
-  files: {
-        ["App.jsx"]: `export function App({ albums = [] }) {
-    let title = "0 albums"
-    if (albums.length === 1) title = "1 album"
-    if (albums.length > 1) title = \`\${albums.length} albums\`
-
-    return (
-      <section>
-        <h2>{title}</h2>
-        {albums.map((album) => (
-          <Album key={album.id} album={album} />
-        ))}
-      </section>
-    )
-}`}
-})}

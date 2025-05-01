@@ -1,4 +1,4 @@
-import { useTutorialStep } from "../TutorialStepContext"
+export { step } from "./step"
 
 ## Let's create your first app!
 
@@ -61,10 +61,3 @@ export default function App() {
   return <h1>Hello {name|++.toUpperCase()++|}!</h1>
 }
 ```
-
-{useTutorialStep({
-  files: {
-        ["App.jsx"]: `export function App() {
-    return <h1>Hello world!</h1>
-}`}
-})}
