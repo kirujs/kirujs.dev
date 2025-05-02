@@ -3,19 +3,19 @@ import { ElementProps, signal, useLayoutEffect, useRef } from "kaioken"
 import { tutorials, TutorialItem } from "./meta"
 import { ChevronRightIcon } from "$/components/icons/ChevronRightIcon"
 
-const navCollapsed = signal(true)
+const navExpanded = signal(false)
 
 export function TutorialNav() {
   const { urlPathname } = usePageContext()
   const prevPathname = useRef(urlPathname)
   useLayoutEffect(() => {
     if (urlPathname !== prevPathname.current) {
-      navCollapsed.value = true
+      navExpanded.value = false
       prevPathname.current = urlPathname
     }
   }, [urlPathname])
 
-  if (!navCollapsed.value) {
+  if (navExpanded.value) {
     return (
       <ul className="flex flex-col gap-1 p-2 py-1 bg-white/2.5 border border-white/5">
         {tutorials.map((tutorial) => (
@@ -34,7 +34,7 @@ export function TutorialNav() {
       <button
         type="button"
         className="flex items-center gap-1 p-2 py-1 bg-white/2.5 border border-white/5"
-        onclick={() => (navCollapsed.value = !navCollapsed.value)}
+        onclick={() => (navExpanded.value = true)}
       >
         {activeTopLevelTutorial.title}
         <ChevronRightIcon />
@@ -54,9 +54,7 @@ export function TutorialNav() {
     <button
       type="button"
       className="flex items-center gap-1 p-2 py-1 bg-white/2.5 border border-white/5"
-      onclick={() => {
-        navCollapsed.value = !navCollapsed.value
-      }}
+      onclick={() => (navExpanded.value = true)}
     >
       {activeSection.title}
       <ChevronRightIcon />
@@ -106,6 +104,7 @@ function TutorialNavItem({
           isActive && "font-bold",
         ]}
         href={prefix + item.route}
+        onclick={() => isActive && (navExpanded.value = false)}
       >
         {item.title}
         {isActive && depth === 0 && (
