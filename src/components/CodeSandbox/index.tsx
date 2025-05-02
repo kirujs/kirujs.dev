@@ -1,6 +1,6 @@
 import { JSXEditor } from "$/components/JSXEditor"
 import { TabGroup } from "$/components/TabGroup"
-import { useRef, useEffect, useState, ElementProps } from "kaioken"
+import { useRef, useEffect, useState, ElementProps, useAsync } from "kaioken"
 import {
   NodeBoxProvider,
   useNodeBox,
@@ -8,6 +8,8 @@ import {
 } from "$/context/NodeBoxContext"
 import { FILES_MAP } from "./filesMap"
 import { useDebounceThrottle } from "$/utils"
+import { useTaskRunner } from "$/hooks/useTaskRunner"
+import { PreviewInfo } from "@codesandbox/nodebox"
 
 interface CodeSandboxProps extends ElementProps<"div"> {
   files: Record<string, string>
@@ -40,21 +42,16 @@ function WorkerStatusDisplayText() {
 }
 
 function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
-  const [prevWrittenFiles, setPrevWrittenFiles] = useState<Record<
-    string,
-    string
-  > | null>(null)
+  const prevWrittenFiles = useRef<Record<string, string> | null>(null)
   const nodeBox = useNodeBox()
   const previewIframeRef = useRef<HTMLIFrameElement>(null)
   const [selectedFile, setSelectedFile] = useState(Object.keys(files)[0])
 
-  const cleanupRemovedFiles = async (
-    oldFiles: Record<string, string>,
-    newFiles: Record<string, string>
-  ) => {
+  console.log("CodeSandboxImpl")
+
+  const cleanupRemovedFiles = async (oldFiles: Record<string, string>) => {
     return await Promise.all(
       Object.keys(oldFiles).map(async (file) => {
-        if (file in newFiles) return
         nodeBox.fs.rm(`/src/${file}`)
       })
     )
@@ -68,33 +65,58 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
     )
   }
 
-  const init = async () => {
-    const shell = nodeBox.shell.create()
-    if (prevWrittenFiles === null) {
-      await nodeBox.fs.init({ ...FILES_MAP })
-    }
-    await writeFiles(files)
-    setPrevWrittenFiles(files)
-    if (prevWrittenFiles !== null) return
+  useTaskRunner(
+    (abortSignal) => {
+      const prevFiles = prevWrittenFiles.current
+      abortSignal.addEventListener("abort", () => {
+        console.log("[taskrunner]: cleaning up...")
+        cleanupRemovedFiles(prevFiles ?? {})
+      })
 
-    await shell.runCommand("node", ["startVite.js"])
-    try {
-      const previewInfo = await nodeBox.preview.waitForPort(3000, 10_000)
-      previewIframeRef.current!.setAttribute("src", previewInfo.url)
-    } catch (error) {
-      console.error("err", error)
-    }
-  }
+      const pref = "[taskrunner]: "
+      console.log(pref, "start")
 
-  useEffect(() => {
-    init()
-    return () => {
-      cleanupRemovedFiles(
-        prevWrittenFiles ?? {},
-        previewIframeRef.current ? files : {}
-      )
-    }
-  }, [files])
+      const tasks: (() => Promise<any>)[] = []
+
+      if (prevFiles === null) {
+        tasks.push(async () => {
+          console.log(pref, "initialiing nodebox fs...")
+          await nodeBox.fs.init({ ...FILES_MAP })
+          console.log(pref, "nodebox fs initialized.")
+        })
+      }
+      tasks.push(async () => {
+        console.log(pref, "writing files...")
+        await writeFiles(files)
+        prevWrittenFiles.current = { ...files }
+        console.log(pref, "files written.")
+      })
+
+      if (prevFiles === null) {
+        let previewInfo: PreviewInfo | null = null
+        tasks.push(
+          async () => {
+            console.log(pref, "running startVite.js...")
+            const shell = nodeBox.shell.create()
+            await shell.runCommand("node", ["startVite.js"])
+            console.log(pref, "startVite.js run.")
+          },
+          async () => {
+            console.log(pref, "waiting for vite server...")
+            previewInfo = await nodeBox.preview.waitForPort(3000, 10_000)
+            console.log(pref, "vite server started.")
+          },
+          async () =>
+            previewInfo &&
+            (previewIframeRef.current!.setAttribute("src", previewInfo.url),
+            console.log(pref, "iframe src set."))
+        )
+      }
+
+      return tasks
+    },
+    [files]
+  )
 
   const debouncedWrite = useDebounceThrottle(() => {
     if (!nodeBox) return

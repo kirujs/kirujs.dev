@@ -66,11 +66,9 @@ export function TutorialNav() {
 function TutorialNavItem({
   item,
   prefix = "",
-  depth = 0,
 }: {
   item: TutorialItem
   prefix?: string
-  depth?: number
 }) {
   const { urlPathname } = usePageContext()
   if ("sections" in item) {
@@ -86,7 +84,6 @@ function TutorialNavItem({
                 key={section.title}
                 item={section}
                 prefix={item.route}
-                depth={depth + 1}
               />
             ))}
           </ul>
@@ -107,9 +104,6 @@ function TutorialNavItem({
         onclick={() => isActive && (navExpanded.value = false)}
       >
         {item.title}
-        {isActive && depth === 0 && (
-          <ChevronRightIcon style="transform: rotate(90deg)" />
-        )}
       </a>
     </li>
   )
