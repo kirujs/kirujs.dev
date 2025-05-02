@@ -4,7 +4,7 @@ import { createContext, signal, useContext, useEffect } from "kaioken"
 
 const nodeboxIframe = signal<HTMLIFrameElement | null>(null)
 const nodeboxInstance = signal<Nodebox | null>(null)
-const isLoadingNodebox = signal<boolean>(false)
+const hasInitializedNodebox = signal<boolean>(false)
 
 async function initNodebox() {
   if (nodeboxIframe.value) return
@@ -40,8 +40,8 @@ export const NodeBoxProvider: Kaioken.FC<{ fallback: JSX.Element }> = ({
   fallback,
 }) => {
   useEffect(() => {
-    if (!isLoadingNodebox.value) {
-      isLoadingNodebox.value = true
+    if (!hasInitializedNodebox.value) {
+      hasInitializedNodebox.value = true
       initNodebox()
     }
   }, [])
