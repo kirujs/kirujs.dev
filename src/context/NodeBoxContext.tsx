@@ -1,13 +1,31 @@
 //https://github.com/Sandpack/nodebox-runtime/blob/main/packages/nodebox/api.md
 import { Nodebox, WorkerStatusUpdate } from "@codesandbox/nodebox"
-import { createContext, signal, useContext, useEffect, useState } from "kaioken"
+import { createContext, signal, useContext, useEffect } from "kaioken"
 
-declare global {
-  interface Window {
-    __nodeboxIFrame: HTMLIFrameElement
-    __nodeboxInstance: Nodebox
-    __nodeboxLoadPromise: Promise<void> | null
-  }
+const nodeboxIframe = signal<HTMLIFrameElement | null>(null)
+const nodeboxInstance = signal<Nodebox | null>(null)
+const isLoadingNodebox = signal<boolean>(false)
+
+async function initNodebox() {
+  if (nodeboxIframe.value) return
+  const iframe = (nodeboxIframe.value = document.createElement("iframe"))
+  iframe.style.display = "none"
+  document.body.appendChild(iframe)
+  const pref = "[nodebox]: "
+
+  console.log(pref, "importing @codesandbox/nodebox")
+  const nBoxModule = await import("@codesandbox/nodebox")
+  console.log(pref, "imported @codesandbox/nodebox")
+
+  const nodeBox = new nBoxModule.Nodebox({ iframe })
+
+  console.log(pref, "connecting nodebox")
+  await nodeBox.connect()
+  console.log(pref, "connected nodebox")
+
+  const shell = nodeBox.shell.create()
+  shell.on("progress", (status) => (workerStatus.value = status))
+  nodeboxInstance.value = nodeBox
 }
 
 const NodeBoxContext = createContext<Nodebox>(null as any)
@@ -21,51 +39,14 @@ export const NodeBoxProvider: Kaioken.FC<{ fallback: JSX.Element }> = ({
   children,
   fallback,
 }) => {
-  const [nodebox, setNodebox] = useState<Nodebox | null>(
-    "window" in globalThis && !!window.__nodeboxInstance
-      ? (window.__nodeboxInstance ?? null)
-      : null
-  )
   useEffect(() => {
-    if (window.__nodeboxInstance) {
-      setNodebox(window.__nodeboxInstance)
-      return
+    if (!isLoadingNodebox.value) {
+      isLoadingNodebox.value = true
+      initNodebox()
     }
-    async function init() {
-      if (!(("__nodeboxIFrame" in window) as any)) {
-        window.__nodeboxIFrame = document.createElement("iframe")
-        window.__nodeboxIFrame.style.display = "none"
-        document.body.appendChild(window.__nodeboxIFrame)
-        const pref = "[nodebox]: "
-
-        console.log(pref, "importing @codesandbox/nodebox")
-        const nBoxModule = await import("@codesandbox/nodebox")
-        console.log(pref, "imported @codesandbox/nodebox")
-
-        const nodeBox = new nBoxModule.Nodebox({
-          iframe: window.__nodeboxIFrame,
-        })
-
-        console.log(pref, "connecting nodebox")
-        await nodeBox.connect()
-        console.log(pref, "connected nodebox")
-
-        const shell = nodeBox.shell.create()
-        shell.on("progress", (status) => (workerStatus.value = status))
-        window.__nodeboxInstance = nodeBox
-        setNodebox(nodeBox)
-        return
-      }
-    }
-    if (window.__nodeboxLoadPromise) {
-      window.__nodeboxLoadPromise.then(() =>
-        setNodebox(window.__nodeboxInstance)
-      )
-      return
-    }
-    window.__nodeboxLoadPromise = init()
   }, [])
 
+  const nodebox = nodeboxInstance.value
   if (nodebox === null) return fallback
 
   return (
