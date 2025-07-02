@@ -45,7 +45,11 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
   const prevWrittenFiles = useRef<Record<string, string> | null>(null)
   const nodeBox = useNodeBox()
   const previewIframeRef = useRef<HTMLIFrameElement>(null)
-  const [selectedFile, setSelectedFile] = useState(Object.keys(files)[0])
+  const fileNames = Object.keys(files)
+  const [selectedFile, setSelectedFile] = useState(fileNames[0])
+  if (!files[selectedFile] && fileNames.length > 0) {
+    setSelectedFile(fileNames[0])
+  }
 
   console.log("CodeSandboxImpl")
 
@@ -133,7 +137,7 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
 
   return (
     <div {...props}>
-      <div className="flex-grow flex flex-col h-1/2">
+      <div className="flex-grow flex flex-col h-1/2 overflow-y-auto">
         <TabGroup
           items={Object.keys(files)}
           value={selectedFile}
@@ -143,7 +147,7 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
           key={selectedFile}
           content={code}
           onContentChanged={handleChange}
-          className="flex-grow w-full h-full"
+          className="flex-grow w-full"
           readonly={readonly}
         />
       </div>
