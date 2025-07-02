@@ -1,4 +1,4 @@
 export default {
-  title: "Kaioken - Routing",
+  title: "Kaioken - Router",
   keywords: ["router", "route", "link", "navigate"],
 }

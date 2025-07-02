@@ -3,6 +3,9 @@ import { siteCodeLang } from "$/state/siteCodeLang"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 import { ExternalLink } from "$/components/atoms/ExternalLink"
 import { watchEffectTypePreview } from "$/components/previews/WatchEffect.type.preview"
+import { DocsSectionHeader } from "$/components/DocsSectionHeader"
+import { HighlightOnLoad } from "$/components/HighlightOnLoad"
+
 
 # Signal
 
@@ -11,11 +14,12 @@ Signals hold a value that can be read and updated.
 When the value changes, any subscribers to the signal are notified, 
 allowing for efficient updates to dependent components.
 
-## General Usage
+<HighlightOnLoad id="general-usage">
+  <DocsSectionHeader href="#general-usage">
+    General Usage
+  </DocsSectionHeader>
 
-----
-
-### Creating a Signal
+  ### Creating a Signal
 
 ```ts
 import { signal } from "kaioken"
@@ -29,7 +33,6 @@ following properties:
 
 - **value**: Gets or sets the signal's current value
 - **subscribe**: Registers a function to be called when the signal's value changes
-- **map**: Derives a new signal based on the current signal's value
 - **peek**: Retrieves the value without tracking reactivity
 - **sneak**: Sets the value without emitting a signal change
 - **notify**: Emits a signal change
@@ -66,11 +69,23 @@ allowing you to remove the subscription when needed:
 unsubscribe()
 ```
 
-## Computed
+  
 
----
+</HighlightOnLoad>
 
-Use `computed` to create a signal derived from a getter function:
+<CalloutBlock fontSize="normal">
+  Going forward, we'll refer to the act of reading a signal's value 
+  as **observing**. This is one of the more complex, but powerful 
+  aspects of signals. The core philosophy around their design is 
+  _reactivity via observation, **where it matters**_.
+</CalloutBlock>
+
+<HighlightOnLoad id="computed-signals">
+  <DocsSectionHeader href="#computed-signals">
+    Computed
+  </DocsSectionHeader>
+
+  Use `computed` to create a signal derived from a getter function:
 
 ```ts
 import { computed } from "kaioken"
@@ -78,24 +93,19 @@ import { computed } from "kaioken"
 const userGreeting = computed(() => `Hello, ${userName}!`)
 ```
 
-The `computed` signal will automatically track dependencies and 
-update whenever the tracked signals change.
+The `computed` signal will automatically track dependencies (signals that were `observed`) 
+and update whenever any of them change.
 
 <CalloutBlock variant="info">
-  We've snuck a quality-of-life feature in here - signals 
-implement `toString()` and therefore are able to be used in strings.
-</CalloutBlock>
+  We've also snuck a quality-of-life feature in here - signals 
+implement `toString()` so they can be used in strings!
+</CalloutBlock> 
+</HighlightOnLoad>
 
-## Watch
-
----
-
-<CalloutBlock>
-  Going forward, we'll refer to the act of reading a signal's value 
-  as **observing**. This is one of the more complex, but powerful 
-  aspects of signals. The core philosophy around their design is 
-  _reactivity via observation, **where it matters**_.
-</CalloutBlock>
+<HighlightOnLoad id="signal-effects">
+  <DocsSectionHeader href="#signal-effects">
+    Watch
+  </DocsSectionHeader>
 
 Use `watch` create a <CodePreview data={watchEffectTypePreview} /> that 
 will fire the callback whenever `observed` signals change.
@@ -112,9 +122,13 @@ When a signal that it `observes` changes, it will be queued to fire again
 within a <ExternalLink href="https://developer.mozilla.org/en-US/docs/Web/API/Window/queueMicrotask">microtask</ExternalLink>. 
 This allows us to automatically "batch" execution of callbacks.
 
-## In Components
+</HighlightOnLoad>
 
-----
+<HighlightOnLoad id="usage-in-components">
+  <DocsSectionHeader href="#usage-in-components">
+    In Components
+  </DocsSectionHeader>
+
 
 ### General usage
 
@@ -161,8 +175,8 @@ function App() {
 
 Because neither of the signals are `observed` at the time of rendering, 
 when they change, Kaioken will only change the things that matter - in 
-this case, the text node inside of our heading that displays the 
-greeting and the `value` attribute of our input. 
+this case, the text node inside of our heading that displays the greeting 
+and the `value` attribute of our input. 
 
 
 ### Using local signals
@@ -194,3 +208,101 @@ function App() {
   )
 } 
 ```
+
+</HighlightOnLoad>
+
+<HighlightOnLoad id="two-way-binding">
+  <DocsSectionHeader href="#two-way-binding">
+    Two Way Binding
+  </DocsSectionHeader>
+
+
+The `bind:` prefix can be used to create two-way binding for any property 
+that changes via user interaction. When the signal changes, the property 
+is updated, and vice versa.
+
+```tsx
+function App() {
+  const userName = useSignal("bob")
+
+  useWatch(() => console.log(userName.value))
+
+  return (
+    <div>
+      <input type="text" bind:value={userName} />
+    </div>
+  )
+} 
+```
+</HighlightOnLoad>
+
+<HighlightOnLoad id="for-component">
+  <DocsSectionHeader href="#for-component">
+    {"<For />"}
+  </DocsSectionHeader>
+
+
+The `<For />` component iterates over a signal, producing an automatically-updating 
+list with fine-grained reactivity. This is a great optimization tool for when you would otherwise 
+use `signal.value.map((item) => ...)` in JSX, causing the component that renders
+it to update whenever the signal changes.
+
+```tsx
+function App() {
+  const items = useSignal([0, 1, 2, 3, 4])
+  const doubledItems = useComputed(() => items.value.map((i) => i * 2))
+
+  return (
+    <div>
+      <ul>
+        <For each={doubledItems}>{(item) => <li>{item}</li>}</For>
+      </ul>
+      <button onclick={() => (items.value = [...items.value, items.value.length])}>
+        Add
+      </button>
+    </div>
+  )
+}
+```
+</HighlightOnLoad>
+
+<HighlightOnLoad id="derive-component">
+  <DocsSectionHeader href="#derive-component">
+    {"<Derive />"}
+  </DocsSectionHeader>
+
+
+Similar to `<For />`, `<Derive />` allows you to easily create fine-grained reactivity in JSX. 
+The `<Derive />` component produces a JSX element that automatically updates whenever the 
+provided `from` signal changes. 
+
+```tsx
+function App() {
+  const name = useSignal("bob")
+  const age = useSignal(42)
+  const person = useComputed(() => ({ name: name.value, age: age.value }))
+
+  return (
+    <div>
+      <input bind:value={name} />
+      <input type="number" bind:value={age} />
+      <Derive from={person}>
+        {(person) => (
+          <div>
+            {person.name} is {person.age} years old
+          </div>
+        )}
+      </Derive>
+      {/* You can also use multiple signals! */}
+      <Derive from={[name, age]}>
+        {(name, age) => (
+          <div>
+            {name} is {age} years old
+          </div>
+        )}
+      </Derive>
+    </div>
+  )
+}
+```
+</HighlightOnLoad>

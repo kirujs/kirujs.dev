@@ -21,7 +21,7 @@ button.reset {
 }
 
 .badge {
-  background-color: #dc143ccc;
+  background-color: #8d0606cc;
   border-radius: .25rem;
   color: var(--color-light);
   padding: 4px 4px;
@@ -45,6 +45,14 @@ button.reset {
   text-transform: unset;
   color: #f1f1f1;
   background-color: #161;
+}
+
+.badge.badge-warning {
+  font-size: 10px;
+  padding: 2px 5px;
+  text-transform: unset;
+  color: #fefefe;
+  background-color: #804604;
 }
 
 .link-button {

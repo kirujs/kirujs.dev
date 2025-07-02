@@ -1,5 +1,8 @@
+import { siteCodeLang } from "$/state/siteCodeLang"
 import ExampleCode from "./example.md"
+import ExampleCodeTS from "./example.ts.md"
 import { ExternalLink } from "$/components/atoms/ExternalLink"
+
 
 # Form
 
@@ -10,4 +13,4 @@ offers a declarative approach to form management, making it easy to manage form 
 validation, and submission.
 
 
-<ExampleCode />
+{siteCodeLang.value === "js" ? <ExampleCode /> : <ExampleCodeTS />}

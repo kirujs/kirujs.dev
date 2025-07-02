@@ -21,9 +21,7 @@
 
   --breakpoint-xs: 460px;
 
-  --background-image-theme-gradient: linear-gradient(153deg,
-      #9913548a,
-      #ed143d7d);
+  --background-image-theme-gradient: linear-gradient(153deg, #972b3d8a, #471d1d8f);
 }
 
 
@@ -55,7 +53,7 @@
 
 :root {
   --color-light: #fffbfb;
-  --color-dark: #151313;
+  --color-dark: #0d090d;
   color-scheme: dark;
   background-color: var(--color-dark);
   color: #fffafa;

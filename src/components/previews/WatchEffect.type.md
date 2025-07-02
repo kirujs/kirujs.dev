@@ -1,5 +1,5 @@
 ```ts
-type WatchEffect<T> = {
+type WatchEffect = {
   start: () => void
   stop: () => void
 }

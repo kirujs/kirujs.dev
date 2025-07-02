@@ -3,6 +3,8 @@ import { storeTypePreview } from "$/components/previews/Store.type.preview"
 import { methodFactoryTypePreview } from "$/components/previews/MethodFactory.type.preview"
 import { createStoreTypePreview } from "$/components/previews/createStore.type.preview"
 import { siteCodeLang } from "$/state/siteCodeLang"
+import CountStoreExample from "./CountStoreExample.md"
+import CountStoreExampleTS from "./CountStoreExample.ts.md"
 import TodoItemExample from "./todoItem.md"
 import TodoItemExampleTS from "./todoItem.ts.md"
 
@@ -24,15 +26,7 @@ To create a store, you need to provide two arguments to the <CodePreview data={c
   state. These methods will be accessible through the returned store object.</li>
 </ol>
 
-```jsx
-import { createStore } from "kaioken"
-
-const useCountStore = createStore(0, (set, get) => ({
-  increment: () => set((state) => state + 1),
-  decrement: () => set((state) => state - 1),
-  add: (value) => set(() => get() + value),
-}))
-```
+{siteCodeLang.value === "ts" ? <CountStoreExampleTS /> : <CountStoreExample />}
 
 ### Accessing Store State and Methods
 

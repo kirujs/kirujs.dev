@@ -8,7 +8,7 @@ const fetcher = async ([path, id]) => {
   return res.json()
 }
 
-const useProduct = (id: number) => useSWR(["products", id], fetcher)
+const useProduct = (id) => useSWR(["products", id], fetcher)
 
 export default function SWRExample() {
   const [productId, setProductId] = useState(1)
@@ -65,5 +65,4 @@ function ProductTitle({ id }) {
     </>
   )
 }
-
 ```

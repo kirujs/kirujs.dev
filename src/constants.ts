@@ -16,6 +16,8 @@ export const SITE_LINKS = [
   },
 ]
 
+export const DISCORD_LINK = "https://discord.gg/Pf9zbgBaRw"
+
 export const OS =
   "window" in globalThis &&
   navigator.userAgent.toUpperCase().indexOf("MAC OS") !== -1

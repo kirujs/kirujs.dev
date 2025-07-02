@@ -1,14 +1,27 @@
 import { Container } from "$/components/atoms/Container"
 import { SidebarContent } from "$/components/SidebarContent"
 import { usePageContext } from "$/context/pageContext"
-import { docMeta } from "$/docs-meta"
+import { DocItem, docMeta } from "$/docs-meta"
 import { useHashChangeDispatcher } from "$/hooks/useHashChangeDispatcher"
 import { useEffect, useMemo, useRef, useState } from "kaioken"
 
 export function DocsLayout({ children }: { children: JSX.Children }) {
   const { urlPathname } = usePageContext()
   const sectionIds = useMemo(() => {
-    const pageData = docMeta.find(({ href }) => href === urlPathname)
+    let pageData: DocItem | null = null
+    for (const docItem of docMeta) {
+      if (docItem.href === urlPathname) {
+        pageData = docItem
+        break
+      }
+      if (docItem.pages) {
+        const res = docItem.pages.find((page) => page.href === urlPathname)
+        if (res) {
+          pageData = res
+          break
+        }
+      }
+    }
     if (!pageData) return []
     return pageData.sections?.map(({ id }) => id) ?? []
   }, [urlPathname])
@@ -29,23 +42,33 @@ export function DocsLayout({ children }: { children: JSX.Children }) {
   )
 }
 
+const ASIDE_PADDING = 0
+
 function ActiveLinkTrackerSlidingThing() {
   const ref = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(false)
-  const setPos = () => {
-    if (!ref.current) return
-    const parent = document.querySelector("aside")!
-    const parentRect = parent.getBoundingClientRect()
-    const el = parent.querySelector(
-      'a[href="' + window.location.pathname + window.location.hash + '"]'
-    )
-    if (!el) return
-    const domRect = el.getBoundingClientRect()
 
-    ref.current.style.top =
-      domRect.top - parentRect.top + parent.scrollTop + 4 + "px"
-  }
   useEffect(() => {
+    setMounted(true)
+    const setPos = () => {
+      if (!ref.current) return
+      const parent = document.querySelector("aside")!
+      const parentRect = parent.getBoundingClientRect()
+      const el = parent.querySelector(
+        'a[href="' + window.location.pathname + window.location.hash + '"]'
+      )
+      if (!el) return
+      const tgtRect = el.getBoundingClientRect()
+      // adding 1px to account for box sizing !== line height
+      ref.current.style.top =
+        tgtRect.top -
+        parentRect.top +
+        parent.scrollTop -
+        ASIDE_PADDING +
+        1 +
+        "px"
+      ref.current.style.height = tgtRect.height + "px"
+    }
     setPos()
     window.addEventListener("resize", setPos)
     window.addEventListener("hashchange", setPos)
@@ -55,10 +78,13 @@ function ActiveLinkTrackerSlidingThing() {
     }
   }, [globalThis.window?.location.pathname, globalThis.window?.location.hash])
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const className = `bg-neutral-50 ${mounted ? "opacity-100" : "opacity-0"} w-[2px] h-4 block absolute left-0 top-0 ${mounted ? "transition-all" : ""}`
-  return <div ref={ref} className={className}></div>
+  return (
+    <div
+      ref={ref}
+      className={[
+        "bg-neutral-50 w-[2px] h-4 block absolute left-0 top-0",
+        mounted ? "opacity-100 transition-all" : "opacity-0",
+      ]}
+    ></div>
+  )
 }

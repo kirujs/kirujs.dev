@@ -3,7 +3,7 @@ import { MenuIcon } from "./icons/MenuIcon"
 import { GithubIcon } from "./icons/GithubIcon"
 import { CommandKeyIcon } from "./icons/keys/CommandKeyIcon"
 import { useNavDrawer } from "$/state/navDrawer"
-import { OS, SITE_LINKS } from "$/constants"
+import { DISCORD_LINK, OS, SITE_LINKS } from "$/constants"
 import { usePageContext } from "$/context/pageContext"
 import { isLinkActive } from "$/utils"
 import { useCommandPallete } from "$/state/commandPallete"
@@ -72,7 +72,7 @@ export function Navbar() {
             <GithubIcon />
           </a>
           <a
-            href="https://discord.gg/yspvgXegvs"
+            href={DISCORD_LINK}
             target="_blank"
             ariaLabel="Join the Kaioken Discord server"
             className="flex items-center justify-center hover:opacity-80 transition-opacity"

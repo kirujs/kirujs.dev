@@ -1,6 +1,6 @@
 ### Example
 
-```jsx
+```tsx
 import { useForm } from "kaioken/form"
 
 const App = () => {
@@ -44,7 +44,7 @@ const App = () => {
         />
       </div>
       <form.Subscribe
-        selector={(state) => [state.canSubmit, state.isSubmitting]}
+        selector={(state) => [state.canSubmit, state.isSubmitting] as const}
         children={([canSubmit, isSubmitting]) => {
           return (
             <>

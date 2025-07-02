@@ -2,7 +2,6 @@ type EcosystemItemChild = {
   iconSrc?: string
   title: string
   url?: string
-  comingSoon?: boolean
 }
 
 type EcosystemItem = {
@@ -13,6 +12,29 @@ type EcosystemItem = {
 }
 
 const ECOSYSTEM: EcosystemItem[] = [
+  {
+    title: "Fullstack QuickStart",
+    description:
+      "Full-stack template built with Hono, Drizzle, Vike, and Telefunc. Comes with preconfigured database, authentication, and more.",
+    url: "https://github.com/CrimsonChi/kaioken-node-fullstack-quickstart",
+  },
+  {
+    title: "Adonis Kaioken Template",
+    description:
+      "A ready-to-use starter template for Kaioken applications built with Adonis.",
+    url: "https://github.com/Yofou/adonis-kaioken-template",
+  },
+  {
+    title: "Inertia Kaioken Adapter",
+    description:
+      "Enables use of Kaioken as a rendering library with Inertia. Build full-stack apps with Laravel, .NET and more.",
+    url: "https://github.com/CrimsonChi/inertia-kaioken-adapter",
+  },
+  {
+    title: "Kaioken-GSAP",
+    description: "Makes using GSAP in Kaioken easier.",
+    url: "https://npmjs.com/package/kaioken-gsap",
+  },
   {
     title: "@kaioken-core",
     description:
@@ -26,29 +48,14 @@ const ECOSYSTEM: EcosystemItem[] = [
       },
       {
         title: "Components",
-        comingSoon: true,
       },
       {
         title: "Motion",
-        comingSoon: true,
       },
       {
         title: "Sortable",
-        comingSoon: true,
       },
     ],
-  },
-  {
-    title: "Adonis Kaioken Template",
-    description:
-      "A ready-to-use starter template for Kaioken applications built with Adonis.",
-    url: "https://github.com/Yofou/adonis-kaioken-template",
-  },
-  {
-    title: "Inertia Kaioken Adapter",
-    description:
-      "Enables use of Kaioken as a rendering library with Inertia. Build full-stack apps with Laravel, .NET and more.",
-    url: "https://github.com/CrimsonChi/inertia-kaioken-adapter",
   },
 ]
 
@@ -96,20 +103,15 @@ function EcosystemTile({
   )
 }
 
-function EcosystemTileChild({
-  title,
-  url,
-  iconSrc,
-  comingSoon,
-}: EcosystemItemChild) {
+function EcosystemTileChild({ title, url, iconSrc }: EcosystemItemChild) {
   return (
     <a
       href={url}
-      className={
-        `inline-flex gap-4 items-center not-prose text-sm font-bold text-light` +
-        (comingSoon ? " opacity-50" : "")
-      }
-      title={title + (comingSoon ? " - coming soon" : "")}
+      className={[
+        "inline-flex gap-4 items-center not-prose text-sm font-bold text-light",
+        url ? "" : "opacity-50",
+      ]}
+      title={title + (url ? "" : " - coming soon")}
       target="_blank"
     >
       {iconSrc && <img src={iconSrc} className="w-6 h-6" />}

@@ -2,6 +2,7 @@ import { ExternalLink } from "$/components/atoms/ExternalLink"
 import { DocsSectionHeader } from "$/components/DocsSectionHeader"
 import { HighlightOnLoad } from "$/components/HighlightOnLoad"
 import { EcosystemTiles } from "./EcosystemTiles"
+import { DISCORD_LINK } from '$/constants'
 
 # Introduction
 
@@ -49,10 +50,10 @@ import { EcosystemTiles } from "./EcosystemTiles"
     Ecosystem
   </DocsSectionHeader>
   
-  Some of our honorable mentions from the community, in no particular order:
+  Libraries & templates made by the community and ourselves, in no particular order:
   <EcosystemTiles />
 
-If you want your library or package to be part of this list,
-  <ExternalLink href="https://discord.gg/yspvgXegvs">join the community</ExternalLink>
-and let us know about it!
+  If you want your library or package to be part of this list,
+    <ExternalLink href={DISCORD_LINK}>join the community</ExternalLink>
+  and let us know about it!
 </HighlightOnLoad>

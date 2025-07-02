@@ -1,4 +1,5 @@
 import { CodePreview } from "$/components/CodePreview"
+import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 import { useModelTypePreview } from "$/components/previews/useModel.type.preview"
 import { refTypePreview } from "$/components/previews/Ref.type.preview"
 import { siteCodeLang } from "$/state/siteCodeLang"
@@ -6,6 +7,16 @@ import ExampleCode from "./example.md"
 import ExampleCodeTS from "./example.ts.md"
 
 # useModel
+
+<CalloutBlock variant="warning">
+ <span className="inline-block badge badge-warning mb-1">Deprecated</span>
+
+  `useModel` has been deprecated and will be removed in a future release.
+
+  It was introduced before [Two Way Binding](https://kaioken.dev/docs/api/signal#two-way-binding), which fits the intended purpose much better.
+  For more complex form-related scenarios, consider using the [Form API](https://kaioken.dev/docs/api/form).
+
+</CalloutBlock>
 
 Similar to <a href="/docs/hooks/useRef">useRef</a>, but allows
 you to easily set up two-way binding for a given input, textarea or select element.

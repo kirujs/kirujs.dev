@@ -5,6 +5,6 @@ export const useRouterTypePreview = {
   element: UseRouterType,
   link: {
     text: "useRouter",
-    href: "/docs/api/routing",
+    href: "/docs/api/router",
   },
 } satisfies CodePreviewData

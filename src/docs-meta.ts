@@ -5,29 +5,68 @@ export type DocItem = {
   sections?: DocSectionLink[]
 }
 
+export type DocItemStatus =
+  | {
+      type: "new"
+      since: string
+    }
+  | {
+      type: "deprecated"
+      since: string
+    }
+
 export type DocPageLink = {
   title: string
   href: string
   disabled?: boolean
   keywords?: string[]
-  isNew?: boolean
+  status?: DocItemStatus
+  sections?: DocSectionLink[]
 }
 
 type DocSectionLink = {
   title: string
   id: string
+  isNew?: DocItemStatus
 }
 
-const API_RELEASE_DATES = {
-  SWR: new Date("2025-05-01").getTime(),
-  FORM: new Date("2025-05-01").getTime(),
-}
-
-const NEW_API_DURATION = 30 * 24 * 60 * 60 * 1000 // 30 days
-
-const isAPINew = (api: keyof typeof API_RELEASE_DATES) => {
-  return Date.now() < API_RELEASE_DATES[api] + NEW_API_DURATION
-}
+const STATUS_MAP = {
+  // 2025-05-01
+  swrApi: {
+    type: "new",
+    since: "0.38.0",
+  },
+  // 2025-05-01
+  formApi: {
+    type: "new",
+    since: "0.38.0",
+  },
+  // 2025-05-05
+  elementBindings: {
+    type: "new",
+    since: "0.38.2",
+  },
+  // 2025-05-06
+  ForComponent: {
+    type: "new",
+    since: "0.38.4",
+  },
+  // 2025-05-06
+  DeriveComponent: {
+    type: "new",
+    since: "0.38.4",
+  },
+  // 2025-05-15
+  useModel: {
+    type: "deprecated",
+    since: "0.39.0",
+  },
+  // 2025-05-15
+  useViewTransition: {
+    type: "new",
+    since: "0.39.0",
+  },
+} satisfies Record<string, DocItemStatus>
 
 export const docMeta: DocItem[] = [
   {
@@ -77,12 +116,13 @@ export const docMeta: DocItem[] = [
       {
         title: "Form",
         href: "/docs/api/form",
-        keywords: ["form", "useForm"],
-        isNew: isAPINew("FORM"),
+        keywords: ["useForm"],
+        status: STATUS_MAP.formApi,
       },
       {
         title: "Lazy",
         href: "/docs/api/lazy",
+        keywords: ["code-splitting"],
       },
       {
         title: "Memo",
@@ -93,14 +133,54 @@ export const docMeta: DocItem[] = [
         href: "/docs/api/portal",
       },
       {
-        title: "Routing",
-        href: "/docs/api/routing",
-        keywords: ["router", "route", "link", "navigate"],
+        title: "Router",
+        href: "/docs/api/router",
+        keywords: ["Router", "Route", "Link", "navigate", "useRouter"],
       },
       {
         title: "Signal",
         href: "/docs/api/signal",
-        keywords: ["signal", "state"],
+        keywords: [
+          "state",
+          "computed",
+          "effect",
+          "two way binding",
+          "For",
+          "Derive",
+        ],
+        sections: [
+          {
+            id: "general-usage",
+            title: "General Usage",
+          },
+          {
+            id: "computed-signals",
+            title: "Computed",
+          },
+          {
+            id: "signal-effects",
+            title: "Watch",
+          },
+          {
+            id: "usage-in-components",
+            title: "In Components",
+          },
+          {
+            id: "two-way-binding",
+            title: "Two Way Binding",
+            isNew: STATUS_MAP.elementBindings,
+          },
+          {
+            id: "for-component",
+            title: "For",
+            isNew: STATUS_MAP.ForComponent,
+          },
+          {
+            id: "derive-component",
+            title: "Derive",
+            isNew: STATUS_MAP.DeriveComponent,
+          },
+        ],
       },
       {
         title: "Store",
@@ -111,11 +191,12 @@ export const docMeta: DocItem[] = [
         title: "SWR",
         href: "/docs/api/swr",
         keywords: ["swr", "useSWR", "fetcher", "mutate", "revalidate", "cache"],
-        isNew: isAPINew("SWR"),
+        status: STATUS_MAP.swrApi,
       },
       {
         title: "Transition",
         href: "/docs/api/transition",
+        keywords: ["transitions", "animation"],
       },
     ],
   },
@@ -158,6 +239,7 @@ export const docMeta: DocItem[] = [
         title: "useModel",
         href: "/docs/hooks/useModel",
         keywords: ["Ref"],
+        status: STATUS_MAP.useModel,
       },
       {
         title: "useReducer",
@@ -176,6 +258,12 @@ export const docMeta: DocItem[] = [
         title: "useSyncExternalStore",
         href: "/docs/hooks/useSyncExternalStore",
         keywords: ["state", "global state"],
+      },
+      {
+        title: "useViewTransition",
+        href: "/docs/hooks/useViewTransition",
+        keywords: ["view transition", "animation"],
+        status: STATUS_MAP.useViewTransition,
       },
       {
         title: "Dependency arrays",
