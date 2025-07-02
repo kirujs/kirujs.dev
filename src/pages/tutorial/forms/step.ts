@@ -3,7 +3,7 @@ import { mapFiles } from "../utils"
 
 const files = import.meta.glob("./files/*", {
   eager: true,
-  as: "raw",
+  query: "?raw",
 })
 
 export const step: TutorialStep = {
