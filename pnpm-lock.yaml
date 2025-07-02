@@ -48,16 +48,11 @@ importers:
         specifier: ^3.4.1
         version: 3.4.1
       '@shikijs/transformers':
-<<<<<<< HEAD
-        specifier: ^3.3.0
-        version: 3.3.0
+        specifier: ^3.4.1
+        version: 3.4.1
       codemirror:
         specifier: ^6.0.1
         version: 6.0.1
-=======
-        specifier: ^3.4.1
-        version: 3.4.1
->>>>>>> main
       compression:
         specifier: ^1.8.0
         version: 1.8.0
@@ -108,13 +103,8 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite-plugin-kaioken:
-<<<<<<< HEAD
-        specifier: 0.18.1
-        version: 0.18.1(kaioken@0.38.1)
-=======
         specifier: 0.19.0
         version: 0.19.0(kaioken@0.39.0)
->>>>>>> main
 
 packages:
 
@@ -141,7 +131,6 @@ packages:
   '@brillout/vite-plugin-server-entry@0.7.9':
     resolution: {integrity: sha512-mJrUakPTj8Zf3Pm4beKmHowfozHOLS/deMqheYYIlqK8FSR4Hd3vMeFQBL/rxLLd+svIlW/j2K3M2SVPDmvX7A==}
 
-<<<<<<< HEAD
   '@codemirror/autocomplete@6.18.6':
     resolution: {integrity: sha512-PHHBXFomUs5DF+9tCOM/UoW6XQ4R44lLNNhRaW9PKPTU0D7lIjRg3ElxaJnTwsl/oHiR93WSXDBrekhoUGCPtg==}
 
@@ -169,12 +158,8 @@ packages:
   '@codesandbox/nodebox@0.1.9':
     resolution: {integrity: sha512-h/SCSA5iasmEUlxWWQf2ecv1WgGoI5KLV5iZoN9YA1Hhz4DIacE3vwwD24Vn+1qczny4TEr8zwMQYZ1K8TbvzQ==}
 
-  '@esbuild/aix-ppc64@0.25.3':
-    resolution: {integrity: sha512-W8bFfPA8DowP8l//sxjJLSLkD8iEjMc7cBVyP+u4cEv9sM7mdUCkgsj+t0n/BWPFtv7WWCN5Yzj0N6FJNUUqBQ==}
-=======
   '@esbuild/aix-ppc64@0.25.4':
     resolution: {integrity: sha512-1VCICWypeQKhVbE9oW/sJaAmjLxhVqacdkvPLEjwlttjfwENRSClS8EjBz0KzRyFSCPDIkuXW34Je/vk7zdB7Q==}
->>>>>>> main
     engines: {node: '>=18'}
     cpu: [ppc64]
     os: [aix]
@@ -342,7 +327,9 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
 
-<<<<<<< HEAD
+  '@jridgewell/trace-mapping@0.3.25':
+    resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
   '@lezer/common@1.2.3':
     resolution: {integrity: sha512-w7ojc8ejBqr2REPsWxJjrMFsA/ysDCFICn8zEOR9mrqzOu2amhITYuLD8ag6XZf0CFXDrhKqw7+tW8cX66NaDA==}
 
@@ -357,10 +344,6 @@ packages:
 
   '@marijn/find-cluster-break@1.0.2':
     resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
-=======
-  '@jridgewell/trace-mapping@0.3.25':
-    resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
->>>>>>> main
 
   '@mdx-js/mdx@3.1.0':
     resolution: {integrity: sha512-/QxEhPAvGwbQmy1Px8F899L5Uc2KZ6JtXwlCgJmjSTBedwOZkByYcBG4GceIGPXRDsmfxhHazuS+hlOShRLeDw==}
@@ -727,14 +710,12 @@ packages:
   character-reference-invalid@2.0.1:
     resolution: {integrity: sha512-iBZ4F4wRbyORVsu0jPV7gXkOsGYjGHPmAyv+HiHG8gi5PtC9KI2j1+v8/tlibRvjoWX027ypmG/n0HtO5t7unw==}
 
-<<<<<<< HEAD
-  codemirror@6.0.1:
-    resolution: {integrity: sha512-J8j+nZ+CdWmIeFIGXEFbFPtpiYacFMDR8GlHK3IyHQJMCaVRfGx9NT+Hxivv1ckLWPvNdZqndbr/7lVhrf/Svg==}
-=======
   chownr@3.0.0:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
->>>>>>> main
+
+  codemirror@6.0.1:
+    resolution: {integrity: sha512-J8j+nZ+CdWmIeFIGXEFbFPtpiYacFMDR8GlHK3IyHQJMCaVRfGx9NT+Hxivv1ckLWPvNdZqndbr/7lVhrf/Svg==}
 
   collapse-white-space@2.1.0:
     resolution: {integrity: sha512-loKTxY1zCOuG4j9f6EPnuyyYkf58RnhhWTvRoZEokgB+WbdXehfjFviyOVYkqzEWz1Q5kRiZdBYS5SwxbQYwzw==}
@@ -1549,13 +1530,8 @@ packages:
       vite:
         optional: true
 
-<<<<<<< HEAD
-  vite-plugin-kaioken@0.18.1:
-    resolution: {integrity: sha512-6t3VHqLYC+K9DXXMk2LTwKM+dOj/tMdDIbsRdOBBQpbH/DlbnuPQv+E4B2DSa/NUQmmk8TRvHFb/+yFI/LNnrg==}
-=======
   vite-plugin-kaioken@0.19.0:
     resolution: {integrity: sha512-6cdbNSvm2KaDUGjf8OWl95tvSFRJPYLfRnN7AUpBH6tXkAtSc5hrS9MKtOkz2sq3dWcjHs+iHd31BlFGovxXXA==}
->>>>>>> main
     peerDependencies:
       kaioken: '>=0.39.0'
 
@@ -1634,7 +1610,6 @@ snapshots:
       '@brillout/import': 0.2.6
       '@brillout/picocolors': 1.0.26
 
-<<<<<<< HEAD
   '@codemirror/autocomplete@6.18.6':
     dependencies:
       '@codemirror/language': 6.11.0
@@ -1695,10 +1670,7 @@ snapshots:
       outvariant: 1.4.3
       strict-event-emitter: 0.4.6
 
-  '@esbuild/aix-ppc64@0.25.3':
-=======
   '@esbuild/aix-ppc64@0.25.4':
->>>>>>> main
     optional: true
 
   '@esbuild/android-arm64@0.25.4':
@@ -1789,7 +1761,11 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
 
-<<<<<<< HEAD
+  '@jridgewell/trace-mapping@0.3.25':
+    dependencies:
+      '@jridgewell/resolve-uri': 3.1.2
+      '@jridgewell/sourcemap-codec': 1.5.0
+
   '@lezer/common@1.2.3': {}
 
   '@lezer/highlight@1.2.1':
@@ -1807,12 +1783,6 @@ snapshots:
       '@lezer/common': 1.2.3
 
   '@marijn/find-cluster-break@1.0.2': {}
-=======
-  '@jridgewell/trace-mapping@0.3.25':
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.0
->>>>>>> main
 
   '@mdx-js/mdx@3.1.0(acorn@8.14.1)':
     dependencies:
@@ -2184,7 +2154,8 @@ snapshots:
 
   character-reference-invalid@2.0.1: {}
 
-<<<<<<< HEAD
+  chownr@3.0.0: {}
+
   codemirror@6.0.1:
     dependencies:
       '@codemirror/autocomplete': 6.18.6
@@ -2194,9 +2165,6 @@ snapshots:
       '@codemirror/search': 6.5.10
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.36.6
-=======
-  chownr@3.0.0: {}
->>>>>>> main
 
   collapse-white-space@2.1.0: {}
 
@@ -3349,11 +3317,7 @@ snapshots:
     optionalDependencies:
       vite: 6.3.5(@types/node@22.15.18)(jiti@2.4.2)(lightningcss@1.29.2)
 
-<<<<<<< HEAD
-  vite-plugin-kaioken@0.18.1(kaioken@0.38.1):
-=======
   vite-plugin-kaioken@0.19.0(kaioken@0.39.0):
->>>>>>> main
     dependencies:
       kaioken: 0.39.0
       magic-string: 0.30.17
