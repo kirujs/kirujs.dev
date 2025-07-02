@@ -1,19 +1,17 @@
 import { Counter } from "./Counter"
-import { Multiplier } from "./Multiplier"
 import { GlobalControls } from "./GlobalControls"
 
 export function App() {
   return (
-    <div style={{ fontFamily: "sans-serif" }}>
-      <h1>Signals Demo</h1>
-      <p>Signals provide reactive state that can be shared across components!</p>
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1>📡 Signals Demo</h1>
+      <p>Global reactive state that automatically updates all connected components</p>
       
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
+      <div style={{ display: "grid", gap: "20px", marginTop: "20px" }}>
         <Counter />
-        <Multiplier />
+        <Counter />
+        <GlobalControls />
       </div>
-      
-      <GlobalControls />
     </div>
   )
 } 

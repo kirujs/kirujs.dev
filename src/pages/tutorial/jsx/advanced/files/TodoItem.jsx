@@ -1,10 +1,36 @@
-export function TodoItem({ todo }) {
+export function TodoItem({ todo, onToggle, onDelete }) {
   return (
-    <li style={{ 
-      textDecoration: todo.done ? 'line-through' : 'none',
-      color: todo.done ? '#666' : '#ddd'
-    }}>
-      {todo.text}
-    </li>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "10px",
+        backgroundColor: "#f8f9fa",
+        marginBottom: "8px",
+        borderRadius: "4px",
+        textDecoration: todo.completed ? "line-through" : "none",
+        opacity: todo.completed ? 0.7 : 1
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={todo.completed}
+        onchange={() => onToggle(todo.id)}
+        style={{ marginRight: "10px" }}
+      />
+      <span style={{ flex: 1 }}>{todo.text}</span>
+      <button
+        onclick={() => onDelete(todo.id)}
+        style={{
+          backgroundColor: "#dc3545",
+          color: "white",
+          border: "none",
+          padding: "4px 8px",
+          borderRadius: "4px"
+        }}
+      >
+        Delete
+      </button>
+    </div>
   )
 } 

@@ -1,14 +1,19 @@
 import CodeSandbox from "$/components/CodeSandbox"
 import { usePageContext } from "$/context/pageContext"
-import { useTutorialStep } from "./TutorialStepContext"
+import { useMemo } from "kaioken"
+import { mapFiles } from "./utils"
 
 export function TutorialSandbox() {
-  const step = useTutorialStep()
+  const exports = usePageContext().exports
+  const files = useMemo(
+    () => mapFiles(exports.files as Record<string, unknown>),
+    [exports.files]
+  )
 
   return (
     <CodeSandbox
       //key={usePageContext().urlPathname}
-      files={step?.files ?? {}}
+      files={files ?? {}}
       className="h-full flex flex-col"
     />
   )

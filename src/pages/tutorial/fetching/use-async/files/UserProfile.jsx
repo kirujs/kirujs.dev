@@ -1,114 +1,59 @@
 import { useAsync } from "kaioken"
-import { fetchUser, fetchPosts } from "./api"
-import { LoadingSpinner } from "./LoadingSpinner"
-import { UserStats } from "./UserStats"
-import { PostsList } from "./PostsList"
+import { fetchUser } from "./api"
 
 export function UserProfile({ userId }) {
-  const { 
-    data: user, 
-    loading: userLoading, 
-    error: userError, 
-    invalidate: invalidateUser 
-  } = useAsync(() => fetchUser(userId), [userId])
-  
-  const { 
-    data: posts, 
-    loading: postsLoading, 
-    error: postsError,
-    invalidate: invalidatePosts 
-  } = useAsync(() => fetchPosts(userId), [userId])
-  
-  if (userLoading) {
+  const { data: user, error, isLoading, refetch } = useAsync(
+    () => fetchUser(userId), 
+    [userId]
+  )
+
+  if (isLoading) {
     return (
-      <div style={{ textAlign: "center", padding: "40px" }}>
-        <LoadingSpinner />
-        <p style={{ marginTop: "20px" }}>Loading user profile...</p>
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <div>Loading user...</div>
       </div>
     )
   }
-  
-  if (userError) {
+
+  if (error) {
     return (
       <div style={{ 
-        textAlign: "center", 
-        padding: "40px",
-        color: "#dc3545",
-        backgroundColor: "#f8d7da",
-        border: "1px solid #f5c6cb",
-        borderRadius: "8px",
-        margin: "20px"
+        padding: "20px", 
+        backgroundColor: "#f8d7da", 
+        borderRadius: "4px",
+        border: "1px solid #f5c6cb"
       }}>
-        <h2>❌ Error Loading Profile</h2>
-        <p>{userError.message}</p>
-        <button 
-          onclick={invalidateUser}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#dc3545",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
-          }}
-        >
-          Retry
+        <h3>❌ Error</h3>
+        <p>{error.message}</p>
+        <button onclick={refetch} style={{ padding: "8px 16px" }}>
+          Try Again
         </button>
       </div>
     )
   }
-  
+
   if (!user) return null
-  
+
   return (
-    <div style={{ fontFamily: "sans-serif", maxWidth: "800px", margin: "0 auto" }}>
-      {/* User Header */}
-      <div style={{
-        display: "flex",
-        gap: "20px",
-        padding: "20px",
-        backgroundColor: "#f8f9fa",
-        borderRadius: "12px",
-        marginBottom: "20px",
-        alignItems: "center"
-      }}>
-        <img 
-          src={user.avatar} 
-          alt={user.name}
-          style={{
-            width: "80px",
-            height: "80px",
-            borderRadius: "50%",
-            border: "3px solid #007bff"
-          }}
-        />
-        <div style={{ flex: 1 }}>
-          <h1 style={{ margin: "0 0 10px 0", color: "#333" }}>{user.name}</h1>
-          <p style={{ margin: "0 0 10px 0", color: "#666" }}>{user.email}</p>
-          <p style={{ margin: "0", color: "#888", fontStyle: "italic" }}>{user.bio}</p>
-        </div>
-        <button 
-          onclick={invalidateUser}
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
-          }}
-        >
-          🔄 Refresh Profile
+    <div style={{ 
+      padding: "20px", 
+      backgroundColor: "#f8f9fa", 
+      borderRadius: "8px",
+      border: "1px solid #ddd"
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+        <h2>👤 User Profile</h2>
+        <button onclick={refetch} style={{ padding: "8px 16px" }}>
+          🔄 Refresh
         </button>
       </div>
       
-      <UserStats user={user} />
-      <PostsList 
-        posts={posts} 
-        loading={postsLoading} 
-        error={postsError} 
-        onRefresh={invalidatePosts} 
-      />
+      <div>
+        <h3>{user.name}</h3>
+        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Phone:</strong> {user.phone}</p>
+        <p><strong>Company:</strong> {user.company}</p>
+      </div>
     </div>
   )
 } 

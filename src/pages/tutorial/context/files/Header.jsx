@@ -1,15 +1,16 @@
 import { useTheme } from "./Theme"
 
 export function Header() {
-  const { theme, toggleTheme, styles } = useTheme()
+  const { theme, isDark } = useTheme()
   
   return (
-    <header style={{ marginBottom: "30px", textAlign: "center" }}>
-      <h1>Theme Context Demo</h1>
-      <p>Current theme: <strong>{theme}</strong></p>
-      <button style={styles.button} onclick={toggleTheme}>
-        Switch to {theme === "light" ? "Dark" : "Light"} Theme
-      </button>
+    <header style={{
+      padding: "20px",
+      backgroundColor: theme.headerBg,
+      color: theme.text,
+      borderBottom: `1px solid ${theme.border}`
+    }}>
+      <h1>{isDark ? "🌙" : "☀️"} Theme Demo</h1>
     </header>
   )
 } 

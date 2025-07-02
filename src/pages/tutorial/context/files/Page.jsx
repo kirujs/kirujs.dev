@@ -3,26 +3,28 @@ import { Header } from "./Header"
 import { Settings } from "./Settings"
 
 export function Page() {
-  const { styles } = useTheme()
+  const { theme } = useTheme()
   
   return (
-    <div>
+    <div style={{
+      minHeight: "100vh",
+      backgroundColor: theme.bg,
+      color: theme.text,
+      fontFamily: "Arial, sans-serif"
+    }}>
       <Header />
-      <Settings />
-      
-      <div style={{ 
-        marginTop: "30px", 
-        padding: "20px", 
-        backgroundColor: styles.container.backgroundColor === "#ffffff" ? "#f8f9fa" : "#444444",
-        borderRadius: "8px"
-      }}>
-        <h3>💡 How Context Works</h3>
-        <ul>
-          <li>ThemeProvider wraps the entire app</li>
-          <li>Any component can access theme data using useTheme()</li>
-          <li>State changes propagate to all consuming components</li>
-          <li>No prop drilling required!</li>
-        </ul>
+      <div style={{ padding: "20px" }}>
+        <Settings />
+        
+        <div style={{
+          padding: "20px",
+          backgroundColor: theme.cardBg,
+          borderRadius: "8px",
+          marginTop: "20px"
+        }}>
+          <h2 style={{ color: theme.primary }}>🎨 Context Demo</h2>
+          <p>This demonstrates how Context allows components to share theme data globally.</p>
+        </div>
       </div>
     </div>
   )

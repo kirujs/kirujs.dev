@@ -4,18 +4,16 @@ import { HomePage } from "./HomePage"
 import { AboutPage } from "./AboutPage"
 import { UsersPage } from "./UsersPage"
 import { UserDetailPage } from "./UserDetailPage"
-import { DashboardPage } from "./DashboardPage"
 
 export function App() {
   return (
     <div style={{ fontFamily: "sans-serif" }}>
       <Navigation />
       <Router>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/users" element={<UsersPage />} />
-        <Route path="/users/:id" element={<UserDetailPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
+                 <Route path="/" element={<HomePage />} />
+         <Route path="/about" element={<AboutPage />} />
+         <Route path="/users" element={<UsersPage />} />
+         <Route path="/users/:id" element={<UserDetailPage />} />
       </Router>
       
       <style>{`

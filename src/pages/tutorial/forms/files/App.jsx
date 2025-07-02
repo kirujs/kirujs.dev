@@ -1,48 +1,28 @@
 import { useState } from "kaioken"
 import { validateForm } from "./validation"
-import { countries, interestOptions, inputStyle } from "./constants"
 import { FormField } from "./FormField"
 import { TextInput } from "./TextInput"
 import { SelectField } from "./SelectField"
-import { CheckboxGroup } from "./CheckboxGroup"
 
 export function App() {
-  // Form state
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    age: "",
-    country: "",
-    interests: [],
-    newsletter: false,
-    message: ""
+    country: ""
   })
-  
-  // Validation errors
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState("")
-  
-  // Handle input changes
+  const [submitted, setSubmitted] = useState(false)
+
+  const countries = ["USA", "Canada", "UK", "Germany"]
+
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }))
     }
   }
-  
-  // Handle checkbox changes for interests
-  const handleInterestChange = (interest) => {
-    setFormData(prev => ({
-      ...prev,
-      interests: prev.interests.includes(interest)
-        ? prev.interests.filter(i => i !== interest)
-        : [...prev.interests, interest]
-    }))
-  }
-  
-  // Handle form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -53,66 +33,44 @@ export function App() {
     }
     
     setIsSubmitting(true)
-    setErrors({})
-    
-    // Simulate API call
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      setSubmitMessage("✅ Form submitted successfully!")
-      setFormData({
-        name: "",
-        email: "",
-        age: "",
-        country: "",
-        interests: [],
-        newsletter: false,
-        message: ""
-      })
-    } catch (error) {
-      setSubmitMessage("❌ Submission failed. Please try again.")
-    } finally {
-      setIsSubmitting(false)
-    }
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setIsSubmitting(false)
+    setSubmitted(true)
   }
-  
+
+  if (submitted) {
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <h2>✅ Success!</h2>
+        <p>Form submitted successfully!</p>
+        <button onclick={() => setSubmitted(false)}>
+          Submit Another
+        </button>
+      </div>
+    )
+  }
+
   return (
-    <div style={{ 
-      fontFamily: "sans-serif", 
-      maxWidth: "600px", 
-      margin: "0 auto", 
-      padding: "20px" 
-    }}>
-      <h1>📝 User Registration Form</h1>
-      
-      <form onsubmit={handleSubmit} style={{ display: "grid", gap: "20px" }}>
-        <FormField label="Full Name" error={errors.name} required>
+    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
+      <h1>📝 Registration Form</h1>
+
+      <form onsubmit={handleSubmit}>
+        <FormField label="Name" error={errors.name} required>
           <TextInput
             value={formData.name}
             onInput={(e) => handleChange("name", e.target.value)}
-            placeholder="Enter your full name"
+            placeholder="Your name"
             error={errors.name}
           />
         </FormField>
         
-        <FormField label="Email Address" error={errors.email} required>
+        <FormField label="Email" error={errors.email} required>
           <TextInput
             type="email"
             value={formData.email}
             onInput={(e) => handleChange("email", e.target.value)}
-            placeholder="your.email@example.com"
+            placeholder="your@email.com"
             error={errors.email}
-          />
-        </FormField>
-        
-        <FormField label="Age" error={errors.age} required>
-          <TextInput
-            type="number"
-            value={formData.age}
-            onInput={(e) => handleChange("age", e.target.value)}
-            placeholder="25"
-            min="13"
-            max="120"
-            error={errors.age}
           />
         </FormField>
         
@@ -121,42 +79,8 @@ export function App() {
             value={formData.country}
             onChange={(e) => handleChange("country", e.target.value)}
             options={countries}
-            placeholder="Select your country"
+            placeholder="Select country"
             error={errors.country}
-          />
-        </FormField>
-        
-        <FormField label="Interests (Select at least one)" error={errors.interests} required>
-          <CheckboxGroup
-            options={interestOptions}
-            selectedValues={formData.interests}
-            onChange={handleInterestChange}
-            error={errors.interests}
-          />
-        </FormField>
-        
-        <div>
-          <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <input
-              type="checkbox"
-              checked={formData.newsletter}
-              onchange={(e) => handleChange("newsletter", e.target.checked)}
-            />
-            Subscribe to our newsletter
-          </label>
-        </div>
-        
-        <FormField label="Message" error={errors.message} required>
-          <textarea
-            value={formData.message}
-            oninput={(e) => handleChange("message", e.target.value)}
-            style={{
-              ...inputStyle,
-              borderColor: errors.message ? "#dc3545" : "#ddd",
-              minHeight: "100px",
-              resize: "vertical"
-            }}
-            placeholder="Tell us a bit about yourself..."
           />
         </FormField>
         
@@ -164,43 +88,18 @@ export function App() {
           type="submit"
           disabled={isSubmitting}
           style={{
-            padding: "12px 24px",
-            backgroundColor: isSubmitting ? "#6c757d" : "#007bff",
+            width: "100%",
+            padding: "12px",
+            backgroundColor: isSubmitting ? "#ccc" : "#007bff",
             color: "white",
             border: "none",
             borderRadius: "4px",
-            fontSize: "16px",
-            cursor: isSubmitting ? "not-allowed" : "pointer",
-            marginTop: "10px"
+            marginTop: "20px"
           }}
         >
-          {isSubmitting ? "Submitting..." : "Submit Registration"}
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
-        
-        {submitMessage && (
-          <div style={{ 
-            padding: "10px", 
-            borderRadius: "4px",
-            backgroundColor: submitMessage.includes("✅") ? "#d4edda" : "#f8d7da",
-            color: submitMessage.includes("✅") ? "#155724" : "#721c24",
-            textAlign: "center"
-          }}>
-            {submitMessage}
-          </div>
-        )}
       </form>
-      
-      <div style={{ 
-        marginTop: "30px", 
-        padding: "20px", 
-        backgroundColor: "#f8f9fa", 
-        borderRadius: "8px" 
-      }}>
-        <h3>Form Data Preview:</h3>
-        <pre style={{ fontSize: "12px", overflow: "auto" }}>
-          {JSON.stringify(formData, null, 2)}
-        </pre>
-      </div>
     </div>
   )
 } 

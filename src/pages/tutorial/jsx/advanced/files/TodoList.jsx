@@ -1,11 +1,24 @@
 import { TodoItem } from "./TodoItem"
 
-export function TodoList({ todos }) {
+export function TodoList({ todos, onToggle, onDelete }) {
+  if (todos.length === 0) {
+    return (
+      <p style={{ color: "#666", fontStyle: "italic" }}>
+        No todos yet. Add one above!
+      </p>
+    )
+  }
+
   return (
-    <ul>
+    <div>
       {todos.map(todo => (
-        <TodoItem key={todo.id} todo={todo} />
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          onToggle={onToggle}
+          onDelete={onDelete}
+        />
       ))}
-    </ul>
+    </div>
   )
 } 

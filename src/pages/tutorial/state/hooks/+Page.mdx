@@ -1,4 +1,4 @@
-export { step } from "./step"
+export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
 ## State Management with Hooks
 
