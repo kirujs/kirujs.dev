@@ -63,7 +63,7 @@ export function CodeMirrorComponent({
 
   return (
     <div
-      className={"prose CodeMirror max-w-full flex w-full " + className}
+      className={"CodeMirror prose max-w-full flex w-full " + className}
       ref={elementRef}
       {...rest}
     />
