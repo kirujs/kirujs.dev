@@ -10,7 +10,7 @@ interface TabGroupProps {
 
 export function TabGroup(props: TabGroupProps) {
   return (
-    <div className="tab-group">
+    <div className="tab-group sticky top-0 z-10">
       <ul>
         {props.items.map((item) => (
           <TabItem
