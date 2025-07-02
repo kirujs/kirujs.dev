@@ -5,10 +5,9 @@ export function TodoItem({ todo, onToggle, onDelete }) {
         display: "flex",
         alignItems: "center",
         padding: "10px",
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#333",
         marginBottom: "8px",
         borderRadius: "4px",
-        textDecoration: todo.completed ? "line-through" : "none",
         opacity: todo.completed ? 0.7 : 1
       }}
     >
@@ -18,7 +17,14 @@ export function TodoItem({ todo, onToggle, onDelete }) {
         onchange={() => onToggle(todo.id)}
         style={{ marginRight: "10px" }}
       />
-      <span style={{ flex: 1 }}>{todo.text}</span>
+      <span
+        style={{
+          flex: 1,
+          textDecoration: todo.completed ? "line-through" : "none",
+        }}
+      >
+        {todo.text}
+      </span>
       <button
         onclick={() => onDelete(todo.id)}
         style={{

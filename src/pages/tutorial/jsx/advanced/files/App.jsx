@@ -9,14 +9,15 @@ export function App() {
   const [inputValue, setInputValue] = useState("")
 
   const addTodo = () => {
-    if (inputValue.trim()) {
-      setTodos([...todos, {
-        id: Date.now(),
-        text: inputValue,
-        completed: false
-      }])
-      setInputValue("")
-    }
+    const text = inputValue.trim()
+    if (!text.length) return
+
+    setTodos([...todos, {
+      id: Date.now(),
+      text,
+      completed: false
+    }])
+    setInputValue("")    
   }
 
   const toggleTodo = (id) => {
