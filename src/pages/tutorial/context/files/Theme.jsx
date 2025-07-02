@@ -3,6 +3,11 @@ import { createContext, useContext, useState } from "kaioken"
 // Create a Theme Context
 const ThemeContext = createContext()
 
+// Custom hook to use theme
+export function useTheme() {
+  return useContext(ThemeContext)
+} 
+
 // Theme Provider Component
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState("light")
@@ -17,7 +22,6 @@ export function ThemeProvider({ children }) {
       padding: "20px",
       backgroundColor: theme === "light" ? "#ffffff" : "#333333",
       color: theme === "light" ? "#333333" : "#ffffff",
-      minHeight: "100vh",
       fontFamily: "sans-serif"
     },
     button: {
@@ -34,10 +38,10 @@ export function ThemeProvider({ children }) {
   return (
     <ThemeContext.Provider value={{
       theme,
-      setTheme,
       toggleTheme,
       primaryColor,
       setPrimaryColor,
+      isDark: theme === "dark",
       styles
     }}>
       <div style={styles.container}>
@@ -47,11 +51,3 @@ export function ThemeProvider({ children }) {
   )
 }
 
-// Custom hook to use theme
-export function useTheme() {
-  const context = useContext(ThemeContext)
-  if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider")
-  }
-  return context
-} 

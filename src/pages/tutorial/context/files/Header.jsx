@@ -5,7 +5,6 @@ export function Header() {
   
   return (
     <header style={{
-      padding: "20px",
       backgroundColor: theme.headerBg,
       color: theme.text,
       borderBottom: `1px solid ${theme.border}`

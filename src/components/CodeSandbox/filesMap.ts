@@ -105,7 +105,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   gap: 1rem;
 }
 #error-display {
