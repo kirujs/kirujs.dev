@@ -1,0 +1,87 @@
+export { step } from "./step"
+
+## Signals - Reactive State Management
+
+Signals are Kaioken's powerful reactive state management system. Unlike hooks, signals can be used outside of components and automatically update any components that use them.
+
+### Creating Signals
+
+Create a signal with an initial value:
+
+```jsx
+import { signal } from "kaioken"
+
+const count = signal(0)
+```
+
+### Using Signals
+
+Access and update signal values:
+
+```jsx
+// Read the value
+console.log(count.value) // 0
+
+// Update the value
+count.value = 5
+count.value++ // increment
+```
+
+### Computed Signals
+
+Computed signals automatically recalculate when their dependencies change:
+
+```jsx
+import { computed } from "kaioken"
+
+const doubled = computed(() => count.value * 2)
+const isEven = computed(() => count.value % 2 === 0)
+```
+
+### Key Benefits
+
+1. **Global State**: Signals can be shared across components without prop drilling
+2. **Automatic Updates**: Components using signals re-render when signal values change
+3. **Computed Values**: Derived state updates automatically
+4. **Performance**: Only components using changed signals re-render
+
+### Signals vs Hooks
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Signals</th>
+      <th>Hooks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Scope</td>
+      <td>Global or local</td>
+      <td>Component-local</td>
+    </tr>
+    <tr>
+      <td>Sharing</td>
+      <td>Easy to share</td>
+      <td>Requires prop drilling or context</td>
+    </tr>
+    <tr>
+      <td>Performance</td>
+      <td>Fine-grained reactivity</td>
+      <td>Component-level reactivity</td>
+    </tr>
+    <tr>
+      <td>Usage</td>
+      <td>Anywhere in code</td>
+      <td>Only in components</td>
+    </tr>
+  </tbody>
+</table>
+
+Try modifying the signals in the editor and notice how all components using them update automatically!
+
+<div className="flex justify-between">
+  <a href="/tutorial/state/hooks" className="link-button">Previous: Hooks</a>
+  <a href="/tutorial/context" className="link-button">Next: Context</a>
+</div> 

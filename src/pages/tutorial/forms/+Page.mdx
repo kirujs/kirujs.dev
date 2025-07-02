@@ -1,0 +1,137 @@
+export { step } from "./step"
+
+## Forms - Handle User Input
+
+Forms are essential for collecting user input in web applications. Learn how to handle form state, validation, and submission in Kaioken applications.
+
+### Basic Form State
+
+Use `useState` to manage form data:
+
+```jsx
+import { useState } from "kaioken"
+
+function MyForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  })
+  
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+  
+  return (
+    <form>
+      <input
+        value={formData.name}
+        oninput={(e) => handleChange("name", e.target.value)}
+        placeholder="Name"
+      />
+    </form>
+  )
+}
+```
+
+### Form Validation
+
+Implement validation to ensure data quality:
+
+```jsx
+const validateForm = (formData) => {
+  const errors = {}
+  
+  if (!formData.name.trim()) {
+    errors.name = "Name is required"
+  }
+  
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
+    errors.email = "Please enter a valid email"
+  }
+  
+  return errors
+}
+```
+
+### Form Submission
+
+Handle form submission with validation:
+
+```jsx
+const handleSubmit = async (e) => {
+  e.preventDefault()
+  
+  const errors = validateForm(formData)
+  if (Object.keys(errors).length > 0) {
+    setErrors(errors)
+    return
+  }
+  
+  // Submit form data
+  try {
+    await submitForm(formData)
+    console.log("Form submitted successfully!")
+  } catch (error) {
+    console.error("Submission failed:", error)
+  }
+}
+```
+
+### Different Input Types
+
+Handle various input types:
+
+```jsx
+// Text input
+<input
+  type="text"
+  value={formData.name}
+  oninput={(e) => handleChange("name", e.target.value)}
+/>
+
+// Select dropdown
+<select
+  value={formData.country}
+  onchange={(e) => handleChange("country", e.target.value)}
+>
+  <option value="">Select country</option>
+  <option value="US">United States</option>
+</select>
+
+// Checkbox
+<input
+  type="checkbox"
+  checked={formData.newsletter}
+  onchange={(e) => handleChange("newsletter", e.target.checked)}
+/>
+
+// Textarea
+<textarea
+  value={formData.message}
+  oninput={(e) => handleChange("message", e.target.value)}
+/>
+```
+
+### Form Best Practices
+
+1. **Controlled Components**: Always use controlled inputs with state
+2. **Real-time Validation**: Clear errors as users type
+3. **Loading States**: Show loading during submission
+4. **Error Handling**: Display clear error messages
+5. **Accessibility**: Use proper labels and ARIA attributes
+6. **User Feedback**: Confirm successful submissions
+
+### Advanced Patterns
+
+- **Dynamic Forms**: Add/remove form fields based on user input
+- **Multi-step Forms**: Break complex forms into steps
+- **Form Libraries**: Consider using form libraries for complex scenarios
+- **File Uploads**: Handle file inputs with special care
+
+Try filling out the form in the editor. Notice how validation works in real-time and how the form state updates as you type!
+
+<div className="flex justify-between">
+  <a href="/tutorial/routing" className="link-button">Previous: Routing</a>
+  <a href="/tutorial/fetching/use-async" className="link-button">Next: Data Fetching</a>
+</div> 

@@ -1,9 +1,11 @@
 import { TutorialStep } from "../../TutorialStepContext"
+import { mapFiles } from "../../utils"
+
+const files = import.meta.glob("./files/*", {
+  eager: true,
+  as: "raw",
+})
 
 export const step: TutorialStep = {
-  files: {
-    ["App.jsx"]: `export function App() {
-    return <h1>Hello world!</h1>
-}`,
-  },
+  files: mapFiles(files),
 }

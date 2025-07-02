@@ -1,33 +1,59 @@
 export { step } from "./step"
 
-## Advanced JSX 
+## JSX Advanced
 
-... insert some preamble here ...
+Now let's explore more advanced JSX patterns including conditional rendering, lists, and styling.
 
-First, let's edit ``App.tsx`` and declare a ``name`` variable:
+### Rendering Lists
+
+First, let's look at how to render a list of items. We'll start with an array of todo items:
 
 ```jsx
-export default function App() {
-  const name = "Kaioken" // [!code ++]
-  return <h1>Hello world!</h1>
+export function App() {
+  const todos = [
+    { id: 1, text: "Learn Kaioken", done: false },
+    { id: 2, text: "Build an app", done: true },
+    { id: 3, text: "Share with friends", done: false }
+  ]
+  
+  return (
+    <ul>
+      {todos.map(todo => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  )
 }
 ```
 
-Then, we can refer to ``name`` in the markup:
+Notice the `key` prop - this is important for Kaioken to efficiently update the DOM when the list changes.
+
+### Conditional Rendering
+
+We can conditionally render elements using JavaScript expressions:
 
 ```jsx
-export default function App() {
-  const name = "Kaioken"
-  return <h1>Hello |~~{name}~~|!</h1>
-}
+{todos.every(todo => todo.done) && (
+  <div>🎉 All tasks completed!</div>
+)}
 ```
 
-Inside the curly braces, we can put any JavaScript expression we want. 
-Try adding ``.toUpperCase()`` for a shoutier greeting.
+### Dynamic Styling
+
+JSX allows us to apply styles conditionally:
 
 ```jsx
-export default function App() {
-  const name = "Kaioken"
-  return <h1>Hello {name|++.toUpperCase()++|}!</h1>
-}
+<li style={{ 
+  textDecoration: todo.done ? 'line-through' : 'none',
+  color: todo.done ? '#666' : '#000'
+}}>
+  {todo.text}
+</li>
 ```
+
+Try modifying the todo array in the code editor to see how the rendering changes!
+
+<div className="flex justify-between">
+  <a href="/tutorial/jsx/basics" className="link-button">Previous: JSX Basics</a>
+  <a href="/tutorial/state/hooks" className="link-button">Next: State & Hooks</a>
+</div>

@@ -1,0 +1,58 @@
+export { step } from "./step"
+
+## State Management with Hooks
+
+Hooks are functions that let you use state and other Kaioken features in functional components. The most fundamental hook is `useState`.
+
+### useState Hook
+
+The `useState` hook lets you add state to functional components:
+
+```jsx
+import { useState } from "kaioken"
+
+export function App() {
+  const [count, setCount] = useState(0)
+  
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <button onclick={() => setCount(count + 1)}>+</button>
+    </div>
+  )
+}
+```
+
+### Key Concepts
+
+1. **State Initialization**: `useState(0)` creates state with initial value `0`
+2. **Destructuring**: Returns an array with `[currentValue, setterFunction]`
+3. **State Updates**: Call the setter function to update state
+4. **Reactivity**: Components re-render when state changes
+
+### Multiple State Variables
+
+You can use multiple `useState` hooks in a single component:
+
+```jsx
+const [count, setCount] = useState(0)
+const [name, setName] = useState("")
+```
+
+### Event Handling
+
+Handle user interactions by updating state:
+
+```jsx
+<input 
+  value={name}
+  oninput={(e) => setName(e.target.value)}
+/>
+```
+
+Try experimenting with the counter and name input in the editor. Notice how the component updates reactively as you interact with it!
+
+<div className="flex justify-between">
+  <a href="/tutorial/jsx/advanced" className="link-button">Previous: JSX Advanced</a>
+  <a href="/tutorial/state/signals" className="link-button">Next: Signals</a>
+</div> 

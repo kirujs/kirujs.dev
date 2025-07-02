@@ -1,0 +1,193 @@
+export { step } from "./step"
+
+## useSWR - Stale-While-Revalidate Data Fetching
+
+useSWR is a powerful data fetching strategy that provides caching, revalidation, and automatic background updates. It's perfect for building fast and responsive applications.
+
+### Basic Usage
+
+Use `useSWR` with a key and fetcher function:
+
+```jsx
+import { useSWR } from "kaioken/swr"
+
+const fetcher = (url) => fetch(url).then(res => res.json())
+
+function Profile() {
+  const { data, error, isLoading } = useSWR('/api/user', fetcher)
+
+  if (error) return <div>Failed to load</div>
+  if (isLoading) return <div>Loading...</div>
+  
+  return <div>Hello {data.name}!</div>
+}
+```
+
+### Key Concepts
+
+**SWR** stands for **stale-while-revalidate**, a HTTP caching strategy:
+
+1. **Stale**: Return cached data immediately (fast)
+2. **While**: Send fetch request in background
+3. **Revalidate**: Update with fresh data when available
+
+### Hook Return Values
+
+`useSWR` returns an object with these properties:
+
+- **`data`**: Data returned by the fetcher
+- **`error`**: Error thrown by the fetcher
+- **`isLoading`**: If there's an ongoing request and no cached data
+- **`isValidating`**: If there's a request or revalidation in progress
+- **`mutate`**: Function to mutate the cached data
+
+### Caching and Deduplication
+
+SWR automatically caches data and deduplicates requests:
+
+```jsx
+// Both components will share the same data and cache
+function UserProfile() {
+  const { data } = useSWR('/api/user', fetcher)
+  return <div>{data?.name}</div>
+}
+
+function UserSettings() {
+  const { data } = useSWR('/api/user', fetcher) // Same key = shared cache
+  return <div>{data?.email}</div>
+}
+```
+
+### Conditional Fetching
+
+Skip fetching by passing `null` as the key:
+
+```jsx
+const { data } = useSWR(
+  user ? `/api/user/${user.id}/posts` : null,
+  fetcher
+)
+
+// Or use a function that returns null
+const { data } = useSWR(
+  () => shouldFetch ? '/api/data' : null,
+  fetcher
+)
+```
+
+### Manual Revalidation
+
+Trigger revalidation manually with `mutate`:
+
+```jsx
+function Profile() {
+  const { data, mutate } = useSWR('/api/user', fetcher)
+  
+  const updateProfile = async (newData) => {
+    // Optimistically update
+    mutate({ ...data, ...newData }, false)
+    
+    // Update on server
+    await updateUser(newData)
+    
+    // Revalidate to get fresh data
+    mutate()
+  }
+  
+  return (
+    <div>
+      <h1>{data?.name}</h1>
+      <button onclick={() => updateProfile({ name: 'New Name' })}>
+        Update Name
+      </button>
+    </div>
+  )
+}
+```
+
+### Error Handling and Retry
+
+Handle errors with built-in retry logic:
+
+```jsx
+const { data, error, mutate } = useSWR('/api/data', fetcher, {
+  errorRetryCount: 3,
+  errorRetryInterval: 1000
+})
+
+if (error) {
+  return (
+    <div>
+      <p>Error: {error.message}</p>
+      <button onclick={() => mutate()}>Retry</button>
+    </div>
+  )
+}
+```
+
+### Configuration Options
+
+Customize SWR behavior with options:
+
+```jsx
+const { data } = useSWR('/api/data', fetcher, {
+  refreshInterval: 1000,      // Refresh every second
+  revalidateOnFocus: false,   // Don't revalidate on window focus
+  revalidateOnReconnect: true, // Revalidate on network reconnect
+  dedupingInterval: 2000      // Dedupe requests within 2 seconds
+})
+```
+
+### SWR vs useAsync
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>useSWR</th>
+      <th>useAsync</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Caching</td>
+      <td>✅ Built-in global cache</td>
+      <td>❌ No caching</td>
+    </tr>
+    <tr>
+      <td>Deduplication</td>
+      <td>✅ Automatic</td>
+      <td>❌ Each hook fetches separately</td>
+    </tr>
+    <tr>
+      <td>Stale-while-revalidate</td>
+      <td>✅ Yes</td>
+      <td>❌ No</td>
+    </tr>
+    <tr>
+      <td>Background updates</td>
+      <td>✅ Automatic</td>
+      <td>❌ Manual only</td>
+    </tr>
+    <tr>
+      <td>Global configuration</td>
+      <td>✅ Yes</td>
+      <td>❌ No</td>
+    </tr>
+  </tbody>
+</table>
+
+### Best Practices
+
+1. **Use consistent keys**: Same data should have the same key across components
+2. **Handle loading and error states**: Always provide fallbacks
+3. **Leverage optimistic updates**: Update UI immediately, then sync with server
+4. **Configure appropriately**: Set refresh intervals based on data freshness needs
+5. **Use conditional fetching**: Don't fetch data you don't need
+
+Try the interactive demo above! Notice how data is cached between components and how the stale-while-revalidate pattern provides instant loading.
+
+<div className="flex justify-between">
+  <a href="/tutorial/fetching/use-async" className="link-button">Previous: useAsync</a>
+  <a href="/tutorial/introduction" className="link-button">🎉 Tutorial Complete!</a>
+</div> 
