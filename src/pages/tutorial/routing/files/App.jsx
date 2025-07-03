@@ -10,12 +10,12 @@ export function App() {
     <div style={{ fontFamily: "sans-serif" }}>
       <Navigation />
       <Router>
-                 <Route path="/" element={<HomePage />} />
-         <Route path="/about" element={<AboutPage />} />
-         <Route path="/users" element={<UsersPage />} />
-         <Route path="/users/:id" element={<UserDetailPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/users" element={<UsersPage />} />
+        <Route path="/users/:id" element={<UserDetailPage />} />
       </Router>
-      
+
       <style>{`
         .nav-link {
           text-decoration: none;
@@ -41,4 +41,4 @@ export function App() {
       `}</style>
     </div>
   )
-} 
+}
