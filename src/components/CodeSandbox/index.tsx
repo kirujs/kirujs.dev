@@ -1,6 +1,6 @@
 import { JSXEditor } from "$/components/JSXEditor"
 import { TabGroup } from "$/components/TabGroup"
-import { useRef, useEffect, useState, ElementProps, useAsync } from "kaioken"
+import { useRef, useState, ElementProps } from "kaioken"
 import {
   NodeBoxProvider,
   useNodeBox,
@@ -50,8 +50,6 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
   if (!files[selectedFile] && fileNames.length > 0) {
     setSelectedFile(fileNames[0])
   }
-
-  console.log("CodeSandboxImpl")
 
   const cleanupRemovedFiles = async (oldFiles: Record<string, string>) => {
     return await Promise.all(

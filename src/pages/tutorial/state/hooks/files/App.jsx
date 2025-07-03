@@ -38,23 +38,11 @@ export function App() {
           <button onclick={() => setName("")}>Clear</button>
         </div>
         
-        <div style={{ marginTop: "20px", padding: "10px", background: "#333" }}>
-          <strong>Status:</strong> {count > 0 ? "Positive" : count < 0 ? "Negative" : "Zero"}
-        </div>
-        
         {name && (
-          <div style={{ marginTop: "10px", padding: "10px", background: "#e3f2fd", borderRadius: "4px" }}>
+          <div style={{ marginTop: "10px", padding: "10px", background: "#333", borderRadius: "4px", color: "#fff" }}>
             Hello, <strong>{name}</strong>! 👋
           </div>
         )}
-      </div>
-
-      {/* Combined State Display */}
-      <div style={{ padding: "20px", background: "#f8f9fa", borderRadius: "8px" }}>
-        <h3>Combined State</h3>
-        <p>Count: {count}</p>
-        <p>Name: {name || "(empty)"}</p>
-        <p>Both filled: {count !== 0 && name ? "✅ Yes" : "❌ No"}</p>
       </div>
     </div>
   )

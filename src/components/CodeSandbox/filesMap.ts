@@ -86,7 +86,7 @@ const INDEX_HTML = `
   </head>
   <body style="background-color: #1c1a1a" >
     <div id="app"></div>
-    <script type="module" src="/src/client.ts"></script>
+    <script type="module" src="/src/client.js"></script>
   </body>
 </html>
 `
@@ -121,12 +121,11 @@ body {
   display: block;
 }
 `
-const CLIENT_TS = `
+const CLIENT_JS = `
 import "./styles.css"
 import { mount } from "kaioken"
 import { App } from "./App"
-const root = document.getElementById("app")!
-mount(App, root);
+mount(App, document.getElementById("app"));
 
 const errorDisplay = Object.assign(document.createElement("div"), {
   id: "error-display",
@@ -153,5 +152,5 @@ export const FILES_MAP: FilesMap = {
   "startVite.js": VITE_SERVER_SCRIPT,
   "/index.html": INDEX_HTML,
   "/src/styles.css": STYLES,
-  "/src/client.ts": CLIENT_TS,
+  "/src/client.js": CLIENT_JS,
 }

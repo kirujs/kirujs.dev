@@ -1,23 +1,18 @@
-export type TutorialItem =
-  | {
-      title: string
-      route: string
-    }
-  | {
-      title: string
-      route: string
-      sections: TutorialItem[]
-    }
+export type TutorialItem = {
+  title: string
+  route: string
+  children?: TutorialItem[]
+}
 
 export const tutorials: TutorialItem[] = [
   {
     title: "Introduction",
-    route: "/tutorial/introduction",
+    route: "/introduction",
   },
   {
     title: "JSX", // cover jsx expressions
-    route: "/tutorial/jsx",
-    sections: [
+    route: "/jsx",
+    children: [
       {
         title: "Basics",
         route: "/basics",
@@ -30,8 +25,8 @@ export const tutorials: TutorialItem[] = [
   },
   {
     title: "State",
-    route: "/tutorial/state",
-    sections: [
+    route: "/state",
+    children: [
       {
         title: "Hooks",
         route: "/hooks",
@@ -39,25 +34,31 @@ export const tutorials: TutorialItem[] = [
       {
         title: "Signals",
         route: "/signals",
+        children: [
+          {
+            title: "Basic",
+            route: "/basic",
+          },
+        ],
       },
     ],
   },
   {
     title: "Context",
-    route: "/tutorial/context",
+    route: "/context",
   },
   {
     title: "Routing", // explore the Router API
-    route: "/tutorial/routing",
+    route: "/routing",
   },
   {
     title: "Forms", // explore the Form API
-    route: "/tutorial/forms",
+    route: "/forms",
   },
   {
     title: "Data Fetching", // explore the useAsync/useSWR hooks
-    route: "/tutorial/fetching",
-    sections: [
+    route: "/fetching",
+    children: [
       {
         title: "useAsync",
         route: "/use-async",
