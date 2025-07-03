@@ -1,135 +1,172 @@
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
-## Forms - Handle User Input
+## Forms - Handle User Input with the Form API
 
-Forms are essential for collecting user input in web applications. Learn how to handle form state, validation, and submission in Kaioken applications.
+Forms are essential for collecting user input in web applications. Kaioken provides a powerful Form API that makes it easy to handle form state, validation, and submission with minimal boilerplate.
 
-### Basic Form State
+### Using the Form API
 
-Use `useState` to manage form data:
+The Form API provides a declarative approach to form management, inspired by TanStack Form. It handles form state, validation, and submission automatically:
 
 ```jsx
-import { useState } from "kaioken"
+import { useForm } from "kaioken/form"
 
 function MyForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: ""
+  const form = useForm({
+    initialValues: {
+      name: "",
+      email: ""
+    },
+    onSubmit: ({ state }) => {
+      console.log("Form submitted:", state)
+    }
   })
-  
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-  
+
   return (
-    <form>
-      <input
-        value={formData.name}
-        oninput={(e) => handleChange("name", e.target.value)}
-        placeholder="Name"
+    <form onsubmit={(e) => {
+      e.preventDefault()
+      form.handleSubmit()
+    }}>
+      <form.Field
+        name="name"
+        validators={{
+          onChange: ({ value }) => !value?.trim() && "Name is required"
+        }}
+        children={(field) => (
+          <div>
+            <label>Name</label>
+            <input
+              value={field.state.value}
+              oninput={(e) => field.handleChange(e.target.value)}
+              onblur={field.handleBlur}
+            />
+            {field.state.errors.length > 0 && (
+              <span>{field.state.errors[0]}</span>
+            )}
+          </div>
+        )}
       />
     </form>
   )
 }
 ```
 
-### Form Validation
+### Form State Management
 
-Implement validation to ensure data quality:
+The Form API automatically manages form state through the `useForm` hook:
+
+- **Initial Values**: Set default values for all form fields
+- **Current State**: Access current values and validation status
+- **Submission State**: Track if form is submitting and can be submitted
+
+### Field Validation
+
+Each field can have its own validation rules:
 
 ```jsx
-const validateForm = (formData) => {
-  const errors = {}
-  
-  if (!formData.name.trim()) {
-    errors.name = "Name is required"
-  }
-  
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
-    errors.email = "Please enter a valid email"
-  }
-  
-  return errors
-}
+<form.Field
+  name="email"
+  validators={{
+    onChange: ({ value }) => {
+      if (!value?.trim()) {
+        return "Email is required"
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        return "Please enter a valid email"
+      }
+    }
+  }}
+  children={(field) => (
+    <div>
+      <input
+        type="email"
+        value={field.state.value}
+        oninput={(e) => field.handleChange(e.target.value)}
+        onblur={field.handleBlur}
+      />
+      {field.state.errors.length > 0 && (
+        <span>{field.state.errors[0]}</span>
+      )}
+    </div>
+  )}
+/>
 ```
 
 ### Form Submission
 
-Handle form submission with validation:
+The Form API handles submission automatically:
 
 ```jsx
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  
-  const errors = validateForm(formData)
-  if (Object.keys(errors).length > 0) {
-    setErrors(errors)
-    return
-  }
-  
-  // Submit form data
-  try {
-    await submitForm(formData)
-    console.log("Form submitted successfully!")
-  } catch (error) {
-    console.error("Submission failed:", error)
-  }
-}
+<form.Subscribe
+  selector={(state) => [state.canSubmit, state.isSubmitting]}
+  children={([canSubmit, isSubmitting]) => (
+    <button
+      type="submit"
+      disabled={!canSubmit}
+    >
+      {isSubmitting ? "Submitting..." : "Submit"}
+    </button>
+  )}
+/>
 ```
 
-### Different Input Types
+### Key Features
 
-Handle various input types:
+1. **Declarative**: Define validation rules alongside field definitions
+2. **Automatic State Management**: No need to manually manage form state
+3. **Real-time Validation**: Validation runs as users type
+4. **Submission Handling**: Built-in submission state management
+5. **Field-level Control**: Each field manages its own state and validation
+
+### Field Types
+
+Handle different input types with the same API:
 
 ```jsx
 // Text input
-<input
-  type="text"
-  value={formData.name}
-  oninput={(e) => handleChange("name", e.target.value)}
+<form.Field
+  name="name"
+  validators={{ onChange: ({ value }) => !value && "Required" }}
+  children={(field) => (
+    <input
+      value={field.state.value}
+      oninput={(e) => field.handleChange(e.target.value)}
+    />
+  )}
 />
 
 // Select dropdown
-<select
-  value={formData.country}
-  onchange={(e) => handleChange("country", e.target.value)}
->
-  <option value="">Select country</option>
-  <option value="US">United States</option>
-</select>
-
-// Checkbox
-<input
-  type="checkbox"
-  checked={formData.newsletter}
-  onchange={(e) => handleChange("newsletter", e.target.checked)}
-/>
-
-// Textarea
-<textarea
-  value={formData.message}
-  oninput={(e) => handleChange("message", e.target.value)}
+<form.Field
+  name="country"
+  validators={{ onChange: ({ value }) => !value && "Please select a country" }}
+  children={(field) => (
+    <select
+      value={field.state.value}
+      onchange={(e) => field.handleChange(e.target.value)}
+    >
+      <option value="">Select country</option>
+      <option value="US">United States</option>
+    </select>
+  )}
 />
 ```
 
-### Form Best Practices
+### Best Practices
 
-1. **Controlled Components**: Always use controlled inputs with state
-2. **Real-time Validation**: Clear errors as users type
-3. **Loading States**: Show loading during submission
-4. **Error Handling**: Display clear error messages
-5. **Accessibility**: Use proper labels and ARIA attributes
-6. **User Feedback**: Confirm successful submissions
+1. **Use the Form API**: Prefer the Form API over manual state management
+2. **Field-level Validation**: Define validation rules close to field definitions
+3. **Subscribe to State**: Use `form.Subscribe` for reactive UI updates
+4. **Handle Submission**: Always prevent default form submission
+5. **Error Display**: Show validation errors near their respective fields
 
-### Advanced Patterns
+### Advanced Features
 
-- **Dynamic Forms**: Add/remove form fields based on user input
-- **Multi-step Forms**: Break complex forms into steps
-- **Form Libraries**: Consider using form libraries for complex scenarios
-- **File Uploads**: Handle file inputs with special care
+- **Cross-field Validation**: Access other field values in validators
+- **Async Validation**: Support for asynchronous validation
+- **Form Reset**: Reset form to initial state
+- **Field Arrays**: Handle dynamic lists of fields
 
-Try filling out the form in the editor. Notice how validation works in real-time and how the form state updates as you type!
+Try filling out the form in the editor. Notice how the Form API automatically handles validation, state management, and submission without any manual work!
 
 <div className="flex justify-between">
   <a href="/tutorial/routing" className="link-button">Previous: Routing</a>

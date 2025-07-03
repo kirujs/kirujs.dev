@@ -1,105 +1,118 @@
-import { useState } from "kaioken"
-import { validateForm } from "./validation"
+import { useForm } from "kaioken/form"
 import { FormField } from "./FormField"
 import { TextInput } from "./TextInput"
 import { SelectField } from "./SelectField"
+import { countries } from "./constants"
 
 export function App() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    country: ""
+  const form = useForm({
+    initialValues: {
+      name: "",
+      email: "",
+      country: "",
+    },
+    onSubmit: ({ state }) => {
+      console.log("Form submitted successfully!", state)
+      // Simulate success
+      setTimeout(() => {
+        alert("Form submitted successfully!")
+      }, 500)
+    },
   })
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-
-  const countries = ["USA", "Canada", "UK", "Germany"]
-
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }))
-    }
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    const newErrors = validateForm(formData)
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
-    }
-    
-    setIsSubmitting(true)
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setIsSubmitting(false)
-    setSubmitted(true)
-  }
-
-  if (submitted) {
-    return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        <h2>✅ Success!</h2>
-        <p>Form submitted successfully!</p>
-        <button onclick={() => setSubmitted(false)}>
-          Submit Another
-        </button>
-      </div>
-    )
-  }
 
   return (
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
       <h1>📝 Registration Form</h1>
 
-      <form onsubmit={handleSubmit}>
-        <FormField label="Name" error={errors.name} required>
-          <TextInput
-            value={formData.name}
-            onInput={(e) => handleChange("name", e.target.value)}
-            placeholder="Your name"
-            error={errors.name}
-          />
-        </FormField>
-        
-        <FormField label="Email" error={errors.email} required>
-          <TextInput
-            type="email"
-            value={formData.email}
-            onInput={(e) => handleChange("email", e.target.value)}
-            placeholder="your@email.com"
-            error={errors.email}
-          />
-        </FormField>
-        
-        <FormField label="Country" error={errors.country} required>
-          <SelectField
-            value={formData.country}
-            onChange={(e) => handleChange("country", e.target.value)}
-            options={countries}
-            placeholder="Select country"
-            error={errors.country}
-          />
-        </FormField>
-        
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          style={{
-            width: "100%",
-            padding: "12px",
-            backgroundColor: isSubmitting ? "#ccc" : "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            marginTop: "20px"
+      <form
+        onsubmit={(e) => {
+          e.preventDefault()
+          form.handleSubmit()
+        }}
+      >
+        <form.Field
+          name="name"
+          validators={{
+            onChange: ({ value }) => !value?.trim() && "Name is required",
           }}
-        >
-          {isSubmitting ? "Submitting..." : "Submit"}
-        </button>
+          children={(field) => (
+            <FormField label="Name" error={field.state.errors?.[0]} required>
+              <TextInput
+                value={field.state.value}
+                oninput={(e) => field.handleChange(e.target.value)}
+                placeholder="Your name"
+                error={field.state.errors?.[0]}
+                onBlur={field.handleBlur}
+              />
+            </FormField>
+          )}
+        />
+
+        <form.Field
+          name="email"
+          validators={{
+            onChange: ({ value }) => {
+              if (!value?.trim()) {
+                return "Email is required"
+              }
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                return "Please enter a valid email"
+              }
+            },
+          }}
+          children={(field) => (
+            <FormField label="Email" error={field.state.errors?.[0]} required>
+              <TextInput
+                type="email"
+                value={field.state.value}
+                oninput={(e) => field.handleChange(e.target.value)}
+                placeholder="your@email.com"
+                error={field.state.errors?.[0]}
+                onblur={field.handleBlur}
+              />
+            </FormField>
+          )}
+        />
+
+        <form.Field
+          name="country"
+          validators={{
+            onChange: (value) => !value && "Please select a country",
+          }}
+          children={(field) => (
+            <FormField label="Country" error={field.state.errors?.[0]} required>
+              <SelectField
+                value={field.state.value}
+                onchange={(e) => field.handleChange(e.target.value)}
+                options={countries}
+                placeholder="Select country"
+                error={field.state.errors?.[0]}
+              />
+            </FormField>
+          )}
+        />
+
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              style={{
+                width: "100%",
+                padding: "12px",
+                backgroundColor: !canSubmit ? "#ccc" : "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                marginTop: "20px",
+              }}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
+          )}
+        />
       </form>
     </div>
   )
-} 
+}
