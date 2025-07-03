@@ -34,12 +34,6 @@ export const tutorials: TutorialItem[] = [
       {
         title: "Signals",
         route: "/signals",
-        children: [
-          {
-            title: "Basic",
-            route: "/basic",
-          },
-        ],
       },
     ],
   },
