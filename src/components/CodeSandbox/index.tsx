@@ -137,7 +137,7 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
 
   return (
     <div {...props}>
-      <div className="flex-grow flex flex-col h-1/2 overflow-y-auto">
+      <div className="flex-grow flex flex-col h-1/2">
         <TabGroup
           items={Object.keys(files)}
           value={selectedFile}
@@ -147,7 +147,7 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
           key={selectedFile}
           content={code}
           onContentChanged={handleChange}
-          className="flex-grow w-full"
+          className="flex-grow w-full max-h-[calc(100%-40px)]"
           readonly={readonly}
         />
       </div>
