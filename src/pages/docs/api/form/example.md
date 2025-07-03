@@ -24,7 +24,7 @@ const App = () => {
         <form.Field
           name="username"
           validators={{
-            onChange: (value) => !value && "Username is required",
+            onChange: ({ value }) => !value && "Username is required",
           }}
           children={(field) => (
             <div>
