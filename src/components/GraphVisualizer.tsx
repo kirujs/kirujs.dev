@@ -1,10 +1,5 @@
-import {
-  ElementProps,
-  useViewTransition,
-  useSignal,
-  useEffect,
-  Signal,
-} from "kaioken"
+import { ElementProps, useViewTransition, Signal } from "kaioken"
+import { className as cls } from "kaioken/utils"
 import ArrowIcon from "./icons/ArrowIcon"
 
 function mapSiblings(
@@ -103,10 +98,10 @@ function GraphVisualizerNode({ node }: GraphVisualizerNodeProps) {
       <div className="col-span-1 relative">
         {node.depth > 0 && node.index > 0 && (
           <ArrowIcon.Up
-            className={[
+            className={cls(
               "absolute top-0 left-0.5 -translate-y-full",
-              activeEdges?.parent ? "text-primary" : "text-neutral-400",
-            ]}
+              activeEdges?.parent ? "text-primary" : "text-neutral-400"
+            )}
           />
         )}
         <small className="absolute top-0.5 left-0.5 text-[8px] bg-black/50 rounded-sm px-0.5">
@@ -130,16 +125,16 @@ function GraphVisualizerNode({ node }: GraphVisualizerNodeProps) {
             <div className="gap-1 grid grid-flow-col">
               <div className="flex">
                 <ArrowIcon.Down
-                  className={[
-                    activeEdges?.child ? "text-primary" : "text-neutral-400",
-                  ]}
+                  className={cls(
+                    activeEdges?.child ? "text-primary" : "text-neutral-400"
+                  )}
                 />
                 <ArrowIcon.Up
-                  className={[
+                  className={cls(
                     child.activeEdges?.parent
                       ? "text-primary"
-                      : "text-neutral-400",
-                  ]}
+                      : "text-neutral-400"
+                  )}
                 />
               </div>
             </div>
@@ -152,13 +147,13 @@ function GraphVisualizerNode({ node }: GraphVisualizerNodeProps) {
         mapSiblings(sibling, (node, prev) => (
           <div className="flex col-span-1">
             <ArrowIcon.Right
-              className={[
+              className={cls(
                 "mt-3",
                 prev?.activeEdges?.sibling ||
-                (node === sibling && activeEdges?.sibling)
+                  (node === sibling && activeEdges?.sibling)
                   ? "text-primary"
-                  : "text-neutral-400",
-              ]}
+                  : "text-neutral-400"
+              )}
             />
             <GraphVisualizerNode node={node} />
           </div>

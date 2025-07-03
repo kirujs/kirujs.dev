@@ -2,6 +2,7 @@ import { usePageContext } from "$/context/pageContext"
 import { docMeta } from "$/docs-meta"
 import { useNavDrawer } from "$/state/navDrawer"
 import { isLinkActive } from "$/utils"
+import { className as cls } from "kaioken/utils"
 import { ElementProps, Fragment, unwrap } from "kaioken"
 import { DocItemStatus } from "./DocItemStatus"
 
@@ -56,10 +57,10 @@ export function SidebarContent() {
                           open &&
                           setOpen(false)
                         }
-                        className={[
+                        className={cls(
                           isActive && "text-light",
-                          "flex items-center justify-between",
-                        ]}
+                          "flex items-center justify-between"
+                        )}
                       >
                         {page.title}
                         <DocItemStatus
@@ -123,7 +124,7 @@ function Header({ children }: ElementProps<"div">) {
 function LinkList({ className, ...props }: ElementProps<"div">) {
   return (
     <div
-      className={["flex flex-col w-full gap", unwrap(className)]}
+      className={cls("flex flex-col w-full gap", unwrap(className))}
       {...props}
     />
   )
@@ -131,7 +132,7 @@ function LinkList({ className, ...props }: ElementProps<"div">) {
 
 function Link({ children, className, ...props }: ElementProps<"a">) {
   return (
-    <a className={["text-muted", unwrap(className)].flat()} {...props}>
+    <a className={cls("text-muted", unwrap(className))} {...props}>
       {children}
     </a>
   )

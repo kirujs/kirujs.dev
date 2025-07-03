@@ -1,3 +1,7 @@
 .resizable-resizing iframe {
   pointer-events: none;
 }
+
+.resizable-resizing * {
+  user-select: none;
+}

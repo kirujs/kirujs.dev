@@ -1,3 +1,5 @@
+import { className as cls } from "kaioken/utils"
+
 type EcosystemItemChild = {
   iconSrc?: string
   title: string
@@ -107,10 +109,10 @@ function EcosystemTileChild({ title, url, iconSrc }: EcosystemItemChild) {
   return (
     <a
       href={url}
-      className={[
+      className={cls(
         "inline-flex gap-4 items-center not-prose text-sm font-bold text-light",
-        url ? "" : "opacity-50",
-      ]}
+        url ? "" : "opacity-50"
+      )}
       title={title + (url ? "" : " - coming soon")}
       target="_blank"
     >

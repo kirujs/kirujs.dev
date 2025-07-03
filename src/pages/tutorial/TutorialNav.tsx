@@ -1,5 +1,6 @@
 import { usePageContext } from "$/context/pageContext"
 import { ElementProps, signal, useLayoutEffect, useMemo, useRef } from "kaioken"
+import { className as cls } from "kaioken/utils"
 import { tutorials, TutorialItem } from "./meta"
 import { ChevronRightIcon } from "$/components/icons/ChevronRightIcon"
 import { matchUrl } from "./utils"
@@ -96,10 +97,10 @@ function TutorialNavItem({
   return (
     <li>
       <a
-        className={[
+        className={cls(
           "text-light flex items-center gap-1",
-          isActive && "font-bold",
-        ]}
+          isActive && "font-bold"
+        )}
         href={urlPrefix + item.route}
         onclick={() => isActive && (navExpanded.value = false)}
       >

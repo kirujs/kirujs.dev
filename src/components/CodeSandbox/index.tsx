@@ -1,5 +1,6 @@
 import { JSXEditor } from "$/components/JSXEditor"
 import { TabGroup } from "$/components/TabGroup"
+import { ResizablePane } from "$/components/atoms/ResizablePane"
 import {
   useRef,
   useState,
@@ -33,7 +34,7 @@ export default function CodeSandbox(props: CodeSandboxProps) {
   )
 }
 
-function WorkerStatusDisplayText() {
+function WorkerStatusDisplay() {
   const status = useWorkerStatus()
   if (!status) return null
   switch (status.state) {
@@ -41,9 +42,17 @@ function WorkerStatusDisplayText() {
       return null
     case "starting_command":
     case "downloading_manifest":
-      return status.state + "..."
+      return (
+        <small className="uppercase absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
+          {status.state + "..."}
+        </small>
+      )
     case "downloaded_module":
-      return `downloaded module ${status.name}@${status.version}. total pending modules: ${status.totalPending}`
+      return (
+        <small className="uppercase absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
+          {`downloaded module ${status.name}@${status.version}. total pending modules: ${status.totalPending}`}
+        </small>
+      )
   }
 }
 
@@ -105,28 +114,43 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
 
   const code = files[selectedFile]
 
+  // Editor pane with tab group
+  const editorPane = (
+    <div className="flex flex-col h-full">
+      <TabGroup
+        items={Object.keys(files)}
+        value={selectedFile}
+        onSelect={setSelectedFile}
+      />
+      <JSXEditor
+        key={selectedFile}
+        content={code}
+        onContentChanged={handleChange}
+        className="flex-grow w-full"
+        readonly={readonly}
+      />
+    </div>
+  )
+
+  // Preview pane with iframe
+  const previewPane = (
+    <div className="flex flex-col h-full relative">
+      <iframe ref={previewIframeRef} className="flex-grow h-full w-full" />
+      <WorkerStatusDisplay />
+    </div>
+  )
+
   return (
     <div {...props}>
-      <div className="flex-grow flex flex-col h-1/2">
-        <TabGroup
-          items={Object.keys(files)}
-          value={selectedFile}
-          onSelect={setSelectedFile}
-        />
-        <JSXEditor
-          key={selectedFile}
-          content={code}
-          onContentChanged={handleChange}
-          className="flex-grow w-full max-h-[calc(100%-40px)]"
-          readonly={readonly}
-        />
-      </div>
-      <div className="flex-grow h-1/2">
-        <iframe ref={previewIframeRef} className="flex-grow h-full w-full" />
-        <small className="uppercase fixed bottom-0">
-          <WorkerStatusDisplayText />
-        </small>
-      </div>
+      <ResizablePane
+        firstPane={editorPane}
+        secondPane={previewPane}
+        direction="vertical"
+        initialFirstSize={50}
+        minFirstSize={20}
+        maxFirstSize={80}
+        className="h-full"
+      />
     </div>
   )
 }

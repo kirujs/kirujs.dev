@@ -21,11 +21,12 @@ export function Layout({ children }: { children: JSX.Children }) {
   return (
     <div className="flex flex-col h-full mt-[var(--navbar-height)]">
       <ResizablePane
-        leftPane={leftPane}
-        rightPane={rightPane}
-        initialLeftWidth={50}
-        minLeftWidth={25}
-        maxLeftWidth={75}
+        firstPane={leftPane}
+        secondPane={rightPane}
+        direction="horizontal"
+        initialFirstSize={50}
+        minFirstSize={20}
+        maxFirstSize={80}
         className="flex-grow h-[calc(100dvh+var(--navbar-height-negative))]"
       />
     </div>
