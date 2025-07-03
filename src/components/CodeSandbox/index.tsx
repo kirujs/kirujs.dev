@@ -126,7 +126,7 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
         key={selectedFile}
         content={code}
         onContentChanged={handleChange}
-        className="flex-grow w-full"
+        className="flex-grow w-full max-h-[calc(100%-40px)]"
         readonly={readonly}
       />
     </div>
