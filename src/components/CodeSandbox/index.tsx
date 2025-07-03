@@ -62,6 +62,7 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
   }
 
   const writeFiles = async (files: Record<string, string>) => {
+    if (prevWrittenFiles.current === files) return
     prevWrittenFiles.current = files
     await Promise.all(
       Object.keys(files).map(async (file) => {
@@ -88,7 +89,6 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
 
   useAsync(async () => {
     if (nodeboxInitializationState.value !== "initialized") return
-    if (prevWrittenFiles.current === files) return
     await writeFiles(files)
   }, [files, nodeboxInitializationState.value])
 
