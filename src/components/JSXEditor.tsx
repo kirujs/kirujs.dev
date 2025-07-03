@@ -1,4 +1,4 @@
-import { ElementProps, useMemo } from "kaioken"
+import { useMemo } from "kaioken"
 import {
   CodeMirrorComponent,
   CodeMirrorComponentProps,

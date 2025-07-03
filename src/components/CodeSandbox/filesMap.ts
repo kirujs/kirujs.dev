@@ -94,9 +94,35 @@ const STYLES = `
 :root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
 					'Open Sans', 'Helvetica Neue', sans-serif;
+  color-scheme: dark;
   background-color: #1c1a1a;
   color: #f6f6f6;
 }
+* {
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-moz-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-ms-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-o-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
 body {
   margin: 0;
 }
