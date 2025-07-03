@@ -74,10 +74,9 @@ function TutorialNavItem({
   const { urlPathname } = usePageContext()
   if (item.children) {
     const active = urlPathname.startsWith(urlPrefix + item.route)
-    const detailsProps: ElementProps<"details"> = active ? { open: true } : {}
     return (
       <li className="px-2 py-1 bg-white/2.5 border border-white/5">
-        <details {...detailsProps}>
+        <details open={active}>
           <summary className="text-light cursor-pointer">{item.title}</summary>
           <ul className="pl-4">
             {item.children.map((section) => (
