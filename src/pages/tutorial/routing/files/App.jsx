@@ -7,7 +7,7 @@ import { UserDetailPage } from "./UserDetailPage"
 
 export function App() {
   return (
-    <div style={{ fontFamily: "sans-serif" }}>
+    <div style={{ fontFamily: "sans-serif", backgroundColor: "#111" }}>
       <Navigation />
       <Router>
         <Route path="/" element={<HomePage />} />

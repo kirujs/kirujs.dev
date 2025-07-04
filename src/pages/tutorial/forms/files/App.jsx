@@ -5,7 +5,7 @@ import { SelectField } from "./SelectField"
 import { countries } from "./constants"
 
 export function App() {
-  const form = useForm({
+  const { Field, Subscribe, handleSubmit } = useForm({
     initialValues: {
       name: "",
       email: "",
@@ -27,13 +27,13 @@ export function App() {
       <form
         onsubmit={(e) => {
           e.preventDefault()
-          form.handleSubmit()
+          handleSubmit()
         }}
       >
-        <form.Field
+        <Field
           name="name"
           validators={{
-            onChange: ({ value }) => !value?.trim() && "Name is required",
+            onChange: ({ value }) => !value.trim() && "Name is required",
           }}
           children={(field) => (
             <FormField label="Name" error={field.state.errors?.[0]} required>
@@ -48,11 +48,11 @@ export function App() {
           )}
         />
 
-        <form.Field
+        <Field
           name="email"
           validators={{
             onChange: ({ value }) => {
-              if (!value?.trim()) {
+              if (!value.trim()) {
                 return "Email is required"
               }
               if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
@@ -74,10 +74,10 @@ export function App() {
           )}
         />
 
-        <form.Field
+        <Field
           name="country"
           validators={{
-            onChange: (value) => !value && "Please select a country",
+            onChange: ({ value }) => !value.trim() && "Country is required",
           }}
           children={(field) => (
             <FormField label="Country" error={field.state.errors?.[0]} required>
@@ -92,7 +92,7 @@ export function App() {
           )}
         />
 
-        <form.Subscribe
+        <Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <button
@@ -101,11 +101,13 @@ export function App() {
               style={{
                 width: "100%",
                 padding: "12px",
-                backgroundColor: !canSubmit ? "#ccc" : "#007bff",
+                backgroundColor: "#007bff",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
                 marginTop: "20px",
+                opacity: canSubmit ? 1 : 0.5,
+                cursor: canSubmit ? "pointer" : "not-allowed",
               }}
             >
               {isSubmitting ? "Submitting..." : "Submit"}

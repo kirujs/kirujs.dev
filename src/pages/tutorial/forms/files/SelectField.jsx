@@ -7,13 +7,17 @@ export function SelectField({ value, onChange, options, placeholder, error }) {
       onchange={onChange}
       style={{
         ...inputStyle,
-        borderColor: error ? "#dc3545" : "#ddd"
+        borderColor: error ? "#dc3545" : "#ddd",
       }}
     >
-      <option value="">{placeholder}</option>
-      {options.map(option => (
-        <option key={option} value={option}>{option}</option>
+      <option value="" disabled>
+        {placeholder}
+      </option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
       ))}
     </select>
   )
-} 
+}
