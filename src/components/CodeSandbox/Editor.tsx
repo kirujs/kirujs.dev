@@ -79,6 +79,7 @@ export function Editor(props: ElementProps<"div">) {
       <CodeMirrorComponent
         initialContent={files[selectedFile]}
         onContentChanged={(content) => {
+          files[selectedFile] = content
           if (!onContentChanged.current) return
           onContentChanged.current(selectedFile, content)
         }}

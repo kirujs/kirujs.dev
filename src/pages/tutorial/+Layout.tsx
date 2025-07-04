@@ -116,40 +116,34 @@ export function Layout({ children }: { children: JSX.Children }) {
   if (isMobile) {
     return <MobileLayout files={files}>{children}</MobileLayout>
   }
-  const leftPane = (
-    <div className="bg-[#111] prose prose-invert h-full p-8 max-w-none w-full overflow-y-auto">
-      <nav className="not-prose w-full">
-        <TutorialNav />
-      </nav>
-      {children}
-    </div>
-  )
-
-  const editorPane = (
-    <Editor className="w-screen max-w-screen h-full max-h-[calc(100vh-37px+var(--navbar-height-negative))]" />
-  )
-  const previewPane = <CodeSandbox />
-
-  const rightPane = (
-    <div className="h-full">
-      <ResizablePane
-        firstPane={editorPane}
-        secondPane={previewPane}
-        direction="vertical"
-        initialFirstSize={50}
-        minFirstSize={20}
-        maxFirstSize={80}
-        className="h-full"
-      />
-    </div>
-  )
 
   return (
     <div className="flex flex-col h-full mt-[var(--navbar-height)]">
       <EditorProvider files={files}>
         <ResizablePane
-          firstPane={leftPane}
-          secondPane={rightPane}
+          firstPane={
+            <div className="bg-[#111] prose prose-invert h-full p-8 max-w-none w-full overflow-y-auto">
+              <nav className="not-prose w-full">
+                <TutorialNav />
+              </nav>
+              {children}
+            </div>
+          }
+          secondPane={
+            <div className="h-full">
+              <ResizablePane
+                firstPane={
+                  <Editor className="w-screen max-w-screen h-full max-h-[calc(100vh-37px+var(--navbar-height-negative))]" />
+                }
+                secondPane={<CodeSandbox />}
+                direction="vertical"
+                initialFirstSize={50}
+                minFirstSize={20}
+                maxFirstSize={80}
+                className="h-full"
+              />
+            </div>
+          }
           direction="horizontal"
           initialFirstSize={50}
           minFirstSize={20}

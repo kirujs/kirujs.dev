@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "kaioken"
+import { useEffect, useEffectEvent, useRef } from "kaioken"
 
 export function isLinkActive(href: string, urlPath: string) {
   return (
@@ -53,8 +53,8 @@ export function useDebounceThrottle(fn: () => void, delay: number) {
   useEffect(() => {
     return () => window.clearTimeout(timeoutRef.current)
   }, [])
-  return () => {
+  return useEffectEvent(() => {
     window.clearTimeout(timeoutRef.current)
     timeoutRef.current = window.setTimeout(fn, delay)
-  }
+  })
 }
