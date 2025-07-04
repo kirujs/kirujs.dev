@@ -86,7 +86,7 @@ function MobileLayout({
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-1/3 right-8 p-0.5 bg-[#1a1a1a] rounded-full">
+      <div className="fixed top-1/2 -translate-y-1/2 right-8 p-0.5 bg-[#1a1a1a] rounded-full">
         <div className="flex flex-col gap-1 relative">
           <MobileTabButton tab={MobileTab.Info}>
             <BookOpenTextIcon className="w-6 h-6" />
@@ -133,7 +133,7 @@ export function Layout({ children }: { children: JSX.Children }) {
             <div className="h-full">
               <ResizablePane
                 firstPane={
-                  <Editor className="w-screen max-w-screen h-full max-h-[calc(100vh-37px+var(--navbar-height-negative))]" />
+                  <Editor className="w-full max-w-full h-full max-h-[calc(100%-37px)]" />
                 }
                 secondPane={<CodeSandbox />}
                 direction="vertical"

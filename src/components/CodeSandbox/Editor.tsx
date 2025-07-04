@@ -84,7 +84,7 @@ export function Editor(props: ElementProps<"div">) {
           onContentChanged.current(selectedFile, content)
         }}
         extensions={extensions}
-        className={`flex-grow max-h-[calc(100%-40px)] ${props.className}`}
+        className={`flex-grow ${props.className}`}
         readonly={readonly}
       />
     </div>
