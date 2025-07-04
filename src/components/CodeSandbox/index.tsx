@@ -60,8 +60,10 @@ const nodeboxInitializationState = signal<
   "idle" | "initializing" | "initialized"
 >("idle")
 
+const iframeSrc = signal("")
+let currentFiles: Record<string, string> = {}
+
 function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
-  const prevWrittenFiles = useRef<Record<string, string> | null>(null)
   const nodeBox = useNodeBox()
   const previewIframeRef = useRef<HTMLIFrameElement>(null)
   const fileNames = Object.keys(files)
@@ -71,8 +73,8 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
   }
 
   const writeFiles = async (files: Record<string, string>) => {
-    if (prevWrittenFiles.current === files) return
-    prevWrittenFiles.current = files
+    if (currentFiles === files) return
+    currentFiles = files
     await Promise.all(
       Object.keys(files).map(async (file) => {
         nodeBox.fs.writeFile(`/src/${file}`, files[file])
@@ -89,10 +91,9 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
       const shell = nodeBox.shell.create()
       await shell.runCommand("node", ["startVite.js"])
       const previewInfo = await nodeBox.preview.waitForPort(3000, 10_000)
-      previewIframeRef.current!.setAttribute("src", previewInfo.url)
+      iframeSrc.value = previewInfo.url
       nodeboxInitializationState.value = "initialized"
     }
-
     init()
   }, [])
 
@@ -135,7 +136,11 @@ function CodeSandboxImpl({ files, readonly, ...props }: CodeSandboxProps) {
   // Preview pane with iframe
   const previewPane = (
     <div className="flex flex-col h-full relative">
-      <iframe ref={previewIframeRef} className="flex-grow h-full w-full" />
+      <iframe
+        ref={previewIframeRef}
+        src={iframeSrc}
+        className="flex-grow h-full w-full"
+      />
       <WorkerStatusDisplay />
     </div>
   )
