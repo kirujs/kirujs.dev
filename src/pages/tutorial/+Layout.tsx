@@ -4,11 +4,12 @@ import { ResizablePane } from "$/components/atoms/ResizablePane"
 import { useIsMobile } from "$/hooks/useMediaQuery"
 import { Editor, EditorProvider } from "$/components/CodeSandbox/Editor"
 import { useTutorialFiles } from "./hooks"
-import { signal, useMemo, useRef } from "kaioken"
+import { signal, useEffect, useRef } from "kaioken"
 import { CodeSandbox } from "$/components/CodeSandbox/CodeSandbox"
 import { BookOpenTextIcon } from "$/components/icons/BookOpenTextIcon"
 import { EditIcon } from "$/components/icons/EditIcon"
 import { EyeIcon } from "$/components/icons/EyeIcon"
+import { usePageContext } from "$/context/pageContext"
 
 enum MobileTab {
   Info,
@@ -50,6 +51,16 @@ function MobileLayout({
   children: JSX.Children
   files: Record<string, string>
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const { urlPathname } = usePageContext()
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      })
+    }
+  }, [urlPathname])
   return (
     <div className="flex flex-col h-[calc(100dvh+var(--navbar-height-negative))] mt-[var(--navbar-height)]">
       {/* Carousel Container */}
@@ -64,7 +75,10 @@ function MobileLayout({
           <EditorProvider files={files}>
             {/* Tab 1: Info */}
             <MobileTabWrapper>
-              <div className="prose prose-invert h-full p-8 max-w-none w-screen overflow-y-auto">
+              <div
+                className="prose prose-invert h-full p-8 max-w-none w-screen overflow-y-auto"
+                ref={scrollRef}
+              >
                 <nav className="not-prose w-full mb-4">
                   <TutorialNav />
                 </nav>
@@ -109,20 +123,29 @@ function MobileLayout({
   )
 }
 
-export function Layout({ children }: { children: JSX.Children }) {
-  const files = useTutorialFiles()
-  const isMobile = useIsMobile()
-
-  if (isMobile) {
-    return <MobileLayout files={files}>{children}</MobileLayout>
-  }
-
+function DesktopLayout({
+  children,
+  files,
+}: {
+  children: JSX.Children
+  files: Record<string, string>
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const { urlPathname } = usePageContext()
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0 })
+    }
+  }, [urlPathname])
   return (
     <div className="flex flex-col h-full mt-[var(--navbar-height)]">
       <EditorProvider files={files}>
         <ResizablePane
           firstPane={
-            <div className="bg-[#111] prose prose-invert h-full p-8 max-w-none w-full overflow-y-auto">
+            <div
+              className="bg-[#111] prose prose-invert h-full p-8 max-w-none w-full overflow-y-auto"
+              ref={scrollRef}
+            >
               <nav className="not-prose w-full">
                 <TutorialNav />
               </nav>
@@ -153,4 +176,15 @@ export function Layout({ children }: { children: JSX.Children }) {
       </EditorProvider>
     </div>
   )
+}
+
+export function Layout({ children }: { children: JSX.Children }) {
+  const files = useTutorialFiles()
+  const isMobile = useIsMobile()
+
+  if (isMobile) {
+    return <MobileLayout files={files}>{children}</MobileLayout>
+  }
+
+  return <DesktopLayout files={files}>{children}</DesktopLayout>
 }
