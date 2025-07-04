@@ -84,7 +84,7 @@ const INDEX_HTML = `
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS + Kaioken</title>
   </head>
-  <body style="background-color: #1c1a1a" >
+  <body>
     <div id="app"></div>
     <script type="module" src="/src/client.js"></script>
   </body>
@@ -95,7 +95,7 @@ const STYLES = `
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
 					'Open Sans', 'Helvetica Neue', sans-serif;
   color-scheme: dark;
-  background-color: #1c1a1a;
+  background-color: #0d090d;
   color: #f6f6f6;
 }
 * {

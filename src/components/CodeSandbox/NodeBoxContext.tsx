@@ -55,3 +55,25 @@ export const NodeBoxProvider: Kaioken.FC<{ fallback: JSX.Element }> = ({
     </NodeBoxContext.Provider>
   )
 }
+
+export function NodeBoxWorkerStatusDisplay() {
+  const status = useWorkerStatus()
+  if (!status) return null
+  switch (status.state) {
+    case "command_running":
+      return null
+    case "starting_command":
+    case "downloading_manifest":
+      return (
+        <small className="uppercase absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
+          {status.state + "..."}
+        </small>
+      )
+    case "downloaded_module":
+      return (
+        <small className="uppercase absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
+          {`downloaded module ${status.name}@${status.version}. total pending modules: ${status.totalPending}`}
+        </small>
+      )
+  }
+}

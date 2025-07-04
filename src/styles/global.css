@@ -21,6 +21,8 @@
 
   --breakpoint-xs: 460px;
 
+  --breakpoint-sm: 720px;
+
   --background-image-theme-gradient: linear-gradient(153deg, #972b3d8a, #471d1d8f);
 }
 
@@ -67,7 +69,6 @@
   --navbar-height-negative: -60px;
   --tw-border-opacity: 1;
   scroll-padding: 100px;
-  scrollbar-gutter: stable;
 }
 
 ::placeholder {

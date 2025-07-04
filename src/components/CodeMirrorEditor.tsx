@@ -32,6 +32,8 @@ export function CodeMirrorComponent({
     const extensions: readonly Extension[] = [
       //oneDark,
       kaiokenTheme,
+
+      // EditorView.lineWrapping,
       //myTheme,
       EditorState.readOnly.of(!!readonly),
       keymap.of([indentWithTab]),
@@ -63,7 +65,7 @@ export function CodeMirrorComponent({
 
   return (
     <div
-      className={"CodeMirror prose max-w-full flex w-full " + className}
+      className={"CodeMirror prose flex " + className}
       ref={elementRef}
       {...rest}
     />

@@ -33,7 +33,7 @@ const editorTheme = EditorView.theme(
   {
     "&": {
       color: "#fde3e3",
-      backgroundColor: "#111a",
+      //backgroundColor: "#111a",
     },
     ".cm-content": {
       caretColor: cursor,
