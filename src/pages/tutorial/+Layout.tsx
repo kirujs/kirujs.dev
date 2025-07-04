@@ -89,18 +89,18 @@ function MobileLayout({
       <div className="fixed top-1/2 -translate-y-1/2 right-8 p-0.5 bg-[#1a1a1a] rounded-full">
         <div className="flex flex-col gap-1 relative">
           <MobileTabButton tab={MobileTab.Info}>
-            <BookOpenTextIcon className="w-6 h-6" />
+            <BookOpenTextIcon className="w-5 h-5" />
           </MobileTabButton>
           <MobileTabButton tab={MobileTab.Editor}>
-            <EditIcon className="w-6 h-6" />
+            <EditIcon className="w-5 h-5" />
           </MobileTabButton>
           <MobileTabButton tab={MobileTab.Preview}>
-            <EyeIcon className="w-6 h-6" />
+            <EyeIcon className="w-5 h-5" />
           </MobileTabButton>
           <div
             className="transition-transform w-8 h-8 duration-300 absolute z-[-1] top-0 left-1/2 -translate-x-1/2 right-0 bg-[#b42641] rounded-full"
             style={{
-              transform: `translateY(calc(${currentMobileTab.value * 100}% + ${12 * currentMobileTab.value}px + 4px))`,
+              transform: `translateY(calc(${currentMobileTab.value * 100}% + ${8 * currentMobileTab.value}px + 2px))`,
             }}
           />
         </div>
