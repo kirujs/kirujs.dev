@@ -12,7 +12,7 @@ The Form API provides a declarative approach to form management, inspired by Tan
 import { useForm } from "kaioken/form"
 
 function MyForm() {
-  const form = useForm({
+  const { Field, Subscribe, handleSubmit } = useForm({
     initialValues: {
       name: "",
       email: ""
@@ -25,9 +25,9 @@ function MyForm() {
   return (
     <form onsubmit={(e) => {
       e.preventDefault()
-      form.handleSubmit()
+      handleSubmit()
     }}>
-      <form.Field
+      <Field
         name="name"
         validators={{
           onChange: ({ value }) => !value?.trim() && "Name is required"
@@ -64,7 +64,7 @@ The Form API automatically manages form state through the `useForm` hook:
 Each field can have its own validation rules:
 
 ```jsx
-<form.Field
+<Field
   name="email"
   validators={{
     onChange: ({ value }) => {
@@ -97,7 +97,7 @@ Each field can have its own validation rules:
 The Form API handles submission automatically:
 
 ```jsx
-<form.Subscribe
+<Subscribe
   selector={(state) => [state.canSubmit, state.isSubmitting]}
   children={([canSubmit, isSubmitting]) => (
     <button
@@ -124,7 +124,7 @@ Handle different input types with the same API:
 
 ```jsx
 // Text input
-<form.Field
+<Field
   name="name"
   validators={{ onChange: ({ value }) => !value && "Required" }}
   children={(field) => (
@@ -136,7 +136,7 @@ Handle different input types with the same API:
 />
 
 // Select dropdown
-<form.Field
+<Field
   name="country"
   validators={{ onChange: ({ value }) => !value && "Please select a country" }}
   children={(field) => (
