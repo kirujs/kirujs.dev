@@ -28,7 +28,7 @@ const iframeSrc = signal("")
 let currentFiles: Record<string, string> = {}
 
 function CodeSandboxImpl() {
-  const { configureContentChangedHandler, files, selectedFile } = useEditor()
+  const { subscribe, files, selectedFile } = useEditor()
   const nodeBox = useNodeBox()
   const previewIframeRef = useRef<HTMLIFrameElement>(null)
 
@@ -60,7 +60,7 @@ function CodeSandboxImpl() {
       nodeboxInitializationState.value = "initialized"
     }
     init()
-    configureContentChangedHandler(() => debouncedWrite())
+    return subscribe(() => debouncedWrite())
   }, [])
 
   useAsync(async () => {

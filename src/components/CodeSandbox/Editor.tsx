@@ -17,8 +17,8 @@ type EditorContextType = {
   files: Record<string, string>
   selectedFile: string
   setSelectedFile: (file: string) => void
-  configureContentChangedHandler: (callback: ContentChangedCallback) => void
-  onContentChanged: Kaioken.MutableRefObject<ContentChangedCallback | null>
+  subscribe: (callback: ContentChangedCallback) => () => void
+  onContentChanged: () => void
   readonly: boolean
 }
 
@@ -42,10 +42,11 @@ export function EditorProvider({
   if (!files[selectedFile] && fileNames.length > 0) {
     setSelectedFile(fileNames[0])
   }
-  const onContentChanged = useRef<ContentChangedCallback | null>(null)
-  const configureContentChangedHandler = (callback: ContentChangedCallback) => {
-    onContentChanged.current = callback
-  }
+
+  const [contentChangedCallbacks] = useState<Set<ContentChangedCallback>>(
+    () => new Set()
+  )
+
   return (
     <EditorContext.Provider
       value={{
@@ -53,8 +54,15 @@ export function EditorProvider({
         setSelectedFile,
         files,
         readonly: !!readonly,
-        configureContentChangedHandler,
-        onContentChanged,
+        subscribe: (callback) => {
+          contentChangedCallbacks.add(callback)
+          return () => contentChangedCallbacks.delete(callback)
+        },
+        onContentChanged: () => {
+          contentChangedCallbacks.forEach((callback) =>
+            callback(selectedFile, files[selectedFile])
+          )
+        },
       }}
     >
       {children}
@@ -80,8 +88,7 @@ export function Editor(props: ElementProps<"div">) {
         initialContent={files[selectedFile]}
         onContentChanged={(content) => {
           files[selectedFile] = content
-          if (!onContentChanged.current) return
-          onContentChanged.current(selectedFile, content)
+          onContentChanged()
         }}
         extensions={extensions}
         className={`flex-grow ${props.className}`}
