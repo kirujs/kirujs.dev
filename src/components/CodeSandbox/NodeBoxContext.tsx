@@ -11,6 +11,7 @@ async function initNodebox() {
   const iframe = (nodeboxIframe.value = document.createElement("iframe"))
   iframe.style.display = "none"
   document.body.appendChild(iframe)
+
   const log = (msg: string) => console.log("[nodebox]: " + msg)
 
   log("importing @codesandbox/nodebox")
@@ -28,7 +29,7 @@ async function initNodebox() {
   nodeboxInstance.value = nodeBox
 }
 
-const NodeBoxContext = createContext<Nodebox>(null as any)
+const NodeBoxContext = createContext<Nodebox>(null!)
 
 export const useNodeBox = () => useContext(NodeBoxContext)
 
@@ -58,6 +59,7 @@ export const NodeBoxProvider: Kaioken.FC<{ fallback: JSX.Element }> = ({
 
 export function NodeBoxWorkerStatusDisplay() {
   const status = useWorkerStatus()
+  console.log("nodebox worker status", status)
   if (!status) return null
   switch (status.state) {
     case "command_running":

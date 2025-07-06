@@ -1,4 +1,4 @@
-import { signal, useRef, useEffect } from "kaioken"
+import { signal, useRef, useEffect, useSignal } from "kaioken"
 import { className as cls } from "kaioken/utils"
 import { CodeSandbox } from "$/components/CodeSandbox/CodeSandbox"
 import { EditorProvider, Editor } from "$/components/CodeSandbox/Editor"
@@ -8,6 +8,7 @@ import { EyeIcon } from "$/components/icons/EyeIcon"
 import { usePageContext } from "$/context/pageContext"
 import { TutorialNav } from "./TutorialNav"
 import { useTutorialFiles } from "./hooks"
+import { IframeMenu } from "$/components/CodeSandbox/IframeMenu"
 
 enum MobileTab {
   Info,
@@ -21,7 +22,8 @@ export default function MobileLayout({ children }: { children: JSX.Children }) {
   const files = useTutorialFiles()
   const scrollRef = useRef<HTMLDivElement>(null)
   const { urlPathname } = usePageContext()
-
+  const iframePathname = useSignal("/")
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
@@ -29,6 +31,7 @@ export default function MobileLayout({ children }: { children: JSX.Children }) {
         behavior: "smooth",
       })
     }
+    iframePathname.value = "/"
   }, [urlPathname])
 
   return (
@@ -66,9 +69,19 @@ export default function MobileLayout({ children }: { children: JSX.Children }) {
 
             {/* Tab 3: Preview */}
             <MobileTabWrapper>
-              <div className="p-2 h-full bg-neutral-800">
+              <div className="p-2 h-full bg-neutral-800 flex flex-col gap-2">
+                <IframeMenu
+                  iframeRef={iframeRef}
+                  iframePathname={iframePathname}
+                  className="w-full bg-[#222] flex items-center gap-2"
+                />
                 <div className="h-full rounded-lg overflow-hidden">
-                  <CodeSandbox />
+                  <CodeSandbox
+                    onPathnameChange={(pathname) =>
+                      (iframePathname.value = pathname)
+                    }
+                    iframeRef={iframeRef}
+                  />
                 </div>
               </div>
             </MobileTabWrapper>

@@ -1,4 +1,4 @@
-import { useRef, useAsync, signal, useLayoutEffect } from "kaioken"
+import { useAsync, signal, useLayoutEffect } from "kaioken"
 import {
   NodeBoxProvider,
   useNodeBox,
@@ -7,15 +7,21 @@ import {
 import { FILES_MAP } from "./filesMap"
 import { useDebounceThrottle } from "$/utils"
 import { useEditor } from "./Editor"
+import { CustomMessage } from "./types"
 
-export function CodeSandbox() {
+type CodeSandboxProps = {
+  onPathnameChange?: (pathname: string) => void
+  iframeRef?: Kaioken.Ref<HTMLIFrameElement>
+}
+
+export function CodeSandbox(props: CodeSandboxProps) {
   return (
     <NodeBoxProvider
       fallback={
         <small className="uppercase">preparing sandbox environment...</small>
       }
     >
-      <CodeSandboxImpl />
+      <CodeSandboxImpl {...props} />
     </NodeBoxProvider>
   )
 }
@@ -27,10 +33,9 @@ const nodeboxInitializationState = signal<
 const iframeSrc = signal("")
 let currentFiles: Record<string, string> = {}
 
-function CodeSandboxImpl() {
+function CodeSandboxImpl({ onPathnameChange, iframeRef }: CodeSandboxProps) {
   const { subscribe, files } = useEditor()
   const nodeBox = useNodeBox()
-  const previewIframeRef = useRef<HTMLIFrameElement>(null)
 
   const writeFiles = async (files: Record<string, string>) => {
     if (currentFiles === files) return
@@ -55,8 +60,8 @@ function CodeSandboxImpl() {
       await nodeBox.fs.init({ ...FILES_MAP })
       await writeFiles(files)
       const shell = nodeBox.shell.create()
-      await shell.runCommand("node", ["./startVite.js"])
-      console.log("started vite")
+      const shellInfo = await shell.runCommand("node", ["./startVite.js"])
+      console.log("started vite", shellInfo)
       shell.on("exit", (code, error) => {
         console.log("shell exited", code, error)
       })
@@ -67,8 +72,21 @@ function CodeSandboxImpl() {
       iframeSrc.value = previewInfo.url
       nodeboxInitializationState.value = "initialized"
     }
+    const onMessage = (e: MessageEvent<CustomMessage>) => {
+      switch (e.data.type) {
+        case "code-sandbox:pathname":
+          onPathnameChange?.(e.data.pathname)
+          break
+      }
+    }
     init()
-    return subscribe(debouncedWrite)
+
+    window.addEventListener("message", onMessage)
+    const unsubscribe = subscribe(debouncedWrite)
+    return () => {
+      window.removeEventListener("message", onMessage)
+      unsubscribe()
+    }
   }, [])
 
   useAsync(async () => {
@@ -79,7 +97,7 @@ function CodeSandboxImpl() {
   return (
     <div className="flex flex-col h-full relative">
       <iframe
-        ref={previewIframeRef}
+        ref={iframeRef}
         src={iframeSrc}
         className="flex-grow h-full w-full"
       />

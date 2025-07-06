@@ -3,6 +3,13 @@ import { mount } from "kaioken"
 import { App } from "./App"
 mount(App, document.getElementById("app"))
 
+window.addEventListener("popstate", () => {
+  window.parent.postMessage(
+    { type: "code-sandbox:pathname", pathname: window.location.pathname },
+    "*"
+  )
+})
+
 const errorDisplay = Object.assign(document.createElement("div"), {
   id: "error-display",
 })

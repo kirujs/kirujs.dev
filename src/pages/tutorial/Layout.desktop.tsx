@@ -2,9 +2,11 @@ import { ResizablePane } from "$/components/atoms/ResizablePane"
 import { CodeSandbox } from "$/components/CodeSandbox/CodeSandbox"
 import { EditorProvider, Editor } from "$/components/CodeSandbox/Editor"
 import { usePageContext } from "$/context/pageContext"
-import { useRef, useEffect } from "kaioken"
+import { useRef, useEffect, useSignal } from "kaioken"
 import { TutorialNav } from "./TutorialNav"
 import { useTutorialFiles } from "./hooks"
+import { RefreshIcon } from "$/components/icons/RefreshIcon"
+import { IframeMenu } from "$/components/CodeSandbox/IframeMenu"
 
 export default function DesktopLayout({
   children,
@@ -14,11 +16,16 @@ export default function DesktopLayout({
   const files = useTutorialFiles()
   const scrollRef = useRef<HTMLDivElement>(null)
   const { urlPathname } = usePageContext()
+  const iframePathname = useSignal("/")
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: 0 })
     }
+    iframePathname.value = "/"
   }, [urlPathname])
+
   return (
     <div className="flex flex-col h-full mt-[var(--navbar-height)]">
       <EditorProvider files={files}>
@@ -43,7 +50,21 @@ export default function DesktopLayout({
                     className="w-full max-w-full h-full max-h-[calc(100%-37px)]"
                   />
                 }
-                secondPane={<CodeSandbox />}
+                secondPane={
+                  <div className="h-full relative flex flex-col">
+                    <IframeMenu
+                      iframeRef={iframeRef}
+                      iframePathname={iframePathname}
+                      className="w-full bg-[#222] px-2 py-1 flex items-center gap-2"
+                    />
+                    <CodeSandbox
+                      onPathnameChange={(pathname) =>
+                        (iframePathname.value = pathname)
+                      }
+                      iframeRef={iframeRef}
+                    />
+                  </div>
+                }
                 direction="vertical"
                 initialFirstSize={50}
                 minFirstSize={20}
