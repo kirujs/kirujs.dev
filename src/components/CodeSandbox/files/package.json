@@ -1,0 +1,21 @@
+{
+  "name": "kaioken-vite-custom-sandbox",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "kaioken": "latest",
+    "esbuild-wasm": "latest",
+    "@rollup/wasm-node": "latest"
+  },
+  "devDependencies": {
+    "vite": "4.5.5",
+    "vite-plugin-kaioken": "latest"
+  },
+  "npm": {
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
+  }
+}

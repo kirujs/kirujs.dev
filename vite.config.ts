@@ -16,20 +16,12 @@ export default defineConfig({
       $: path.resolve(__dirname, "src"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: ["/src/components/CodeSandbox/files/**/*"],
+    },
+  },
   plugins: [
-    //     {
-    //       name: "cf: emit '_headers' file",
-    //       buildStart() {
-    //         this.emitFile({
-    //           type: "asset",
-    //           fileName: "_headers",
-    //           source: `# custom cloudflare headers
-    // https://kaioken.dev/*
-    //   Content-Security-Policy: default-src 'self'; img-src 'self' kaioken.dev;
-    //           `,
-    //         })
-    //       },
-    //     },
     {
       enforce: "pre",
       ...mdx({
