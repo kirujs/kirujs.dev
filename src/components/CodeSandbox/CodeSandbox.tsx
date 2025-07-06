@@ -28,7 +28,7 @@ const iframeSrc = signal("")
 let currentFiles: Record<string, string> = {}
 
 function CodeSandboxImpl() {
-  const { subscribe, files, selectedFile } = useEditor()
+  const { subscribe, files } = useEditor()
   const nodeBox = useNodeBox()
   const previewIframeRef = useRef<HTMLIFrameElement>(null)
 
@@ -42,9 +42,9 @@ function CodeSandboxImpl() {
     )
   }
 
-  const debouncedWrite = useDebounceThrottle(() => {
+  const debouncedWrite = useDebounceThrottle((file: string, code: string) => {
     if (!nodeBox) return
-    nodeBox.fs.writeFile(`/src/${selectedFile}`, files[selectedFile])
+    nodeBox.fs.writeFile(`/src/${file}`, code)
   }, 50)
 
   useLayoutEffect(() => {
@@ -55,12 +55,12 @@ function CodeSandboxImpl() {
       await writeFiles(files)
       const shell = nodeBox.shell.create()
       await shell.runCommand("node", ["startVite.js"])
-      const previewInfo = await nodeBox.preview.waitForPort(3000, 10_000)
+      const previewInfo = await nodeBox.preview.waitForPort(8080, 10_000)
       iframeSrc.value = previewInfo.url
       nodeboxInitializationState.value = "initialized"
     }
     init()
-    return subscribe(() => debouncedWrite())
+    return subscribe(debouncedWrite)
   }, [])
 
   useAsync(async () => {

@@ -48,13 +48,16 @@ export function trapFocus(element: Element, e: KeyboardEvent) {
   }
 }
 
-export function useDebounceThrottle(fn: () => void, delay: number) {
+export function useDebounceThrottle<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number
+): T {
   const timeoutRef = useRef<number>(-1)
   useEffect(() => {
     return () => window.clearTimeout(timeoutRef.current)
   }, [])
-  return useEffectEvent(() => {
+  return useEffectEvent((...args: Parameters<T>) => {
     window.clearTimeout(timeoutRef.current)
-    timeoutRef.current = window.setTimeout(fn, delay)
-  })
+    timeoutRef.current = window.setTimeout(() => fn(...args), delay)
+  }) as T
 }

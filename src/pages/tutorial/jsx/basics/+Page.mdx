@@ -1,34 +1,60 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
 ## JSX Basics
 
-First, let's edit ``App.tsx`` and declare a ``name`` variable:
+<TutorialStep 
+  stepId="jsx-basics-declare-variable"
+  validator={(code) => {
+    // Check if the code contains a name variable declaration
+    return code.includes('const name = "Kaioken"') || code.includes("const name = 'Kaioken'")
+  }}
+>
+  First, let's edit ``App.jsx`` and declare a ``name`` variable:
 
-```jsx
-export default function App() {
-  const name = "Kaioken" // [!code ++]
-  return <h1>Hello world!</h1>
-}
-```
+  ```jsx
+  export default function App() {
+    const name = "Kaioken" // [!code ++]
+    return <h1>Hello world!</h1>
+  }
+  ```
+</TutorialStep>
 
-Then, we can refer to ``name`` in the markup:
+<TutorialStep 
+  stepId="jsx-basics-use-variable"
+  validator={(code) => {
+    // Check if the code uses {name} in the JSX
+    return code.includes('{name}') && code.includes('const name =')
+  }}
+>
+  Then, we can refer to ``name`` in the markup:
 
-```jsx
-export default function App() {
-  const name = "Kaioken"
-  return <h1>Hello |~~{name}~~|!</h1>
-}
-```
+  ```jsx
+  export default function App() {
+    const name = "Kaioken"
+    return <h1>Hello {name}!</h1>
+  }
+  ```
+</TutorialStep>
 
-Inside the curly braces, we can put any JavaScript expression we want. 
-Try adding ``.toUpperCase()`` for a shoutier greeting.
+<TutorialStep 
+  stepId="jsx-basics-uppercase"
+  validator={(code) => {
+    // Check if the code uses {name.toUpperCase()} in the JSX
+    return code.includes('{name.toUpperCase()}') && code.includes('const name =')
+  }}
+>
+  Inside the curly braces, we can put any JavaScript expression we want. 
+  Try adding ``.toUpperCase()`` for a shoutier greeting.
 
-```jsx
-export default function App() {
-  const name = "Kaioken"
-  return <h1>Hello {name|++.toUpperCase()++|}!</h1>
-}
-```
+  ```jsx
+  export default function App() {
+    const name = "Kaioken"
+    return <h1>Hello {name.toUpperCase()}!</h1>
+  }
+  ```
+</TutorialStep>
 
 <div className="flex justify-end">
   <a href="/tutorial/jsx/advanced" className="link-button">Next: JSX Advanced</a>

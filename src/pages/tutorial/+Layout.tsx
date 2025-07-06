@@ -10,6 +10,8 @@ import { BookOpenTextIcon } from "$/components/icons/BookOpenTextIcon"
 import { EditIcon } from "$/components/icons/EditIcon"
 import { EyeIcon } from "$/components/icons/EyeIcon"
 import { usePageContext } from "$/context/pageContext"
+import { TutorialStepsProvider } from "$/components/tutorials/TutorialStepsContext"
+import { TutorialFeedback } from "$/components/tutorials/TutorialFeedback"
 
 enum MobileTab {
   Info,
@@ -93,7 +95,11 @@ function MobileLayout({
 
             {/* Tab 3: Preview */}
             <MobileTabWrapper>
-              <CodeSandbox />
+              <div className="p-2 h-full bg-neutral-800">
+                <div className="h-full rounded-lg overflow-hidden">
+                  <CodeSandbox />
+                </div>
+              </div>
             </MobileTabWrapper>
           </EditorProvider>
         </div>
@@ -182,9 +188,11 @@ export function Layout({ children }: { children: JSX.Children }) {
   const files = useTutorialFiles()
   const isMobile = useIsMobile()
 
-  if (isMobile) {
-    return <MobileLayout files={files}>{children}</MobileLayout>
-  }
-
-  return <DesktopLayout files={files}>{children}</DesktopLayout>
+  const Layout = isMobile ? MobileLayout : DesktopLayout
+  return (
+    <TutorialStepsProvider>
+      <Layout files={files}>{children}</Layout>
+      <TutorialFeedback />
+    </TutorialStepsProvider>
+  )
 }

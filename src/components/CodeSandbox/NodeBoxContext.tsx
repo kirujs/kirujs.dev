@@ -11,17 +11,17 @@ async function initNodebox() {
   const iframe = (nodeboxIframe.value = document.createElement("iframe"))
   iframe.style.display = "none"
   document.body.appendChild(iframe)
-  const pref = "[nodebox]: "
+  const log = (msg: string) => console.log("[nodebox]: " + msg)
 
-  console.log(pref, "importing @codesandbox/nodebox")
+  log("importing @codesandbox/nodebox")
   const nBoxModule = await import("@codesandbox/nodebox")
-  console.log(pref, "imported @codesandbox/nodebox")
+  log("imported @codesandbox/nodebox")
 
   const nodeBox = new nBoxModule.Nodebox({ iframe })
 
-  console.log(pref, "connecting nodebox")
+  log("connecting...")
   await nodeBox.connect()
-  console.log(pref, "connected nodebox")
+  log("connected")
 
   const shell = nodeBox.shell.create()
   shell.on("progress", (status) => (workerStatus.value = status))

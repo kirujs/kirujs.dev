@@ -1,6 +1,7 @@
 import {
   createContext,
   ElementProps,
+  useCallback,
   useContext,
   useRef,
   useState,
@@ -18,8 +19,7 @@ type EditorContextType = {
   selectedFile: string
   setSelectedFile: (file: string) => void
   subscribe: (callback: ContentChangedCallback) => () => void
-  onContentChanged: () => void
-  readonly: boolean
+  setFileContent: (file: string, content: string) => void
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -30,11 +30,9 @@ export function useEditor() {
 
 export function EditorProvider({
   files,
-  readonly,
   children,
 }: {
   files: Record<string, string>
-  readonly?: boolean
   children: JSX.Children
 }) {
   const fileNames = Object.keys(files)
@@ -53,15 +51,13 @@ export function EditorProvider({
         selectedFile,
         setSelectedFile,
         files,
-        readonly: !!readonly,
         subscribe: (callback) => {
           contentChangedCallbacks.add(callback)
           return () => contentChangedCallbacks.delete(callback)
         },
-        onContentChanged: () => {
-          contentChangedCallbacks.forEach((callback) =>
-            callback(selectedFile, files[selectedFile])
-          )
+        setFileContent: (file, content) => {
+          files[file] = content
+          contentChangedCallbacks.forEach((callback) => callback(file, content))
         },
       }}
     >
@@ -70,12 +66,15 @@ export function EditorProvider({
   )
 }
 
-export function Editor(props: ElementProps<"div">) {
-  const { files, selectedFile, setSelectedFile, readonly, onContentChanged } =
-    useEditor()
+export function Editor(props: ElementProps<"div"> & { readonly?: boolean }) {
+  const { files, selectedFile, setSelectedFile, setFileContent } = useEditor()
   const extensions = useMemo(
     () => [javascript({ jsx: true, typescript: true })],
     []
+  )
+  const onContentChanged = useCallback(
+    (content: string) => setFileContent(selectedFile, content),
+    [selectedFile]
   )
   return (
     <div className="flex flex-col h-full">
@@ -86,13 +85,10 @@ export function Editor(props: ElementProps<"div">) {
       />
       <CodeMirrorComponent
         initialContent={files[selectedFile]}
-        onContentChanged={(content) => {
-          files[selectedFile] = content
-          onContentChanged()
-        }}
+        onContentChanged={onContentChanged}
         extensions={extensions}
         className={`flex-grow ${props.className}`}
-        readonly={readonly}
+        readonly={props.readonly}
       />
     </div>
   )

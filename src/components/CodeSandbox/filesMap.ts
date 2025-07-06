@@ -57,7 +57,7 @@ async function startViteServer() {
       // Optional: Define Vite-specific options here if needed
       // This is similar to the vite.config.js configuration
       server: {
-        port: 3000,  // Customize the port if desired
+        port: 8080,  // Customize the port if desired
       },
       
       plugins: [kaioken({devtools:false})],
