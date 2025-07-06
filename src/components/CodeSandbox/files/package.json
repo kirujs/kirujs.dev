@@ -6,8 +6,7 @@
   },
   "dependencies": {
     "kaioken": "latest",
-    "esbuild-wasm": "latest",
-    "@rollup/wasm-node": "latest"
+    "esbuild-wasm": "latest"
   },
   "devDependencies": {
     "vite": "4.5.5",
