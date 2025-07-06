@@ -10,6 +10,9 @@ function getTitle(pageContext: PageContext) {
   if (typeof val === "function") {
     return val(pageContext)
   }
+  if (pageContext.urlPathname.startsWith("/tutorial")) {
+    return "Tutorial: " + val
+  }
   return val || "Kaioken"
 }
 
