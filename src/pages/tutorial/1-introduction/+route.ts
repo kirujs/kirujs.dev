@@ -1,1 +1,1 @@
-export default "/introduction"
+export default "/tutorial/introduction"

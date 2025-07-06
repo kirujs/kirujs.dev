@@ -1,1 +1,1 @@
-export default "/routing"
+export default "/tutorial/routing"

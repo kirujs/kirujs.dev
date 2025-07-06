@@ -1,1 +1,1 @@
-export default "/fetching/use-swr"
+export default "/tutorial/fetching/use-swr"

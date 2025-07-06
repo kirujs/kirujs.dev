@@ -1,1 +1,1 @@
-export default "/forms"
+export default "/tutorial/forms"

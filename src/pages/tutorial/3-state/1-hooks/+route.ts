@@ -1,1 +1,1 @@
-export default "/state/hooks"
+export default "/tutorial/state/hooks"

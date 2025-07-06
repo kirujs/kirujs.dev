@@ -1,1 +1,1 @@
-export default "/fetching/use-async"
+export default "/tutorial/fetching/use-async"

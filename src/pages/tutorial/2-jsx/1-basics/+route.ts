@@ -1,1 +1,1 @@
-export default "/jsx/basics"
+export default "/tutorial/jsx/basics"

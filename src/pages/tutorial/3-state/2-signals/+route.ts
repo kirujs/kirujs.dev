@@ -1,1 +1,1 @@
-export default "/state/signals"
+export default "/tutorial/state/signals"
