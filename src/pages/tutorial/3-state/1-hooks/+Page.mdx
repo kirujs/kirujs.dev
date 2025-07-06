@@ -3,123 +3,258 @@ import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFoo
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
-## State Management with Hooks
+## State & Hooks
 
-Hooks let you use state and other Kaioken features in functional components. The most fundamental hook is `useState`.
+State allows components to remember information and react to user interactions. 
+Let's build a todo app to learn how state works in Kaioken using the `useState` hook.
 
 <TutorialStep 
-  stepId="state-hooks-basic-counter"
+  stepId="state-hooks-basic-state"
   validator={(code) => {
-    // Check if the code uses useState and setCount
-    return code.includes('useState') && code.includes('setCount') && code.includes('count')
+    return code.includes('import { useState } from "kaioken"') &&
+      code.includes('const [todos, setTodos] = useState([])') &&
+      code.includes('Add Todo')
   }}
 >
-  Let's create a simple counter using `useState`. Add state to track the count:
+  First, let's add state to track our todos. Import `useState` and create a todos state:
 
   ```jsx
-  import { useState } from "kaioken"
+  import { useState } from "kaioken" // [!code ++]
 
   export function App() {
-    const [count, setCount] = useState(0)
+    const [todos, setTodos] = useState([])
     
     return (
-      <div>
-        <h2>Count: {count}</h2>
-        <button onclick={() => setCount(count + 1)}>+</button>
-        <button onclick={() => setCount(count - 1)}>-</button>
-      </div>
+      |++<ul>++|
+        |++{todos.map((todo) => (++|
+          |++<li key={todo.id}>++|
+            |++<span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>++|
+              |++{todo.text}++|
+            |++</span>++|
+          |++</li>++|
+        |++))}++|
+      |++</ul>++|
     )
   }
   ```
 
-  `useState(0)` creates state with initial value `0` and returns `[currentValue, setterFunction]`.
+  `useState([])` creates state with an empty array as the initial value.
+  It returns `[currentValue, setterFunction]` that we destructure.
 </TutorialStep>
 
 <TutorialStep 
-  stepId="state-hooks-multiple-state"
+  stepId="state-hooks-add-todo"
   validator={(code) => {
-    // Check if the code uses multiple useState hooks
-    return code.includes('useState') && code.includes('setName') && code.includes('setEmail') && code.includes('setAge')
+    return code.includes('const addTodo = () => {') &&
+      code.includes('setTodos([...todos, newTodo])') &&
+      code.includes('onclick={addTodo}')
   }}
 >
-  Now let's use multiple state variables for a user form:
+  Now let's add functionality to create new todos:
 
   ```jsx
   import { useState } from "kaioken"
 
   export function App() {
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [age, setAge] = useState(0)
+    const [todos, setTodos] = useState([])
     
-    return (
-      <div>
-        <h2>User Form</h2>
-        <input 
-          placeholder="Name"
-          value={name}
-          oninput={(e) => setName(e.target.value)}
-        />
-        <input 
-          placeholder="Email"
-          value={email}
-          oninput={(e) => setEmail(e.target.value)}
-        />
-        <input 
-          type="number"
-          placeholder="Age"
-          value={age}
-          oninput={(e) => setAge(Number(e.target.value))}
-        />
-        <p>Hello {name}, {age} years old, email: {email}</p>
-      </div>
-    )
-  }
-  ```
-
-  You can use multiple `useState` hooks for different values in the same component.
-</TutorialStep>
-
-<TutorialStep 
-  stepId="state-hooks-object-state"
-  validator={(code) => {
-    // Check if the code uses object state with spread operator
-    return code.includes('useState({') && code.includes('...user') && code.includes('setUser')
-  }}
->
-  For complex state, you can use objects. Let's create a user profile:
-
-  ```jsx
-  import { useState } from "kaioken"
-
-  export function App() {
-    const [user, setUser] = useState({
-      name: "John",
-      age: 30,
-      email: "john@example.com"
-    })
-    
-    const updateAge = () => {
-      setUser({ ...user, age: user.age + 1 })
-    }
-    
-    const updateName = (newName) => {
-      setUser({ ...user, name: newName })
+    const addTodo = () => {
+      const newTodo = {
+        id: Date.now(),
+        text: `Todo ${todos.length + 1}`,
+        completed: false
+      }
+      setTodos([...todos, newTodo])
     }
     
     return (
       <div>
-        <h1>{user.name}</h1>
-        <p>Age: {user.age}</p>
-        <p>Email: {user.email}</p>
-        <button onclick={updateAge}>Birthday</button>
-        <button onclick={() => updateName("Jane")}>Change Name</button>
+        <h1>Todo App</h1>
+        <p>You have {todos.length} todos</p>
+        <button |++onclick={addTodo}++|>Add Todo</button>
       </div>
     )
   }
   ```
 
-  Use the spread operator `...user` to update only specific properties of an object.
+  We use the spread operator `...todos` to create a new array with the existing todos plus the new one.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="state-hooks-render-todos"
+  validator={(code) => {
+    return code.includes('{todos.map(') &&
+      code.includes('key={todo.id}') &&
+      code.includes('{todo.text}') &&
+      code.includes('todo.completed')
+  }}
+>
+  Let's display the todos in a list and show their completion status:
+
+  ```jsx
+  import { useState } from "kaioken"
+
+  export function App() {
+    const [todos, setTodos] = useState([])
+    
+    const addTodo = () => {
+      const newTodo = {
+        id: Date.now(),
+        text: `Todo ${todos.length + 1}`,
+        completed: false
+      }
+      setTodos([...todos, newTodo])
+    }
+    
+    return (
+      <div>
+        <h1>Todo App</h1>
+        <p>You have {todos.length} todos</p>
+        <button onclick={addTodo}>Add Todo</button>
+        
+        |++<ul>++|
+          |++{todos.map((todo) => (++|
+            |++<li key={todo.id}>++|
+              |++<span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>++|
+                |++{todo.text}++|
+              |++</span>++|
+            |++</li>++|
+          |++))}++|
+        |++</ul>++|
+      </div>
+    )
+  }
+  ```
+
+  We use `map()` to render each todo, and conditional styling to show completed todos with strikethrough.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="state-hooks-toggle-todo"
+  validator={(code) => {
+    return code.includes('const toggleTodo = (id) => {') &&
+      code.includes('setTodos(todos.map(') &&
+      code.includes('todo.id === id ? { ...todo, completed: !todo.completed } : todo') &&
+      code.includes('onclick={() => toggleTodo(todo.id)}')
+  }}
+>
+  Now let's add the ability to toggle todos as completed:
+
+  ```jsx
+  import { useState } from "kaioken"
+
+  export function App() {
+    const [todos, setTodos] = useState([])
+    
+    const addTodo = () => {
+      const newTodo = {
+        id: Date.now(),
+        text: `Todo ${todos.length + 1}`,
+        completed: false
+      }
+      setTodos([...todos, newTodo])
+    }
+    
+    const toggleTodo = (id) => {
+      setTodos(todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      ))
+    }
+    
+    return (
+      <div>
+        <h1>Todo App</h1>
+        <p>You have {todos.length} todos</p>
+        <button onclick={addTodo}>Add Todo</button>
+        
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              <span 
+                style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+                |++onclick={() => toggleTodo(todo.id)}++|
+              >
+                {todo.text}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  We update state by creating a new array where the clicked todo's `completed` status is toggled.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="state-hooks-input-state"
+  validator={(code) => {
+    return code.includes('const [inputValue, setInputValue] = useState("")') &&
+      code.includes('value={inputValue}') &&
+      code.includes('oninput={(e) => setInputValue(e.target.value)}') &&
+      code.includes('text: inputValue')
+  }}
+>
+  Finally, let's add an input field so users can create custom todos:
+
+  ```jsx
+  import { useState } from "kaioken"
+
+  export function App() {
+    const [todos, setTodos] = useState([])
+    const [inputValue, setInputValue] = useState("")
+    
+    const addTodo = () => {
+      if (!inputValue.trim()) return // [!code ++]
+      const newTodo = {
+        id: Date.now(),
+        text: |~~inputValue~~|,
+        completed: false
+      }
+      setTodos([...todos, newTodo])
+      setInputValue("") // [!code ++]
+    }
+    
+    const toggleTodo = (id) => {
+      setTodos(todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      ))
+    }
+    
+    return (
+      <div>
+        <h1>Todo App</h1>
+        <p>You have {todos.length} todos</p>
+        
+        |++<div>++|
+          |++<input ++|
+            |++type="text"++|
+            |++value={inputValue}++|
+            |++oninput={(e) => setInputValue(e.target.value)}++|
+            |++placeholder="Enter a todo"++|
+          |++/>++|
+          <button onclick={addTodo}>Add Todo</button>
+        |++</div>++|
+        
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              <span 
+                style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+                onclick={() => toggleTodo(todo.id)}
+              >
+                {todo.text}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  We now have a fully functional todo app! Notice how we use multiple state variables and update them independently.
 </TutorialStep>
 
 <TutorialContentFooter

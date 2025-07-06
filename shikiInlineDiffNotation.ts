@@ -18,16 +18,21 @@ function splitAndColorTokens(
     // split them into separate tokens
     if (line[matchStartIdx].content !== options.matchStart) {
       const [pre, post] = line[matchStartIdx].content.split(options.matchStart)
+      console.log("~~~~~~~matchStart~~~~~~~\n", line[matchStartIdx], {
+        pre,
+        post,
+      })
+      line[matchStartIdx].content = pre
       if (post.length > 0) {
-        line[matchStartIdx].content = pre
         const newToken = {
           content: post,
           bgColor: line[matchStartIdx].bgColor,
           offset: line[matchStartIdx].offset,
         }
+
         line.splice(matchStartIdx + 1, 0, newToken)
-        matchStartIdx++
       }
+      matchStartIdx++
     } else {
       line.splice(matchStartIdx, 1)
     }
@@ -41,6 +46,10 @@ function splitAndColorTokens(
 
     if (line[matchEndIdx].content !== options.matchEnd) {
       const [pre, post] = line[matchEndIdx].content.split(options.matchEnd)
+      console.log("~~~~~~~matchEnd~~~~~~~\n", line[matchEndIdx], {
+        pre,
+        post,
+      })
       line[matchEndIdx].content = pre
       if (post.length > 0) {
         const newToken = {
