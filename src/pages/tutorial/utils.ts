@@ -1,14 +1,5 @@
 import { TutorialItem, tutorials } from "./meta"
 
-export function mapFiles(fileMap: Record<string, unknown>) {
-  return Object.fromEntries(
-    Object.entries(fileMap).map(([path, file]) => [
-      path.replace("./files/", ""),
-      (file as { default: string }).default,
-    ])
-  )
-}
-
 export function matchUrl(url: string): null | { stack: TutorialItem[] } {
   const urlParts = url.split("/").filter(Boolean)
 

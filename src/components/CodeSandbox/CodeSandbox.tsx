@@ -40,6 +40,7 @@ function CodeSandboxImpl() {
         nodeBox.fs.writeFile(`/src/${file}`, files[file])
       })
     )
+    console.log("wrote files", files)
   }
 
   const debouncedWrite = useDebounceThrottle((file: string, code: string) => {
@@ -51,20 +52,16 @@ function CodeSandboxImpl() {
     async function init() {
       if (nodeboxInitializationState.value !== "idle") return
       nodeboxInitializationState.value = "initializing"
-      console.log("writing file map", FILES_MAP)
       await nodeBox.fs.init({ ...FILES_MAP })
-      console.log("wrote file map")
-      console.log("writing files", files)
       await writeFiles(files)
-      console.log("wrote files")
       const shell = nodeBox.shell.create()
       await shell.runCommand("node", ["./startVite.js"])
       console.log("started vite")
       shell.on("exit", (code, error) => {
-        console.log("vite exited", code, error)
+        console.log("shell exited", code, error)
       })
       shell.on("progress", (status) => {
-        console.log("vite progress", status)
+        console.log("shell progress", status)
       })
       const previewInfo = await nodeBox.preview.waitForPort(8080, 10_000)
       iframeSrc.value = previewInfo.url
