@@ -1,4 +1,5 @@
 import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
@@ -236,7 +237,7 @@ The `useAsync` hook makes it easy to handle asynchronous operations like API cal
   Use the `refetch` function to manually retry failed requests or refresh data.
 </TutorialStep>
 
-<div className="flex justify-between">
-  <a href="/tutorial/forms" className="link-button">Previous: Forms</a>
-  <a href="/tutorial/fetching/use-swr" className="link-button">Next: useSWR</a>
-</div> 
+<TutorialContentFooter
+  previous={{ label: "Forms", href: "/tutorial/forms" }}
+  next={{ label: "useSWR", href: "/tutorial/fetching/use-swr" }}
+/>

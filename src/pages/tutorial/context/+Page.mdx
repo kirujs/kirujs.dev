@@ -1,4 +1,5 @@
 import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
@@ -161,7 +162,8 @@ Context lets you share state between components without passing props through ev
   Now you have a clean, modular theme system using Context!
 </TutorialStep>
 
-<div className="flex justify-between">
-  <a href="/tutorial/state/signals" className="link-button">Previous: Signals</a>
-  <a href="/tutorial/routing" className="link-button">Next: Routing</a>
-</div>
+<TutorialContentFooter
+  previous={{ label: "Signals", href: "/tutorial/state/signals" }}
+  next={{ label: "Routing", href: "/tutorial/routing" }}
+/>
+

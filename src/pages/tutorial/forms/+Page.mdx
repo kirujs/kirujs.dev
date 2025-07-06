@@ -1,4 +1,5 @@
 import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
@@ -264,7 +265,7 @@ Forms are essential for collecting user input. Kaioken's Form API makes it simpl
   Now you have a clean, modular form system with reusable components and validation!
 </TutorialStep>
 
-<div className="flex justify-between">
-  <a href="/tutorial/routing" className="link-button">Previous: Routing</a>
-  <a href="/tutorial/fetching/use-async" className="link-button">Next: Data Fetching</a>
-</div> 
+<TutorialContentFooter
+  previous={{ label: "Routing", href: "/tutorial/routing" }}
+  next={{ label: "useAsync", href: "/tutorial/fetching/use-async" }}
+/>

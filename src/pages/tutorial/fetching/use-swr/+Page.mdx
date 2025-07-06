@@ -1,4 +1,5 @@
 import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
@@ -266,7 +267,7 @@ useSWR provides smart data fetching with caching and automatic revalidation. It'
   Use `mutate(newData, false)` for optimistic updates, then `mutate()` to revalidate from the server.
 </TutorialStep>
 
-<div className="flex justify-between">
-  <a href="/tutorial/fetching/use-async" className="link-button">Previous: useAsync</a>
-  <a href="/tutorial/introduction" className="link-button">🎉 Tutorial Complete!</a>
-</div> 
+<TutorialContentFooter
+  previous={{ label: "useAsync", href: "/tutorial/fetching/use-async" }}
+  next={{ label: "Introduction", href: "/tutorial/introduction" }}
+/>

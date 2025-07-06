@@ -1,4 +1,5 @@
 import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
@@ -176,7 +177,7 @@ Signals are Kaioken's reactive state system. Unlike hooks, signals work anywhere
   This global state is shared across all components without any setup!
 </TutorialStep>
 
-<div className="flex justify-between">
-  <a href="/tutorial/state/hooks" className="link-button">Previous: Hooks</a>
-  <a href="/tutorial/context" className="link-button">Next: Context</a>
-</div> 
+<TutorialContentFooter
+  previous={{ label: "State & Hooks", href: "/tutorial/state/hooks" }}
+  next={{ label: "Context", href: "/tutorial/context" }}
+/>

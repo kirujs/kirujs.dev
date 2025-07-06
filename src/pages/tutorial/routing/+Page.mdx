@@ -1,4 +1,5 @@
 import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
@@ -217,7 +218,7 @@ Kaioken's built-in router makes it easy to create single-page applications with 
   Now you have a complete routing system with navigation, dynamic routes, and modular components!
 </TutorialStep>
 
-<div className="flex justify-between">
-  <a href="/tutorial/context" className="link-button">Previous: Context</a>
-  <a href="/tutorial/forms" className="link-button">Next: Forms</a>
-</div> 
+<TutorialContentFooter
+  previous={{ label: "Context", href: "/tutorial/context" }}
+  next={{ label: "Forms", href: "/tutorial/forms" }}
+/>

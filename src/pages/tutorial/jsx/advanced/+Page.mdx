@@ -1,4 +1,5 @@
 import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
 
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
@@ -106,7 +107,7 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
   are able to filter the posts by their publication status.
 </TutorialStep>
 
-<div className="flex justify-between">
-  <a href="/tutorial/jsx/basics" className="link-button">Previous: JSX Basics</a>
-  <a href="/tutorial/state/hooks" className="link-button">Next: State & Hooks</a>
-</div>
+<TutorialContentFooter
+  previous={{ label: "JSX Basics", href: "/tutorial/jsx/basics" }}
+  next={{ label: "State & Hooks", href: "/tutorial/state/hooks" }}
+/>
