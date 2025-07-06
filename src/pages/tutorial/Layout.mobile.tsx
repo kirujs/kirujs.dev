@@ -7,7 +7,6 @@ import { EditIcon } from "$/components/icons/EditIcon"
 import { EyeIcon } from "$/components/icons/EyeIcon"
 import { usePageContext } from "$/context/pageContext"
 import { TutorialNav } from "./TutorialNav"
-import { useTutorialFiles } from "./hooks"
 import { IframeMenu } from "$/components/CodeSandbox/IframeMenu"
 
 enum MobileTab {
@@ -18,8 +17,13 @@ enum MobileTab {
 
 const currentMobileTab = signal<MobileTab>(MobileTab.Info)
 
-export default function MobileLayout({ children }: { children: JSX.Children }) {
-  const files = useTutorialFiles()
+export default function MobileLayout({
+  children,
+  files,
+}: {
+  children: JSX.Children
+  files: Record<string, string>
+}) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const { urlPathname } = usePageContext()
   const iframePathname = useSignal("/")

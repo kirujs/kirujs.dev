@@ -4,16 +4,15 @@ import { EditorProvider, Editor } from "$/components/CodeSandbox/Editor"
 import { usePageContext } from "$/context/pageContext"
 import { useRef, useEffect, useSignal } from "kaioken"
 import { TutorialNav } from "./TutorialNav"
-import { useTutorialFiles } from "./hooks"
-import { RefreshIcon } from "$/components/icons/RefreshIcon"
 import { IframeMenu } from "$/components/CodeSandbox/IframeMenu"
 
 export default function DesktopLayout({
   children,
+  files,
 }: {
   children: JSX.Children
+  files: Record<string, string>
 }) {
-  const files = useTutorialFiles()
   const scrollRef = useRef<HTMLDivElement>(null)
   const { urlPathname } = usePageContext()
   const iframePathname = useSignal("/")
