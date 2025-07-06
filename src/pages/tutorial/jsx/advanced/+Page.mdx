@@ -10,8 +10,11 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
 <TutorialStep 
   stepId="jsx-advanced-render-list"
   validator={(code) => {
-    return code.includes('import { PostList } from "./PostList"') &&
-      code.includes('<PostList posts={posts}')
+    return code.includes('import { PostItem } from "./PostItem"') &&
+      code.includes('{posts.map(') &&
+      code.includes('<PostItem') &&
+      code.includes('key={post.id}') &&
+      code.includes('post={post}')
   }}
 > 
   Let's start with rendering a list of posts using `map()`. Update `App.jsx` to render the posts in a list:
@@ -28,11 +31,17 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
     
     return (
       <div>
-        |++{posts.map(post => (<PostItem key={post.id} post={post} />))}++|
+        |++{posts.map((post) => (<PostItem key={post.id} post={post} />))}++|
       </div>
     )
   }
   ```
+
+  <p className="font-medium text-xs">
+    **Note**: The `key` prop helps Kaioken efficiently update the DOM when the list changes. 
+    Always use a stable, unique value like `id` for list keys.
+  </p>
+
 </TutorialStep>
 
 <TutorialStep 
@@ -47,81 +56,34 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
       code.includes('Draft')
   }}
 > 
-  Now let's enhance the `PostItem.jsx` component to display the post's title, content, and publication status:
+  Now let's enhance the `PostItem.jsx` component to display the post's content
+  and publication status:
 
   ```jsx
   export function PostItem({ post }) {
     return (
-      <article style={{ 
-        border: '1px solid #ddd', 
-        borderRadius: '8px', 
-        padding: '16px', 
-        margin: '16px 0',
-        backgroundColor: post.published ? '#f8f9fa' : '#fff3cd'
-      }}>
+      <article>
         <h3>{post.title}</h3>
-        <p>{post.content}</p>
-        <span style={{ 
-          color: post.published ? '#28a745' : '#ffc107',
-          fontWeight: 'bold'
-        }}>
-          {post.published ? '✅ Published' : '📝 Draft'}
-        </span>
+        |++<p>{post.content}</p>++|
+        |++<span>Status: {post.published ? "Published" : "Draft"}</span>++|
       </article>
     )
   }
   ```
-
-  This component accepts a `post` prop and renders it with conditional styling based on the `published` status.
 </TutorialStep>
 
 <TutorialStep 
-  stepId="jsx-advanced-post-list"
-  watchFile="PostList.jsx"
+  stepId="jsx-advanced-conditional-rendering"
   validator={(code) => {
-    return code.includes('export function PostList') && code.includes('import') && code.includes('PostItem') && code.includes('.map(') && code.includes('key={post.id}')
+    return true
   }}
 >
-  ## Step 3: Create PostList Component
-  
-  Update the `PostList.jsx` component to use PostItem and handle the list logic:
+  Finally, let's filter the posts by their publication status:
 
   ```jsx
   import { PostItem } from "./PostItem"
 
-  export function PostList({ posts }) {
-    if (posts.length === 0) {
-      return <p>No posts yet. Start writing!</p>
-    }
-
-    return (
-      <div>
-        {posts.map(post => (
-          <PostItem
-            key={post.id}
-            post={post}
-          />
-        ))}
-      </div>
-    )
-  }
-  ```
-
-  This component handles the list logic and conditional rendering when there are no posts.
-</TutorialStep>
-
-<TutorialStep 
-  stepId="jsx-advanced-use-components"
-  validator={(code) => {
-    return code.includes('import') && code.includes('PostList') && code.includes('<PostList') && code.includes('publishedCount')
-  }}
->
-  ## Step 4: Use the Components
-  
-  Finally, update your `App.jsx` to use the new components with additional features:
-
-  ```jsx
-  import { PostList } from "./PostList"
+  const showDrafts = false // [!code ++]
 
   export function App() {
     const posts = [
@@ -129,31 +91,19 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
       { id: 2, title: "Advanced JSX Patterns", content: "Explore dynamic rendering and component composition", published: false },
       { id: 3, title: "State Management Tips", content: "Best practices for managing app state", published: true }
     ]
-    
-    const publishedCount = posts.filter(post => post.published).length
-    const draftCount = posts.length - publishedCount
+
+    const filteredPosts = showDrafts ? posts : posts.filter((post) => post.published) // [!code ++]
     
     return (
-      <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-        <h1>📝 My Blog Posts</h1>
-        <div style={{ marginBottom: '20px' }}>
-          <span style={{ marginRight: '20px' }}>Published: {publishedCount}</span>
-          <span>Drafts: {draftCount}</span>
-        </div>
-        
-        <PostList posts={posts} />
-        
-        {publishedCount === posts.length && posts.length > 0 && (
-          <div style={{ color: 'green', fontWeight: 'bold', marginTop: '20px', textAlign: 'center' }}>
-            🎉 All posts are published!
-          </div>
-        )}
+      <div>
+        {|~~filteredPosts~~|.map((post) => (<PostItem key={post.id} post={post} />))}
       </div>
     )
   }
   ```
 
-  Now you have a modular blog posts app with separate, reusable components!
+  We now have a blog posts app with a list of posts, a post item component, and 
+  are able to filter the posts by their publication status.
 </TutorialStep>
 
 <div className="flex justify-between">

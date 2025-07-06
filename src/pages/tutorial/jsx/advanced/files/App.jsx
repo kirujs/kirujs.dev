@@ -1,23 +1,8 @@
 export function App() {
   const posts = [
-    {
-      id: 1,
-      title: "Getting Started with Kaioken",
-      content: "Learn the basics of this modern framework",
-      published: true,
-    },
-    {
-      id: 2,
-      title: "Advanced JSX Patterns",
-      content: "Explore dynamic rendering and component composition",
-      published: false,
-    },
-    {
-      id: 3,
-      title: "State Management Tips",
-      content: "Best practices for managing app state",
-      published: true,
-    },
+    { id: 1, title: "Getting Started with Kaioken", content: "Learn the basics of this modern framework", published: true },
+    { id: 2, title: "Advanced JSX Patterns", content: "Explore dynamic rendering and component composition", published: false },
+    { id: 3, title: "State Management Tips", content: "Best practices for managing app state", published: true }
   ]
 
   return <div></div>
