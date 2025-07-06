@@ -1,85 +1,180 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
 ## Signals - Reactive State Management
 
-Signals are Kaioken's powerful reactive state management system. Unlike hooks, signals can be used outside of components and automatically update any components that use them.
+Signals are Kaioken's reactive state system. Unlike hooks, signals work anywhere in your code and automatically update components that use them.
 
-### Creating Signals
+<TutorialStep 
+  stepId="signals-basic-counter"
+  validator={(code) => {
+    // Check if the code creates a signal and uses it in a component
+    return code.includes('signal(') && code.includes('count.value') && code.includes('count.value++')
+  }}
+>
+  Let's create a simple counter using signals. First, create a signal and use it in a component:
 
-Create a signal with an initial value:
+  ```jsx
+  import { signal } from "kaioken"
 
-```jsx
-import { signal } from "kaioken"
+  const count = signal(0)
 
-const count = signal(0)
-```
+  export function App() {
+    return (
+      <div>
+        <h2>Count: {count.value}</h2>
+        <button onclick={() => count.value++}>+</button>
+        <button onclick={() => count.value--}>-</button>
+      </div>
+    )
+  }
+  ```
 
-### Using Signals
+  Signals automatically update components when their values change.
+</TutorialStep>
 
-Access and update signal values:
+<TutorialStep 
+  stepId="signals-computed-values"
+  validator={(code) => {
+    // Check if the code uses computed signals
+    return code.includes('computed(') && code.includes('doubled') && code.includes('isEven')
+  }}
+>
+  Now let's create computed signals that derive from the count:
 
-```jsx
-// Read the value
-console.log(count.value) // 0
+  ```jsx
+  import { signal, computed } from "kaioken"
 
-// Update the value
-count.value = 5
-count.value++ // increment
-```
+  const count = signal(0)
+  const doubled = computed(() => count.value * 2)
+  const isEven = computed(() => count.value % 2 === 0)
 
-### Computed Signals
+  export function App() {
+    return (
+      <div>
+        <h2>Count: {count.value}</h2>
+        <p>Doubled: {doubled.value}</p>
+        <p>Is even: {isEven.value ? 'Yes' : 'No'}</p>
+        <button onclick={() => count.value++}>+</button>
+        <button onclick={() => count.value--}>-</button>
+      </div>
+    )
+  }
+  ```
 
-Computed signals automatically recalculate when their dependencies change:
+  Computed signals automatically recalculate when their dependencies change.
+</TutorialStep>
 
-```jsx
-import { computed } from "kaioken"
+  <TutorialStep 
+    stepId="signals-external-file"
+    validator={(code) => {
+      // Check if state.js has the signal exports
+      return code.includes('export const count') && code.includes('signal(') && code.includes('export const doubled')
+    }}
+  >
+  Let's move our signals to a separate `state.js` file for better organization:
 
-const doubled = computed(() => count.value * 2)
-const isEven = computed(() => count.value % 2 === 0)
-```
+  ```js
+  import { signal, computed } from "kaioken"
 
-### Key Benefits
+  export const count = signal(0)
+  export const doubled = computed(() => count.value * 2)
+  ```
 
-1. **Global State**: Signals can be shared across components without prop drilling
-2. **Automatic Updates**: Components using signals re-render when signal values change
-3. **Computed Values**: Derived state updates automatically
-4. **Performance**: Only components using changed signals re-render
+  Create this file and export your signals. This allows them to be shared across your entire app.
+</TutorialStep>
 
-### Signals vs Hooks
+<TutorialStep 
+  stepId="signals-multiple-components"
+  validator={(code) => {
+    // Check if the code imports from state.js and has multiple components
+    return code.includes('from "./state"') && code.includes('Counter') && code.includes('Display')
+  }}
+>
+  Now import the signals and create separate Counter and Display components:
 
-<table>
-  <thead>
-    <tr>
-      <th>Feature</th>
-      <th>Signals</th>
-      <th>Hooks</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Scope</td>
-      <td>Global or local</td>
-      <td>Component-local</td>
-    </tr>
-    <tr>
-      <td>Sharing</td>
-      <td>Easy to share</td>
-      <td>Requires prop drilling or context</td>
-    </tr>
-    <tr>
-      <td>Performance</td>
-      <td>Fine-grained reactivity</td>
-      <td>Component-level reactivity</td>
-    </tr>
-    <tr>
-      <td>Usage</td>
-      <td>Anywhere in code</td>
-      <td>Only in components</td>
-    </tr>
-  </tbody>
-</table>
+  ```jsx
+  import { count, doubled } from "./state"
 
-Try modifying the signals in the editor and notice how all components using them update automatically!
+  function Counter() {
+    return (
+      <div>
+        <button onclick={() => count.value++}>+</button>
+        <button onclick={() => count.value--}>-</button>
+      </div>
+    )
+  }
+
+  function Display() {
+    return (
+      <div>
+        <h2>Count: {count.value}</h2>
+        <p>Doubled: {doubled.value}</p>
+      </div>
+    )
+  }
+
+  export function App() {
+    return (
+      <div>
+        <Display />
+        <Counter />
+      </div>
+    )
+  }
+  ```
+
+  Both components automatically update when the signals change, and the state is completely separated!
+</TutorialStep>
+
+<TutorialStep 
+  stepId="signals-global-state"
+  validator={(code) => {
+    // Check if the code uses an object signal for user state
+    return code.includes('user = signal({') && code.includes('user.value.name') && code.includes('user.value.age')
+  }}
+>
+  Let's create a global user state using an object signal:
+
+  ```jsx
+  import { signal } from "kaioken"
+
+  const user = signal({ 
+    name: 'John', 
+    age: 30 
+  })
+
+  function Header() {
+    return <h1>Welcome, {user.value.name}!</h1>
+  }
+
+  function Profile() {
+    return (
+      <div>
+        <p>Age: {user.value.age}</p>
+        <button onclick={() => user.value = { ...user.value, age: user.value.age + 1 }}>
+          Birthday
+        </button>
+        <button onclick={() => user.value = { ...user.value, name: 'Jane' }}>
+          Change Name
+        </button>
+      </div>
+    )
+  }
+
+  export function App() {
+    return (
+      <div>
+        <Header />
+        <Profile />
+      </div>
+    )
+  }
+  ```
+
+  This global state is shared across all components without any setup!
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/state/hooks" className="link-button">Previous: Hooks</a>

@@ -245,8 +245,6 @@ pre.shiki span.line.diff.add {
 pre.shiki span.line.diff.add:before {
   content: "+";
   line-height: 1.25rem;
-  margin-left: 0.1rem;
-  margin-right: -0.85em;
   color: #1fc31f;
 }
 

@@ -1,137 +1,240 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
-## useAsync - Handle Asynchronous Operations
+## useAsync - Handle Async Operations
 
-The `useAsync` hook simplifies handling asynchronous operations like API calls. It manages loading states, errors, and data automatically.
+The `useAsync` hook makes it easy to handle asynchronous operations like API calls with automatic loading and error states.
 
-### Basic Usage
+<TutorialStep 
+  stepId="use-async-basic"
+  validator={(code) => {
+    // Check if the code uses useAsync with loading and error states
+    return code.includes('useAsync(') && code.includes('loading') && code.includes('error') && code.includes('fetchUser')
+  }}
+>
+  Let's fetch user data with `useAsync`. It automatically handles loading and error states:
 
-Use `useAsync` to fetch data with automatic state management:
+  ```jsx
+  import { useAsync } from "kaioken"
 
-```jsx
-import { useAsync } from "kaioken"
+  const fetchUser = async (id) => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    if (id === 999) throw new Error("User not found")
+    return { id, name: `User ${id}`, email: `user${id}@example.com` }
+  }
 
-function UserProfile({ userId }) {
-  const { data, loading, error, refetch } = useAsync(
-    () => fetchUser(userId),
-    [userId] // Dependencies
-  )
-  
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
-  
-  return <div>Hello, {data.name}!</div>
-}
-```
-
-### Hook Return Values
-
-`useAsync` returns an object with these properties:
-
-- **`data`**: The resolved value from the async function
-- **`loading`**: Boolean indicating if the operation is in progress
-- **`error`**: Any error that occurred during execution
-- **`refetch`**: Function to manually trigger the async operation again
-
-### Dependencies Array
-
-The second parameter is a dependencies array (like `useEffect`):
-
-```jsx
-// Refetch when userId changes
-const { data } = useAsync(() => fetchUser(userId), [userId])
-
-// Fetch only once (empty dependencies)
-const { data } = useAsync(() => fetchConfig(), [])
-
-// Always refetch (no dependencies array)
-const { data } = useAsync(() => fetchLatestData())
-```
-
-### Conditional Execution
-
-Skip execution by returning `null` or `undefined`:
-
-```jsx
-const { data: posts } = useAsync(
-  () => user ? fetchUserPosts(user.id) : null,
-  [user]
-)
-```
-
-### Error Handling
-
-Handle errors gracefully with the error state:
-
-```jsx
-function DataComponent() {
-  const { data, loading, error, refetch } = useAsync(fetchData)
-  
-  if (error) {
+  export function App() {
+    const { data, loading, error } = useAsync(
+      () => fetchUser(123),
+      [] // Dependencies array
+    )
+    
+    if (loading) return <div>Loading user...</div>
+    if (error) return <div>Error: {error.message}</div>
+    
     return (
-      <div className="error">
-        <p>Failed to load data: {error.message}</p>
-        <button onclick={refetch}>Try Again</button>
+      <div>
+        <h1>User Profile</h1>
+        <p>Name: {data.name}</p>
+        <p>Email: {data.email}</p>
       </div>
     )
   }
-  
-  // ... rest of component
-}
-```
+  ```
 
-### Loading States
+  `useAsync` returns `data`, `loading`, and `error` states automatically.
+</TutorialStep>
 
-Show loading indicators while operations are in progress:
+<TutorialStep 
+  stepId="use-async-dependencies"
+  validator={(code) => {
+    // Check if the code uses dependencies array and useState for userId
+    return code.includes('useState') && code.includes('userId') && code.includes('[userId]') && code.includes('setUserId')
+  }}
+>
+  Let's use the dependencies array to refetch when the user ID changes:
 
-```jsx
-function LoadingExample() {
-  const { data, loading } = useAsync(fetchSlowData)
-  
-  return (
-    <div>
-      <button disabled={loading}>
-        {loading ? "Loading..." : "Refresh"}
-      </button>
-      {data && <DataDisplay data={data} />}
-    </div>
-  )
-}
-```
+  ```jsx
+  import { useAsync } from "kaioken"
+  import { useState } from "kaioken"
 
-### Multiple Async Operations
+  const fetchUser = async (id) => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    if (id === 999) throw new Error("User not found")
+    return { id, name: `User ${id}`, email: `user${id}@example.com` }
+  }
 
-Use multiple `useAsync` hooks for different operations:
+  export function App() {
+    const [userId, setUserId] = useState(123)
+    
+    const { data, loading, error } = useAsync(
+      () => fetchUser(userId),
+      [userId] // Refetch when userId changes
+    )
+    
+    return (
+      <div>
+        <h1>User Profile</h1>
+        <div>
+          <button onclick={() => setUserId(123)}>User 123</button>
+          <button onclick={() => setUserId(456)}>User 456</button>
+          <button onclick={() => setUserId(999)}>User 999 (Error)</button>
+        </div>
+        
+        {loading && <div>Loading user...</div>}
+        {error && <div>Error: {error.message}</div>}
+        {data && (
+          <div>
+            <p>Name: {data.name}</p>
+            <p>Email: {data.email}</p>
+          </div>
+        )}
+      </div>
+    )
+  }
+  ```
 
-```jsx
-function Dashboard() {
-  const { data: user, loading: userLoading } = useAsync(fetchUser)
-  const { data: posts, loading: postsLoading } = useAsync(
-    () => user ? fetchUserPosts(user.id) : null,
-    [user]
-  )
-  
-  return (
-    <div>
-      {userLoading && <Spinner />}
-      {user && <UserHeader user={user} />}
-      
-      {postsLoading && <PostsSkeleton />}
-      {posts && <PostsList posts={posts} />}
-    </div>
-  )
-}
-```
+  The hook refetches automatically when values in the dependencies array change.
+</TutorialStep>
 
-### Best Practices
+<TutorialStep 
+  stepId="use-async-conditional"
+  validator={(code) => {
+    // Check if the code uses conditional fetching by returning null
+    return code.includes('user ?') && code.includes('fetchUserPosts') && code.includes(': null')
+  }}
+>
+  Let's add conditional fetching. Only fetch posts when a user is selected:
 
-1. **Always handle loading and error states**
-2. **Use meaningful dependencies arrays**
-3. **Provide fallback UI for error cases**
-4. **Consider using skeleton loaders for better UX**
-5. **Debounce user input for search operations**
+  ```jsx
+  import { useAsync } from "kaioken"
+  import { useState } from "kaioken"
 
-Try interacting with the user profile viewer in the editor. Notice how loading states and error handling work seamlessly!
+  const fetchUser = async (id) => {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    return { id, name: `User ${id}`, email: `user${id}@example.com` }
+  }
+
+  const fetchUserPosts = async (userId) => {
+    await new Promise(resolve => setTimeout(resolve, 800))
+    return [
+      { id: 1, title: `Post 1 by User ${userId}`, content: "Content here..." },
+      { id: 2, title: `Post 2 by User ${userId}`, content: "More content..." }
+    ]
+  }
+
+  export function App() {
+    const [userId, setUserId] = useState(null)
+    
+    const { data: user, loading: userLoading } = useAsync(
+      () => userId ? fetchUser(userId) : null,
+      [userId]
+    )
+    
+    const { data: posts, loading: postsLoading } = useAsync(
+      () => user ? fetchUserPosts(user.id) : null,
+      [user]
+    )
+    
+    return (
+      <div>
+        <h1>User Dashboard</h1>
+        <div>
+          <button onclick={() => setUserId(123)}>Load User 123</button>
+          <button onclick={() => setUserId(456)}>Load User 456</button>
+          <button onclick={() => setUserId(null)}>Clear</button>
+        </div>
+        
+        {userLoading && <div>Loading user...</div>}
+        {user && (
+          <div>
+            <h2>{user.name}</h2>
+            <p>{user.email}</p>
+          </div>
+        )}
+        
+        {postsLoading && <div>Loading posts...</div>}
+        {posts && (
+          <div>
+            <h3>Posts</h3>
+            {posts.map(post => (
+              <div key={post.id}>
+                <h4>{post.title}</h4>
+                <p>{post.content}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+  ```
+
+  Return `null` from the async function to skip execution conditionally.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="use-async-error-handling"
+  validator={(code) => {
+    // Check if the code uses refetch for error handling
+    return code.includes('refetch') && code.includes('Try Again') && code.includes('onclick={refetch}')
+  }}
+>
+  Finally, let's add error handling with a retry button:
+
+  ```jsx
+  import { useAsync } from "kaioken"
+  import { useState } from "kaioken"
+
+  const fetchUser = async (id) => {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Simulate random errors
+    if (Math.random() > 0.7) throw new Error("Network error occurred")
+    return { id, name: `User ${id}`, email: `user${id}@example.com` }
+  }
+
+  export function App() {
+    const [userId, setUserId] = useState(123)
+    
+    const { data, loading, error, refetch } = useAsync(
+      () => fetchUser(userId),
+      [userId]
+    )
+    
+    return (
+      <div>
+        <h1>User Profile</h1>
+        <div>
+          <button onclick={() => setUserId(123)}>User 123</button>
+          <button onclick={() => setUserId(456)}>User 456</button>
+        </div>
+        
+        {loading && <div>Loading user...</div>}
+        
+        {error && (
+          <div style={{ color: 'red', padding: '10px', border: '1px solid red' }}>
+            <p>Failed to load user: {error.message}</p>
+            <button onclick={refetch}>Try Again</button>
+          </div>
+        )}
+        
+        {data && (
+          <div>
+            <p>Name: {data.name}</p>
+            <p>Email: {data.email}</p>
+            <button onclick={refetch}>Refresh</button>
+          </div>
+        )}
+      </div>
+    )
+  }
+  ```
+
+  Use the `refetch` function to manually retry failed requests or refresh data.
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/forms" className="link-button">Previous: Forms</a>

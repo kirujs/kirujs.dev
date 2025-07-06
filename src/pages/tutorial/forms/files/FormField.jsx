@@ -1,16 +1,8 @@
-import { errorStyle } from "./constants"
-
-export function FormField({ label, error, required, children }) {
-  console.log("FormField -> error", error)
+export function FormField({ label, children }) {
   return (
     <div>
-      <label
-        style={{ fontWeight: "bold", marginBottom: "5px", display: "block" }}
-      >
-        {label} {required && "*"}
-      </label>
+      <label>{label}</label>
       {children}
-      {error && <div style={errorStyle}>{error}</div>}
     </div>
   )
 }

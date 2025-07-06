@@ -1,44 +1,14 @@
 import { Router, Route } from "kaioken/router"
-import { Navigation } from "./Navigation"
-import { HomePage } from "./HomePage"
-import { AboutPage } from "./AboutPage"
-import { UsersPage } from "./UsersPage"
-import { UserDetailPage } from "./UserDetailPage"
 
 export function App() {
   return (
-    <div style={{ fontFamily: "sans-serif", backgroundColor: "#111" }}>
-      <Navigation />
-      <Router>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/users" element={<UsersPage />} />
-        <Route path="/users/:id" element={<UserDetailPage />} />
-      </Router>
+    <div style={{ fontFamily: "sans-serif", padding: "20px" }}>
+      <h1>My App</h1>
 
-      <style>{`
-        .nav-link {
-          text-decoration: none;
-          color: #007bff;
-          font-weight: 500;
-        }
-        .nav-link:hover {
-          text-decoration: underline;
-        }
-        .nav-button {
-          background: #007bff;
-          color: white;
-          padding: 8px 16px;
-          text-decoration: none;
-          border-radius: 4px;
-          border: none;
-          cursor: pointer;
-          display: inline-block;
-        }
-        .nav-button:hover {
-          background: #0056b3;
-        }
-      `}</style>
+      <Router>
+        <Route path="/" element={<div>Welcome to the home page!</div>} />
+        <Route path="/about" element={<div>About us page</div>} />
+      </Router>
     </div>
   )
 }

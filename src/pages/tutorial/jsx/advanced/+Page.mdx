@@ -1,57 +1,160 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
 ## JSX Advanced
 
-Now let's explore more advanced JSX patterns including conditional rendering, lists, and styling.
+Now let's explore more advanced JSX patterns: rendering lists, 
+conditional rendering, and dynamic styling by building a blog posts app with multiple components.
 
-### Rendering Lists
+<TutorialStep 
+  stepId="jsx-advanced-render-list"
+  validator={(code) => {
+    return code.includes('import { PostList } from "./PostList"') &&
+      code.includes('<PostList posts={posts}')
+  }}
+> 
+  Let's start with rendering a list of posts using `map()`. Update `App.jsx` to render the posts in a list:
 
-First, let's look at how to render a list of items. We'll start with an array of todo items:
+  ```jsx
+  import { PostItem } from "./PostItem" // [!code ++]
 
-```jsx
-export function App() {
-  const todos = [
-    { id: 1, text: "Learn Kaioken", done: false },
-    { id: 2, text: "Build an app", done: true },
-    { id: 3, text: "Share with friends", done: false }
-  ]
+  export function App() {
+    const posts = [
+      { id: 1, title: "Getting Started with Kaioken", content: "Learn the basics of this modern framework", published: true },
+      { id: 2, title: "Advanced JSX Patterns", content: "Explore dynamic rendering and component composition", published: false },
+      { id: 3, title: "State Management Tips", content: "Best practices for managing app state", published: true }
+    ]
+    
+    return (
+      <div>
+        |++{posts.map(post => (<PostItem key={post.id} post={post} />))}++|
+      </div>
+    )
+  }
+  ```
+</TutorialStep>
+
+<TutorialStep 
+  stepId="jsx-advanced-post-item"
+  watchFile="PostItem.jsx"
+  validator={(code) => {
+    return code.includes('export function PostItem') &&
+      code.includes('{post.title}') &&
+      code.includes('{post.content}') &&
+      code.includes('post.published') &&
+      code.includes('Published') &&
+      code.includes('Draft')
+  }}
+> 
+  Now let's enhance the `PostItem.jsx` component to display the post's title, content, and publication status:
+
+  ```jsx
+  export function PostItem({ post }) {
+    return (
+      <article style={{ 
+        border: '1px solid #ddd', 
+        borderRadius: '8px', 
+        padding: '16px', 
+        margin: '16px 0',
+        backgroundColor: post.published ? '#f8f9fa' : '#fff3cd'
+      }}>
+        <h3>{post.title}</h3>
+        <p>{post.content}</p>
+        <span style={{ 
+          color: post.published ? '#28a745' : '#ffc107',
+          fontWeight: 'bold'
+        }}>
+          {post.published ? '✅ Published' : '📝 Draft'}
+        </span>
+      </article>
+    )
+  }
+  ```
+
+  This component accepts a `post` prop and renders it with conditional styling based on the `published` status.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="jsx-advanced-post-list"
+  watchFile="PostList.jsx"
+  validator={(code) => {
+    return code.includes('export function PostList') && code.includes('import') && code.includes('PostItem') && code.includes('.map(') && code.includes('key={post.id}')
+  }}
+>
+  ## Step 3: Create PostList Component
   
-  return (
-    <ul>
-      {todos.map(todo => (
-        <li key={todo.id}>{todo.text}</li>
-      ))}
-    </ul>
-  )
-}
-```
+  Update the `PostList.jsx` component to use PostItem and handle the list logic:
 
-Notice the `key` prop - this is important for Kaioken to efficiently update the DOM when the list changes.
+  ```jsx
+  import { PostItem } from "./PostItem"
 
-### Conditional Rendering
+  export function PostList({ posts }) {
+    if (posts.length === 0) {
+      return <p>No posts yet. Start writing!</p>
+    }
 
-We can conditionally render elements using JavaScript expressions:
+    return (
+      <div>
+        {posts.map(post => (
+          <PostItem
+            key={post.id}
+            post={post}
+          />
+        ))}
+      </div>
+    )
+  }
+  ```
 
-```jsx
-{todos.every(todo => todo.done) && (
-  <div>🎉 All tasks completed!</div>
-)}
-```
+  This component handles the list logic and conditional rendering when there are no posts.
+</TutorialStep>
 
-### Dynamic Styling
+<TutorialStep 
+  stepId="jsx-advanced-use-components"
+  validator={(code) => {
+    return code.includes('import') && code.includes('PostList') && code.includes('<PostList') && code.includes('publishedCount')
+  }}
+>
+  ## Step 4: Use the Components
+  
+  Finally, update your `App.jsx` to use the new components with additional features:
 
-JSX allows us to apply styles conditionally:
+  ```jsx
+  import { PostList } from "./PostList"
 
-```jsx
-<li style={{ 
-  textDecoration: todo.done ? 'line-through' : 'none',
-  color: todo.done ? '#666' : '#000'
-}}>
-  {todo.text}
-</li>
-```
+  export function App() {
+    const posts = [
+      { id: 1, title: "Getting Started with Kaioken", content: "Learn the basics of this modern framework", published: true },
+      { id: 2, title: "Advanced JSX Patterns", content: "Explore dynamic rendering and component composition", published: false },
+      { id: 3, title: "State Management Tips", content: "Best practices for managing app state", published: true }
+    ]
+    
+    const publishedCount = posts.filter(post => post.published).length
+    const draftCount = posts.length - publishedCount
+    
+    return (
+      <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        <h1>📝 My Blog Posts</h1>
+        <div style={{ marginBottom: '20px' }}>
+          <span style={{ marginRight: '20px' }}>Published: {publishedCount}</span>
+          <span>Drafts: {draftCount}</span>
+        </div>
+        
+        <PostList posts={posts} />
+        
+        {publishedCount === posts.length && posts.length > 0 && (
+          <div style={{ color: 'green', fontWeight: 'bold', marginTop: '20px', textAlign: 'center' }}>
+            🎉 All posts are published!
+          </div>
+        )}
+      </div>
+    )
+  }
+  ```
 
-Try modifying the todo array in the code editor to see how the rendering changes!
+  Now you have a modular blog posts app with separate, reusable components!
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/jsx/basics" className="link-button">Previous: JSX Basics</a>

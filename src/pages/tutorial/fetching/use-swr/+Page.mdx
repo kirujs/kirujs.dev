@@ -1,191 +1,270 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
-## useSWR - Stale-While-Revalidate Data Fetching
+## useSWR - Smart Data Fetching
 
-useSWR is a powerful data fetching strategy that provides caching, revalidation, and automatic background updates. It's perfect for building fast and responsive applications.
+useSWR provides smart data fetching with caching and automatic revalidation. It's perfect for building fast, responsive apps.
 
-### Basic Usage
+<TutorialStep 
+  stepId="use-swr-basic"
+  validator={(code) => {
+    // Check if the code uses useSWR with fetcher function
+    return code.includes('useSWR(') && code.includes('fetcher') && code.includes('isLoading') && code.includes('/api/user')
+  }}
+>
+  Let's start with basic useSWR usage. Create a fetcher function and use it with useSWR:
 
-Use `useSWR` with a key and fetcher function:
+  ```jsx
+  import { useSWR } from "kaioken/swr"
 
-```jsx
-import { useSWR } from "kaioken/swr"
-
-const fetcher = (url) => fetch(url).then(res => res.json())
-
-function Profile() {
-  const { data, error, isLoading } = useSWR('/api/user', fetcher)
-
-  if (error) return <div>Failed to load</div>
-  if (isLoading) return <div>Loading...</div>
-  
-  return <div>Hello {data.name}!</div>
-}
-```
-
-### Key Concepts
-
-**SWR** stands for **stale-while-revalidate**, a HTTP caching strategy:
-
-1. **Stale**: Return cached data immediately (fast)
-2. **While**: Send fetch request in background
-3. **Revalidate**: Update with fresh data when available
-
-### Hook Return Values
-
-`useSWR` returns an object with these properties:
-
-- **`data`**: Data returned by the fetcher
-- **`error`**: Error thrown by the fetcher
-- **`isLoading`**: If there's an ongoing request and no cached data
-- **`isValidating`**: If there's a request or revalidation in progress
-- **`mutate`**: Function to mutate the cached data
-
-### Caching and Deduplication
-
-SWR automatically caches data and deduplicates requests:
-
-```jsx
-// Both components will share the same data and cache
-function UserProfile() {
-  const { data } = useSWR('/api/user', fetcher)
-  return <div>{data?.name}</div>
-}
-
-function UserSettings() {
-  const { data } = useSWR('/api/user', fetcher) // Same key = shared cache
-  return <div>{data?.email}</div>
-}
-```
-
-### Conditional Fetching
-
-Skip fetching by passing `null` as the key:
-
-```jsx
-const { data } = useSWR(
-  user ? `/api/user/${user.id}/posts` : null,
-  fetcher
-)
-
-// Or use a function that returns null
-const { data } = useSWR(
-  () => shouldFetch ? '/api/data' : null,
-  fetcher
-)
-```
-
-### Manual Revalidation
-
-Trigger revalidation manually with `mutate`:
-
-```jsx
-function Profile() {
-  const { data, mutate } = useSWR('/api/user', fetcher)
-  
-  const updateProfile = async (newData) => {
-    // Optimistically update
-    mutate({ ...data, ...newData }, false)
-    
-    // Update on server
-    await updateUser(newData)
-    
-    // Revalidate to get fresh data
-    mutate()
+  const fetcher = async (url) => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    if (url === '/api/user') {
+      return { name: 'John Doe', email: 'john@example.com' }
+    }
+    throw new Error('User not found')
   }
-  
-  return (
-    <div>
-      <h1>{data?.name}</h1>
-      <button onclick={() => updateProfile({ name: 'New Name' })}>
-        Update Name
-      </button>
-    </div>
-  )
-}
-```
 
-### Error Handling and Retry
+  export function App() {
+    const { data, error, isLoading } = useSWR('/api/user', fetcher)
 
-Handle errors with built-in retry logic:
+    if (error) return <div>Failed to load user</div>
+    if (isLoading) return <div>Loading...</div>
+    
+    return (
+      <div>
+        <h1>User Profile</h1>
+        <p>Name: {data.name}</p>
+        <p>Email: {data.email}</p>
+      </div>
+    )
+  }
+  ```
 
-```jsx
-const { data, error, mutate } = useSWR('/api/data', fetcher, {
-  errorRetryCount: 3,
-  errorRetryInterval: 1000
-})
+  useSWR takes a key (URL) and a fetcher function. The key is used for caching and deduplication.
+</TutorialStep>
 
-if (error) {
-  return (
-    <div>
-      <p>Error: {error.message}</p>
-      <button onclick={() => mutate()}>Retry</button>
-    </div>
-  )
-}
-```
+<TutorialStep 
+  stepId="use-swr-shared-cache"
+  validator={(code) => {
+    // Check if the code has multiple components using the same SWR key
+    return code.includes('UserProfile') && code.includes('UserSettings') && code.includes('useSWR') && code.includes('/api/user')
+  }}
+>
+  Let's create multiple components that share the same data through SWR's automatic caching:
 
-### Configuration Options
+  ```jsx
+  import { useSWR } from "kaioken/swr"
 
-Customize SWR behavior with options:
+  const fetcher = async (url) => {
+    console.log('Fetching:', url) // You'll see this only once!
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    if (url === '/api/user') {
+      return { name: 'John Doe', email: 'john@example.com', age: 30 }
+    }
+    throw new Error('User not found')
+  }
 
-```jsx
-const { data } = useSWR('/api/data', fetcher, {
-  refreshInterval: 1000,      // Refresh every second
-  revalidateOnFocus: false,   // Don't revalidate on window focus
-  revalidateOnReconnect: true, // Revalidate on network reconnect
-  dedupingInterval: 2000      // Dedupe requests within 2 seconds
-})
-```
+  function UserProfile() {
+    const { data, isLoading } = useSWR('/api/user', fetcher)
+    
+    if (isLoading) return <div>Loading profile...</div>
+    
+    return (
+      <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px' }}>
+        <h2>Profile</h2>
+        <p>Name: {data.name}</p>
+        <p>Age: {data.age}</p>
+      </div>
+    )
+  }
 
-### SWR vs useAsync
+  function UserSettings() {
+    const { data, isLoading } = useSWR('/api/user', fetcher)
+    
+    if (isLoading) return <div>Loading settings...</div>
+    
+    return (
+      <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px' }}>
+        <h2>Settings</h2>
+        <p>Email: {data.email}</p>
+        <p>Name: {data.name}</p>
+      </div>
+    )
+  }
 
-<table>
-  <thead>
-    <tr>
-      <th>Feature</th>
-      <th>useSWR</th>
-      <th>useAsync</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Caching</td>
-      <td>✅ Built-in global cache</td>
-      <td>❌ No caching</td>
-    </tr>
-    <tr>
-      <td>Deduplication</td>
-      <td>✅ Automatic</td>
-      <td>❌ Each hook fetches separately</td>
-    </tr>
-    <tr>
-      <td>Stale-while-revalidate</td>
-      <td>✅ Yes</td>
-      <td>❌ No</td>
-    </tr>
-    <tr>
-      <td>Background updates</td>
-      <td>✅ Automatic</td>
-      <td>❌ Manual only</td>
-    </tr>
-    <tr>
-      <td>Global configuration</td>
-      <td>✅ Yes</td>
-      <td>❌ No</td>
-    </tr>
-  </tbody>
-</table>
+  export function App() {
+    return (
+      <div>
+        <h1>User Dashboard</h1>
+        <UserProfile />
+        <UserSettings />
+      </div>
+    )
+  }
+  ```
 
-### Best Practices
+  Both components share the same data automatically! The fetcher only runs once, and updates are shared.
+</TutorialStep>
 
-1. **Use consistent keys**: Same data should have the same key across components
-2. **Handle loading and error states**: Always provide fallbacks
-3. **Leverage optimistic updates**: Update UI immediately, then sync with server
-4. **Configure appropriately**: Set refresh intervals based on data freshness needs
-5. **Use conditional fetching**: Don't fetch data you don't need
+<TutorialStep 
+  stepId="use-swr-conditional"
+  validator={(code) => {
+    // Check if the code uses conditional fetching with null key
+    return code.includes('user ?') && code.includes('null') && code.includes('useState') && code.includes('setUser')
+  }}
+>
+  Let's add conditional fetching. Only fetch posts when a user is selected:
 
-Try the interactive demo above! Notice how data is cached between components and how the stale-while-revalidate pattern provides instant loading.
+  ```jsx
+  import { useSWR } from "kaioken/swr"
+  import { useState } from "kaioken"
+
+  const fetcher = async (url) => {
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    if (url === '/api/user/123') {
+      return { id: 123, name: 'John Doe', email: 'john@example.com' }
+    }
+    if (url === '/api/user/456') {
+      return { id: 456, name: 'Jane Smith', email: 'jane@example.com' }
+    }
+    if (url.includes('/api/posts/')) {
+      const userId = url.split('/').pop()
+      return [
+        { id: 1, title: `Post 1 by User ${userId}`, content: 'Content here...' },
+        { id: 2, title: `Post 2 by User ${userId}`, content: 'More content...' }
+      ]
+    }
+    throw new Error('Not found')
+  }
+
+  export function App() {
+    const [selectedUserId, setSelectedUserId] = useState(null)
+    
+    const { data: user, isLoading: userLoading } = useSWR(
+      selectedUserId ? `/api/user/${selectedUserId}` : null,
+      fetcher
+    )
+    
+    const { data: posts, isLoading: postsLoading } = useSWR(
+      user ? `/api/posts/${user.id}` : null,
+      fetcher
+    )
+    
+    return (
+      <div>
+        <h1>User Dashboard</h1>
+        <div>
+          <button onclick={() => setSelectedUserId(123)}>Load User 123</button>
+          <button onclick={() => setSelectedUserId(456)}>Load User 456</button>
+          <button onclick={() => setSelectedUserId(null)}>Clear</button>
+        </div>
+        
+        {userLoading && <div>Loading user...</div>}
+        {user && (
+          <div>
+            <h2>{user.name}</h2>
+            <p>{user.email}</p>
+          </div>
+        )}
+        
+        {postsLoading && <div>Loading posts...</div>}
+        {posts && (
+          <div>
+            <h3>Posts</h3>
+            {posts.map(post => (
+              <div key={post.id}>
+                <h4>{post.title}</h4>
+                <p>{post.content}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+  ```
+
+  Pass `null` as the key to skip fetching. useSWR will only fetch when the key is not null.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="use-swr-mutate"
+  validator={(code) => {
+    // Check if the code uses mutate for optimistic updates
+    return code.includes('mutate') && code.includes('updateName') && code.includes('...data') && code.includes('false')
+  }}
+>
+  Finally, let's add optimistic updates with the `mutate` function:
+
+  ```jsx
+  import { useSWR } from "kaioken/swr"
+
+  const fetcher = async (url) => {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    if (url === '/api/user') {
+      return { name: 'John Doe', email: 'john@example.com', age: 30 }
+    }
+    throw new Error('User not found')
+  }
+
+  const updateUser = async (newData) => {
+    // Simulate API call to update user
+    await new Promise(resolve => setTimeout(resolve, 500))
+    console.log('User updated on server:', newData)
+    return { ...newData, updatedAt: new Date().toISOString() }
+  }
+
+  export function App() {
+    const { data, isLoading, mutate } = useSWR('/api/user', fetcher)
+    
+    const updateName = async (newName) => {
+      // Optimistically update the UI immediately
+      mutate({ ...data, name: newName }, false)
+      
+      try {
+        // Update on server
+        const updatedUser = await updateUser({ ...data, name: newName })
+        
+        // Revalidate to get fresh data from server
+        mutate()
+      } catch (error) {
+        // Revert on error
+        mutate()
+        alert('Failed to update user')
+      }
+    }
+    
+    if (isLoading) return <div>Loading...</div>
+    
+    return (
+      <div>
+        <h1>User Profile</h1>
+        <p>Name: {data.name}</p>
+        <p>Email: {data.email}</p>
+        <p>Age: {data.age}</p>
+        
+        <div>
+          <button onclick={() => updateName('John Smith')}>
+            Change Name to John Smith
+          </button>
+          <button onclick={() => updateName('Jane Doe')}>
+            Change Name to Jane Doe
+          </button>
+          <button onclick={() => mutate()}>
+            Refresh Data
+          </button>
+        </div>
+      </div>
+    )
+  }
+  ```
+
+  Use `mutate(newData, false)` for optimistic updates, then `mutate()` to revalidate from the server.
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/fetching/use-async" className="link-button">Previous: useAsync</a>

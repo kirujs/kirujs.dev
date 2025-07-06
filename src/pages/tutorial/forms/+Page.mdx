@@ -1,172 +1,268 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
-## Forms - Handle User Input with the Form API
+## Forms - Handle User Input
 
-Forms are essential for collecting user input in web applications. Kaioken provides a powerful Form API that makes it easy to handle form state, validation, and submission with minimal boilerplate.
+Forms are essential for collecting user input. Kaioken's Form API makes it simple to handle form state and validation.
 
-### Using the Form API
-
-The Form API provides a declarative approach to form management, inspired by TanStack Form. It handles form state, validation, and submission automatically:
-
-```jsx
-import { useForm } from "kaioken/form"
-
-function MyForm() {
-  const { Field, Subscribe, handleSubmit } = useForm({
-    initialValues: {
-      name: "",
-      email: ""
-    },
-    onSubmit: ({ state }) => {
-      console.log("Form submitted:", state)
-    }
-  })
-
-  return (
-    <form onsubmit={(e) => {
-      e.preventDefault()
-      handleSubmit()
-    }}>
-      <Field
-        name="name"
-        validators={{
-          onChange: ({ value }) => !value?.trim() && "Name is required"
-        }}
-        children={(field) => (
-          <div>
-            <label>Name</label>
-            <input
-              value={field.state.value}
-              oninput={(e) => field.handleChange(e.target.value)}
-              onblur={field.handleBlur}
-            />
-            {field.state.errors.length > 0 && (
-              <span>{field.state.errors[0]}</span>
-            )}
-          </div>
-        )}
-      />
-    </form>
-  )
-}
-```
-
-### Form State Management
-
-The Form API automatically manages form state through the `useForm` hook:
-
-- **Initial Values**: Set default values for all form fields
-- **Current State**: Access current values and validation status
-- **Submission State**: Track if form is submitting and can be submitted
-
-### Field Validation
-
-Each field can have its own validation rules:
-
-```jsx
-<Field
-  name="email"
-  validators={{
-    onChange: ({ value }) => {
-      if (!value?.trim()) {
-        return "Email is required"
-      }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        return "Please enter a valid email"
-      }
-    }
+<TutorialStep 
+  stepId="forms-basic-form"
+  validator={(code) => {
+    // Check if the code uses useForm and Field components
+    return code.includes('useForm({') && code.includes('<Field') && code.includes('initialValues')
   }}
-  children={(field) => (
-    <div>
+>
+  Let's create a basic form with the `useForm` hook. Create a form with name and email fields:
+
+  ```jsx
+  import { useForm } from "kaioken/form"
+
+  export function App() {
+    const { Field, handleSubmit } = useForm({
+      initialValues: {
+        name: "",
+        email: ""
+      },
+      onSubmit: ({ state }) => {
+        console.log("Form submitted:", state)
+        alert(`Hello ${state.name}! Email: ${state.email}`)
+      }
+    })
+
+    return (
+      <form onsubmit={(e) => {
+        e.preventDefault()
+        handleSubmit()
+      }}>
+        <h2>User Form</h2>
+        
+        <Field
+          name="name"
+          children={(field) => (
+            <div>
+              <label>Name</label>
+              <input
+                value={field.state.value}
+                oninput={(e) => field.handleChange(e.target.value)}
+              />
+            </div>
+          )}
+        />
+        
+        <Field
+          name="email"
+          children={(field) => (
+            <div>
+              <label>Email</label>
+              <input
+                type="email"
+                value={field.state.value}
+                oninput={(e) => field.handleChange(e.target.value)}
+              />
+            </div>
+          )}
+        />
+        
+        <button type="submit">Submit</button>
+      </form>
+    )
+  }
+  ```
+
+  The `useForm` hook manages form state and the `Field` component handles individual form fields.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="forms-create-constants"
+  
+  validator={(code) => {
+    // Check if constants.js has input and error styles
+    return code.includes('export const inputStyle') && code.includes('export const errorStyle')
+  }}
+>
+  Let's create a `constants.js` file for reusable styles and data:
+
+  ```js
+  export const inputStyle = {
+    width: "100%",
+    padding: "10px",
+    border: "1px solid #ddd",
+    borderRadius: "4px",
+    fontSize: "16px",
+    marginBottom: "10px",
+  }
+
+  export const errorStyle = {
+    color: "#dc3545",
+    fontSize: "14px",
+    marginTop: "5px",
+  }
+
+  export const buttonStyle = {
+    backgroundColor: "#007bff",
+    color: "white",
+    padding: "10px 20px",
+    border: "none",
+    borderRadius: "4px",
+    fontSize: "16px",
+    cursor: "pointer"
+  }
+  ```
+
+  This file will contain shared styles and constants for our form components.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="forms-create-field-component"
+  
+  validator={(code) => {
+    // Check if FormField component exists and imports constants
+    return code.includes('export function FormField') && code.includes('import') && code.includes('errorStyle')
+  }}
+>
+  Create a `FormField.jsx` component for reusable form field logic:
+
+  ```jsx
+  import { errorStyle, inputStyle } from "./constants"
+
+  export function FormField({ label, error, required, children }) {
+    return (
+      <div style={{ marginBottom: "15px" }}>
+        <label
+          style={{ 
+            fontWeight: "bold", 
+            marginBottom: "5px", 
+            display: "block" 
+          }}
+        >
+          {label} {required && <span style={{ color: "red" }}>*</span>}
+        </label>
+        {children}
+        {error && <div style={errorStyle}>{error}</div>}
+      </div>
+    )
+  }
+
+  export function TextInput({ value, onchange, placeholder, type = "text" }) {
+    return (
       <input
-        type="email"
-        value={field.state.value}
-        oninput={(e) => field.handleChange(e.target.value)}
-        onblur={field.handleBlur}
+        type={type}
+        value={value}
+        oninput={onchange}
+        placeholder={placeholder}
+        style={inputStyle}
       />
-      {field.state.errors.length > 0 && (
-        <span>{field.state.errors[0]}</span>
-      )}
-    </div>
-  )}
-/>
-```
+    )
+  }
+  ```
 
-### Form Submission
+  This provides reusable form field components with consistent styling.
+</TutorialStep>
 
-The Form API handles submission automatically:
+<TutorialStep 
+  stepId="forms-use-components"
+  validator={(code) => {
+    // Check if App uses FormField and TextInput components
+    return code.includes('import') && code.includes('FormField') && code.includes('TextInput') && code.includes('validators')
+  }}
+>
+  Now update your `App.jsx` to use the new components with validation:
 
-```jsx
-<Subscribe
-  selector={(state) => [state.canSubmit, state.isSubmitting]}
-  children={([canSubmit, isSubmitting]) => (
-    <button
-      type="submit"
-      disabled={!canSubmit}
-    >
-      {isSubmitting ? "Submitting..." : "Submit"}
-    </button>
-  )}
-/>
-```
+  ```jsx
+  import { useForm } from "kaioken/form"
+  import { FormField, TextInput } from "./FormField"
+  import { buttonStyle } from "./constants"
 
-### Key Features
+  export function App() {
+    const { Field, Subscribe, handleSubmit } = useForm({
+      initialValues: {
+        name: "",
+        email: ""
+      },
+      onSubmit: async ({ state }) => {
+        console.log("Form submitted:", state)
+        // Simulate async submission
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        alert(`Hello ${state.name}! Email: ${state.email}`)
+      }
+    })
 
-1. **Declarative**: Define validation rules alongside field definitions
-2. **Automatic State Management**: No need to manually manage form state
-3. **Real-time Validation**: Validation runs as users type
-4. **Submission Handling**: Built-in submission state management
-5. **Field-level Control**: Each field manages its own state and validation
+    return (
+      <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
+        <form onsubmit={(e) => {
+          e.preventDefault()
+          handleSubmit()
+        }}>
+          <h2>Contact Form</h2>
+          
+          <Field
+            name="name"
+            validators={{
+              onChange: ({ value }) => !value?.trim() && "Name is required"
+            }}
+            children={(field) => (
+              <FormField 
+                label="Full Name" 
+                error={field.state.errors[0]}
+                required
+              >
+                <TextInput
+                  value={field.state.value}
+                  onchange={(e) => field.handleChange(e.target.value)}
+                  placeholder="Enter your name"
+                />
+              </FormField>
+            )}
+          />
+          
+          <Field
+            name="email"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value?.trim()) return "Email is required"
+                if (!/\S+@\S+\.\S+/.test(value)) return "Invalid email format"
+              }
+            }}
+            children={(field) => (
+              <FormField 
+                label="Email Address" 
+                error={field.state.errors[0]}
+                required
+              >
+                <TextInput
+                  type="email"
+                  value={field.state.value}
+                  onchange={(e) => field.handleChange(e.target.value)}
+                  placeholder="Enter your email"
+                />
+              </FormField>
+            )}
+          />
+          
+          <Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => (
+              <button
+                type="submit"
+                disabled={!canSubmit || isSubmitting}
+                style={{
+                  ...buttonStyle,
+                  opacity: (!canSubmit || isSubmitting) ? 0.6 : 1
+                }}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
+            )}
+          />
+        </form>
+      </div>
+    )
+  }
+  ```
 
-### Field Types
-
-Handle different input types with the same API:
-
-```jsx
-// Text input
-<Field
-  name="name"
-  validators={{ onChange: ({ value }) => !value && "Required" }}
-  children={(field) => (
-    <input
-      value={field.state.value}
-      oninput={(e) => field.handleChange(e.target.value)}
-    />
-  )}
-/>
-
-// Select dropdown
-<Field
-  name="country"
-  validators={{ onChange: ({ value }) => !value && "Please select a country" }}
-  children={(field) => (
-    <select
-      value={field.state.value}
-      onchange={(e) => field.handleChange(e.target.value)}
-    >
-      <option value="">Select country</option>
-      <option value="US">United States</option>
-    </select>
-  )}
-/>
-```
-
-### Best Practices
-
-1. **Use the Form API**: Prefer the Form API over manual state management
-2. **Field-level Validation**: Define validation rules close to field definitions
-3. **Subscribe to State**: Use `form.Subscribe` for reactive UI updates
-4. **Handle Submission**: Always prevent default form submission
-5. **Error Display**: Show validation errors near their respective fields
-
-### Advanced Features
-
-- **Cross-field Validation**: Access other field values in validators
-- **Async Validation**: Support for asynchronous validation
-- **Form Reset**: Reset form to initial state
-- **Field Arrays**: Handle dynamic lists of fields
-
-Try filling out the form in the editor. Notice how the Form API automatically handles validation, state management, and submission without any manual work!
+  Now you have a clean, modular form system with reusable components and validation!
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/routing" className="link-button">Previous: Routing</a>

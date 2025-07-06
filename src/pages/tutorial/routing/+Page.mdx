@@ -1,107 +1,221 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
 ## Routing - Navigate Between Pages
 
-Kaioken's built-in router makes it easy to create single-page applications with multiple views. Learn how to set up routes, navigate between pages, and handle dynamic parameters.
+Kaioken's built-in router makes it easy to create single-page applications with multiple views.
 
-### Basic Router Setup
+<TutorialStep 
+  stepId="routing-basic-setup"
+  validator={(code) => {
+    // Check if the code sets up Router and Route components
+    return code.includes('<Router>') && code.includes('<Route path="/"') && code.includes('element={')
+  }}
+>
+  Let's set up basic routing. Create a Router with some routes:
 
-Wrap your app with the Router component and define routes:
+  ```jsx
+  import { Router, Route } from "kaioken/router"
 
-```jsx
-import { Router, Route } from "kaioken/router"
-
-export function App() {
-  return (
-    <Router>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/users" element={<UsersPage />} />
-    </Router>
-  )
-}
-```
-
-### Navigation with Link
-
-Use the `Link` component for client-side navigation:
-
-```jsx
-import { Link } from "kaioken/router"
-
-function Navigation() {
-  return (
-    <nav>
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
-      <Link to="/users">Users</Link>
-    </nav>
-  )
-}
-```
-
-### Dynamic Routes
-
-Capture URL parameters with dynamic segments:
-
-```jsx
-// Route definition
-<Route path="/users/:id" element={<UserDetailPage />} />
-
-// Access parameters in component
-function UserDetailPage() {
-  const router = useRouter()
-  const userId = router.params.id
-  
-  return <h1>User ID: {userId}</h1>
-}
-```
-
-### Programmatic Navigation
-
-Navigate programmatically using the `navigate` function:
-
-```jsx
-import { navigate, useRouter } from "kaioken/router"
-
-function MyComponent() {
-  const router = useRouter()
-  
-  const goToUser = (id) => {
-    navigate(\`/users/\${id}\`)
+  function HomePage() {
+    return <h1>Home Page</h1>
   }
+
+  function AboutPage() {
+    return <h1>About Page</h1>
+  }
+
+  export function App() {
+    return (
+      <Router>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Router>
+    )
+  }
+  ```
+
+  Each Route matches a URL path and renders the specified element.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="routing-create-homepage"
   
-  return (
-    <div>
-      <p>Current path: {router.pathname}</p>
-      <button onClick={() => goToUser(123)}>Go to User 123</button>
-    </div>
-  )
-}
-```
+  validator={(code) => {
+    // Check if HomePage component exists with navigation
+    return code.includes('export function HomePage') && code.includes('navigate')
+  }}
+>
+  Let's create a separate `HomePage.jsx` component file:
 
-### Router Hook
+  ```jsx
+  import { navigate } from "kaioken/router"
 
-The `useRouter` hook provides access to routing information:
+  export function HomePage() {
+    return (
+      <div style={{ padding: "20px" }}>
+        <h2>🏠 Home</h2>
+        <p>Welcome to our app!</p>
+        <button onclick={() => navigate('/about')}>
+          Go to About (programmatic navigation)
+        </button>
+      </div>
+    )
+  }
+  ```
 
-```jsx
-const router = useRouter()
+  This component demonstrates programmatic navigation using the `navigate` function.
+</TutorialStep>
 
-// Available properties:
-router.pathname  // Current path
-router.params    // Route parameters
-router.query     // Query string parameters
-```
+<TutorialStep 
+  stepId="routing-create-navigation"
+  
+  validator={(code) => {
+    // Check if Navigation component exists with Link components
+    return code.includes('export function Navigation') && code.includes('<Link to="/"') && code.includes('<Link to="/about"')
+  }}
+>
+  Create a `Navigation.jsx` component for client-side navigation:
 
-### Key Features
+  ```jsx
+  import { Link } from "kaioken/router"
 
-1. **Client-side Navigation**: Fast transitions without page reloads
-2. **Dynamic Routes**: Capture URL parameters with `:param` syntax
-3. **Programmatic Navigation**: Navigate from event handlers and effects
-4. **Router State**: Access current route information in components
-5. **Nested Routes**: Support for complex routing hierarchies
+  export function Navigation() {
+    return (
+      <nav style={{ 
+        padding: "20px", 
+        borderBottom: "2px solid #ccc",
+        backgroundColor: "#f8f9fa"
+      }}>
+        <div style={{ display: "flex", gap: "20px" }}>
+          <Link 
+            to="/" 
+            style={{ 
+              textDecoration: "none", 
+              color: "#007bff",
+              fontWeight: "bold"
+            }}
+          >
+            Home
+          </Link>
+          <Link 
+            to="/about" 
+            style={{ 
+              textDecoration: "none", 
+              color: "#007bff",
+              fontWeight: "bold"
+            }}
+          >
+            About
+          </Link>
+          <Link 
+            to="/users" 
+            style={{ 
+              textDecoration: "none", 
+              color: "#007bff",
+              fontWeight: "bold"
+            }}
+          >
+            Users
+          </Link>
+        </div>
+      </nav>
+    )
+  }
+  ```
 
-Try navigating between different pages in the demo. Notice how the URL changes and components update without page reloads!
+  Links provide fast navigation without page reloads.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="routing-dynamic-routes"
+  
+  validator={(code) => {
+    // Check if UserPage component exists with useRouter
+    return code.includes('export function UserPage') && code.includes('useRouter') && code.includes('router.params.id')
+  }}
+>
+  Create a `UserPage.jsx` component for dynamic routes:
+
+  ```jsx
+  import { useRouter, Link } from "kaioken/router"
+
+  export function UserPage() {
+    const router = useRouter()
+    const userId = router.params.id
+    
+    // Simulate user data
+    const users = {
+      '123': { name: 'John Doe', email: 'john@example.com' },
+      '456': { name: 'Jane Smith', email: 'jane@example.com' }
+    }
+    
+    const user = users[userId]
+    
+    if (!user) {
+      return (
+        <div style={{ padding: "20px" }}>
+          <h2>User Not Found</h2>
+          <Link to="/">← Back to Home</Link>
+        </div>
+      )
+    }
+    
+    return (
+      <div style={{ padding: "20px" }}>
+        <Link to="/">← Back to Home</Link>
+        <h2>User Profile</h2>
+        <p><strong>ID:</strong> {userId}</p>
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Current path:</strong> {router.pathname}</p>
+      </div>
+    )
+  }
+  ```
+
+  Use `:id` syntax in routes to capture URL parameters, then access them with `router.params.id`.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="routing-use-components"
+  validator={(code) => {
+    // Check if App imports and uses all components
+    return code.includes('import') && code.includes('Navigation') && code.includes('HomePage') && code.includes('UserPage')
+  }}
+>
+  Finally, update your `App.jsx` to use all the components:
+
+  ```jsx
+  import { Router, Route } from "kaioken/router"
+  import { Navigation } from "./Navigation"
+  import { HomePage } from "./HomePage"
+  import { UserPage } from "./UserPage"
+
+  function AboutPage() {
+    return (
+      <div style={{ padding: "20px" }}>
+        <h2>About Us</h2>
+        <p>This is a demo of Kaioken's routing system.</p>
+      </div>
+    )
+  }
+
+  export function App() {
+    return (
+      <Router>
+        <Navigation />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/users/:id" element={<UserPage />} />
+      </Router>
+    )
+  }
+  ```
+
+  Now you have a complete routing system with navigation, dynamic routes, and modular components!
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/context" className="link-button">Previous: Context</a>

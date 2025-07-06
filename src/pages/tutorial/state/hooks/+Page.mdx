@@ -1,56 +1,125 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
 ## State Management with Hooks
 
-Hooks are functions that let you use state and other Kaioken features in functional components. The most fundamental hook is `useState`.
+Hooks let you use state and other Kaioken features in functional components. The most fundamental hook is `useState`.
 
-### useState Hook
+<TutorialStep 
+  stepId="state-hooks-basic-counter"
+  validator={(code) => {
+    // Check if the code uses useState and setCount
+    return code.includes('useState') && code.includes('setCount') && code.includes('count')
+  }}
+>
+  Let's create a simple counter using `useState`. Add state to track the count:
 
-The `useState` hook lets you add state to functional components:
+  ```jsx
+  import { useState } from "kaioken"
 
-```jsx
-import { useState } from "kaioken"
+  export function App() {
+    const [count, setCount] = useState(0)
+    
+    return (
+      <div>
+        <h2>Count: {count}</h2>
+        <button onclick={() => setCount(count + 1)}>+</button>
+        <button onclick={() => setCount(count - 1)}>-</button>
+      </div>
+    )
+  }
+  ```
 
-export function App() {
-  const [count, setCount] = useState(0)
-  
-  return (
-    <div>
-      <h2>Count: {count}</h2>
-      <button onclick={() => setCount(count + 1)}>+</button>
-    </div>
-  )
-}
-```
+  `useState(0)` creates state with initial value `0` and returns `[currentValue, setterFunction]`.
+</TutorialStep>
 
-### Key Concepts
+<TutorialStep 
+  stepId="state-hooks-multiple-state"
+  validator={(code) => {
+    // Check if the code uses multiple useState hooks
+    return code.includes('useState') && code.includes('setName') && code.includes('setEmail') && code.includes('setAge')
+  }}
+>
+  Now let's use multiple state variables for a user form:
 
-1. **State Initialization**: `useState(0)` creates state with initial value `0`
-2. **Destructuring**: Returns an array with `[currentValue, setterFunction]`
-3. **State Updates**: Call the setter function to update state
-4. **Reactivity**: Components re-render when state changes
+  ```jsx
+  import { useState } from "kaioken"
 
-### Multiple State Variables
+  export function App() {
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [age, setAge] = useState(0)
+    
+    return (
+      <div>
+        <h2>User Form</h2>
+        <input 
+          placeholder="Name"
+          value={name}
+          oninput={(e) => setName(e.target.value)}
+        />
+        <input 
+          placeholder="Email"
+          value={email}
+          oninput={(e) => setEmail(e.target.value)}
+        />
+        <input 
+          type="number"
+          placeholder="Age"
+          value={age}
+          oninput={(e) => setAge(Number(e.target.value))}
+        />
+        <p>Hello {name}, {age} years old, email: {email}</p>
+      </div>
+    )
+  }
+  ```
 
-You can use multiple `useState` hooks in a single component:
+  You can use multiple `useState` hooks for different values in the same component.
+</TutorialStep>
 
-```jsx
-const [count, setCount] = useState(0)
-const [name, setName] = useState("")
-```
+<TutorialStep 
+  stepId="state-hooks-object-state"
+  validator={(code) => {
+    // Check if the code uses object state with spread operator
+    return code.includes('useState({') && code.includes('...user') && code.includes('setUser')
+  }}
+>
+  For complex state, you can use objects. Let's create a user profile:
 
-### Event Handling
+  ```jsx
+  import { useState } from "kaioken"
 
-Handle user interactions by updating state:
+  export function App() {
+    const [user, setUser] = useState({
+      name: "John",
+      age: 30,
+      email: "john@example.com"
+    })
+    
+    const updateAge = () => {
+      setUser({ ...user, age: user.age + 1 })
+    }
+    
+    const updateName = (newName) => {
+      setUser({ ...user, name: newName })
+    }
+    
+    return (
+      <div>
+        <h1>{user.name}</h1>
+        <p>Age: {user.age}</p>
+        <p>Email: {user.email}</p>
+        <button onclick={updateAge}>Birthday</button>
+        <button onclick={() => updateName("Jane")}>Change Name</button>
+      </div>
+    )
+  }
+  ```
 
-```jsx
-<input 
-  value={name}
-  oninput={(e) => setName(e.target.value)}
-/>
-```
-
-Try experimenting with the counter and name input in the editor. Notice how the component updates reactively as you interact with it!
+  Use the spread operator `...user` to update only specific properties of an object.
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/jsx/advanced" className="link-button">Previous: JSX Advanced</a>

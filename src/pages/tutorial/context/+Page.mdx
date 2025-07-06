@@ -1,77 +1,165 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+
 export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
 
 ## Context - Share State Across Components
 
-Context provides a way to share state between components without passing props through every level of the component tree. This is perfect for themes, user authentication, or any global application state.
+Context lets you share state between components without passing props through every level of the component tree.
 
-### Creating Context
+<TutorialStep 
+  stepId="context-create-provider"
+  validator={(code) => {
+    // Check if the code creates a context and provider
+    return code.includes('createContext()') && code.includes('ThemeProvider') && code.includes('ThemeContext.Provider')
+  }}
+>
+  Let's create a theme context and provider. First, create the context in your App:
 
-First, create a context and provider:
+  ```jsx
+  import { createContext, useContext, useState } from "kaioken"
 
-```jsx
-import { createContext, useContext } from "kaioken"
+  const ThemeContext = createContext()
 
-const ThemeContext = createContext()
-
-function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("light")
-  
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  )
-}
-```
-
-### Using Context
-
-Consume context in child components:
-
-```jsx
-function Header() {
-  const { theme, setTheme } = useContext(ThemeContext)
-  
-  return (
-    <header>
-      <h1>Current theme: {theme}</h1>
-      <button onclick={() => setTheme(theme === "light" ? "dark" : "light")}>
-        Switch Theme
-      </button>
-    </header>
-  )
-}
-```
-
-### Custom Hooks
-
-Create custom hooks to make context usage cleaner:
-
-```jsx
-function useTheme() {
-  const context = useContext(ThemeContext)
-  if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider")
+  function ThemeProvider({ children }) {
+    const [theme, setTheme] = useState("light")
+    
+    return (
+      <ThemeContext.Provider value={{ theme, setTheme }}>
+        {children}
+      </ThemeContext.Provider>
+    )
   }
-  return context
-}
-```
 
-### Key Benefits
+  export function App() {
+    return (
+      <ThemeProvider>
+        <div>Hello World!</div>
+      </ThemeProvider>
+    )
+  }
+  ```
 
-1. **No Prop Drilling**: Share state without passing props through intermediate components
-2. **Clean API**: Custom hooks provide a clean interface
-3. **Type Safety**: TypeScript support for context values
-4. **Performance**: Only components using context re-render when it changes
+  The provider wraps your app and provides the context value to all child components.
+</TutorialStep>
 
-### When to Use Context
+  <TutorialStep 
+    stepId="context-create-theme-file"
+    validator={(code) => {
+      // Check if Theme.jsx exports ThemeProvider and useTheme
+      return code.includes('export function ThemeProvider') && code.includes('export function useTheme') && code.includes('createContext')
+    }}
+  >
+  Now let's move the theme logic to a separate `Theme.jsx` file for better organization:
 
-- **Theme/UI Settings**: Colors, fonts, layout preferences
-- **User Authentication**: Current user, login status
-- **Language/Locale**: Internationalization settings
-- **Application State**: Shopping cart, user preferences
+  ```jsx
+  import { createContext, useContext, useState } from "kaioken"
 
-Try changing the theme and colors in the editor to see how context shares state across all components!
+  const ThemeContext = createContext()
+
+  export function useTheme() {
+    const context = useContext(ThemeContext)
+    if (!context) {
+      throw new Error("useTheme must be used within ThemeProvider")
+    }
+    return context
+  }
+
+  export function ThemeProvider({ children }) {
+    const [theme, setTheme] = useState("light")
+    
+    const toggleTheme = () => {
+      setTheme(theme === "light" ? "dark" : "light")
+    }
+    
+    return (
+      <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+        {children}
+      </ThemeContext.Provider>
+    )
+  }
+  ```
+
+  Create this file with the theme context and a custom hook for better error handling.
+</TutorialStep>
+
+  <TutorialStep 
+    stepId="context-create-header"
+    validator={(code) => {
+      // Check if Header.jsx imports useTheme and uses theme
+      return code.includes('import') && code.includes('useTheme') && code.includes('export function Header')
+    }}
+  >
+  Create a `Header.jsx` component that uses the theme context:
+
+  ```jsx
+  import { useTheme } from "./Theme"
+
+  export function Header() {
+    const { theme, toggleTheme } = useTheme()
+    
+    return (
+      <header style={{
+        backgroundColor: theme === "dark" ? "#333" : "#fff",
+        color: theme === "dark" ? "#fff" : "#333",
+        padding: "20px",
+        borderBottom: "2px solid #ccc"
+      }}>
+        <h1>My App - {theme} theme</h1>
+        <button 
+          onclick={toggleTheme}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: theme === "dark" ? "#555" : "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px"
+          }}
+        >
+          Switch to {theme === "light" ? "dark" : "light"} theme
+        </button>
+      </header>
+    )
+  }
+  ```
+
+  The Header component can access and update the theme without props!
+</TutorialStep>
+
+<TutorialStep 
+  stepId="context-use-components"
+  validator={(code) => {
+    // Check if App imports and uses ThemeProvider and Header
+    return code.includes('import') && code.includes('ThemeProvider') && code.includes('Header') && code.includes('<Header')
+  }}
+>
+  Finally, update your `App.jsx` to use the theme provider and header:
+
+  ```jsx
+  import { ThemeProvider } from "./Theme"
+  import { Header } from "./Header"
+
+  function Content() {
+    return (
+      <div style={{ padding: "20px" }}>
+        <h2>Welcome to my themed app!</h2>
+        <p>This content will inherit the theme colors.</p>
+        <p>Try switching themes using the button in the header.</p>
+      </div>
+    )
+  }
+
+  export function App() {
+    return (
+      <ThemeProvider>
+        <Header />
+        <Content />
+      </ThemeProvider>
+    )
+  }
+  ```
+
+  Now you have a clean, modular theme system using Context!
+</TutorialStep>
 
 <div className="flex justify-between">
   <a href="/tutorial/state/signals" className="link-button">Previous: Signals</a>

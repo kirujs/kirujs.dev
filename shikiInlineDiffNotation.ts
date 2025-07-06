@@ -8,53 +8,59 @@ function splitAndColorTokens(
     matchEnd: string
   }
 ) {
-  tokens.forEach((token) => {
-    const idx = token.findIndex((t) => t.content.includes(options.matchStart))
-    if (idx === -1) return
-    const node = token[idx]
-    if (node.content === options.matchStart) {
-      // in this case, the nodes are already split.
-      // loop over the nodes between the start and end, applying the color
-      // then remove the start and end nodes
+  tokens.forEach((line) => {
+    let matchStartIdx = line.findIndex((t) =>
+      t.content.includes(options.matchStart)
+    )
+    if (matchStartIdx === -1) return
 
-      for (let i = idx + 1; i < token.length; i++) {
-        if (token[i].content === options.matchEnd) break
-        if (token[i].content.includes(options.matchEnd)) {
-          console.error("TODO: handle this case here", token, node, new Error())
-          return
+    // if the starting token or ending token isn't exclusively the matchStart or matchEnd,
+    // split them into separate tokens
+    if (line[matchStartIdx].content !== options.matchStart) {
+      const [pre, post] = line[matchStartIdx].content.split(options.matchStart)
+      console.log("start", line[matchStartIdx], { pre, post })
+      if (post.length > 0) {
+        line[matchStartIdx].content = pre
+        const newToken = {
+          content: post,
+          bgColor: line[matchStartIdx].bgColor,
+          offset: line[matchStartIdx].offset,
         }
-        token[i].bgColor = options.bgColor
+        line.splice(matchStartIdx + 1, 0, newToken)
+        matchStartIdx++
       }
-
-      token.splice(idx, 1)
-      const endIdx = token.findIndex((t) => t.content === options.matchEnd)
-      token.splice(endIdx, 1)
-      return
-    }
-    const startIdx = node.content.indexOf(options.matchStart)
-    const endIdx = node.content.indexOf(options.matchEnd)
-    // here we have a node with content like so: >Hello /++{name}++/!</
-    // we want to replace it with 3 nodes:
-    // 1. the start node: >Hello
-    // 2. the diff node: {name}
-    // 3. the end node: !</
-
-    const startNode = {
-      ...node,
-      content: node.content.slice(0, startIdx),
-    }
-    const diffNode = {
-      ...node,
-      content: node.content.slice(startIdx + 3, endIdx),
-    }
-    diffNode.bgColor = options.bgColor
-    const endNode = {
-      ...node,
-      content: node.content.slice(endIdx + 3),
+    } else {
+      line.splice(matchStartIdx, 1)
+      matchStartIdx++
     }
 
-    token.splice(idx, 1, startNode, diffNode, endNode)
-    //node.bgColor = "red"
+    let matchEndIdx = line.findIndex((t) =>
+      t.content.includes(options.matchEnd)
+    )
+    if (matchEndIdx === -1) {
+      matchEndIdx = line.length
+    }
+
+    if (line[matchEndIdx].content !== options.matchEnd) {
+      const [pre, post] = line[matchEndIdx].content.split(options.matchEnd)
+      console.log("end", line[matchEndIdx], { pre, post })
+      line[matchEndIdx].content = pre
+      if (post.length > 0) {
+        const newToken = {
+          content: post,
+          bgColor: line[matchEndIdx].bgColor,
+          offset: line[matchEndIdx].offset,
+        }
+        line.splice(matchEndIdx + 1, 0, newToken)
+      }
+      matchEndIdx++
+    } else {
+      line.splice(matchEndIdx, 1)
+    }
+
+    for (let i = matchStartIdx; i < matchEndIdx; i++) {
+      line[i].bgColor = options.bgColor
+    }
   })
 }
 
