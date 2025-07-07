@@ -1,0 +1,100 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
+
+export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
+
+## useState Hook
+
+The `useState` hook lets components remember information between renders. Let's create a simple counter.
+
+<TutorialStep 
+  stepId="state-hooks-basic-counter"
+  validator={(code) => {
+    return code.includes('import { useState } from "kaioken"') &&
+      code.includes('const [count, setCount] = useState(0)') &&
+      code.includes('{count}')
+  }}
+>
+  First, add state to track a count:
+
+  ```jsx
+  import { useState } from "kaioken" // [!code ++]
+
+  export function App() {
+    const [count, setCount] = useState(0) // [!code ++]
+    
+    return (
+      <div>
+        |++<h1>Count: {count}</h1>++|
+        <p>Let's learn about state.</p>
+      </div>
+    )
+  }
+  ```
+
+  `useState(0)` creates state with initial value `0` and returns `[value, setter]`.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="state-hooks-increment"
+  validator={(code) => {
+    return code.includes('setCount(count + 1)') &&
+      code.includes('onclick=') &&
+      code.includes('Increment')
+  }}
+>
+  Now add a button to increment the count:
+
+  ```jsx
+  import { useState } from "kaioken"
+
+  export function App() {
+    const [count, setCount] = useState(0)
+    
+    return (
+      <div>
+        <h1>Count: {count}</h1>
+        |++<button onclick={() => setCount(count + 1)}>Increment</button>++|
+      </div>
+    )
+  }
+  ```
+
+  When clicked, `setCount` updates the state and the component re-renders.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="state-hooks-decrement-reset"
+  validator={(code) => {
+    return code.includes('setCount(count - 1)') &&
+      code.includes('setCount(0)') &&
+      code.includes('Decrement') &&
+      code.includes('Reset')
+  }}
+>
+  Finally, add decrement and reset buttons:
+
+  ```jsx
+  import { useState } from "kaioken"
+
+  export function App() {
+    const [count, setCount] = useState(0)
+    
+    return (
+      <div>
+        <h1>Count: {count}</h1>
+        <button onclick={() => setCount(count + 1)}>Increment</button>
+        |++<button onclick={() => setCount(count - 1)}>Decrement</button>++|
+        |++<button onclick={() => setCount(0)}>Reset</button>++|
+      </div>
+    )
+  }
+  ```
+
+  State can be updated in different ways - increment, decrement, or set to a specific value.
+</TutorialStep>
+
+<TutorialContentFooter
+  previous={{ label: "Advanced JSX", href: "/tutorial/jsx/advanced" }}
+  next={{ label: "useEffect", href: "/tutorial/hooks/useEffect" }}
+/> 

@@ -36,7 +36,7 @@ export function TutorialStep({
     registerStep(stepId, validator)
     const unsubscribe = subscribe((fileName: string, code: string) => {
       // Check completion state fresh each time instead of using stale closure
-      if (fileName === watchFile) {
+      if (fileName === watchFile && !completed) {
         // Clear any existing validation timeout
         window.clearTimeout(validationTimeoutRef.current)
 
@@ -53,10 +53,6 @@ export function TutorialStep({
               // This ensures the editor has finished processing the current input
               requestAnimationFrame(() => {
                 markStepCompleted(stepId)
-              })
-            } else {
-              requestAnimationFrame(() => {
-                markStepFailed(stepId)
               })
             }
           } catch (error) {

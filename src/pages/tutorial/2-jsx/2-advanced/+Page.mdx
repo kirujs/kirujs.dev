@@ -21,15 +21,10 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
   Let's start with rendering a list of posts using `map()`. Update `App.jsx` to render the posts in a list:
 
   ```jsx
+  import posts from "./data.json"
   import { PostItem } from "./PostItem" // [!code ++]
 
   export function App() {
-    const posts = [
-      { id: 1, title: "Getting Started with Kaioken", content: "Learn the basics of this modern framework", published: true },
-      { id: 2, title: "Advanced JSX Patterns", content: "Explore dynamic rendering and component composition", published: false },
-      { id: 3, title: "State Management Tips", content: "Best practices for managing app state", published: true }
-    ]
-    
     return (
       <div>
         |++{posts.map((post) => (<PostItem key={post.id} post={post} />))}++|
@@ -76,7 +71,9 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
 <TutorialStep 
   stepId="jsx-advanced-conditional-rendering"
   validator={(code) => {
-    return true
+    return code.includes("const filteredPosts") &&
+      code.includes("posts.filter") &&
+      code.includes("filteredPosts.map")
   }}
 >
   Finally, let's filter the posts by their publication status:
@@ -109,5 +106,5 @@ conditional rendering, and dynamic styling by building a blog posts app with mul
 
 <TutorialContentFooter
   previous={{ label: "JSX Basics", href: "/tutorial/jsx/basics" }}
-  next={{ label: "State & Hooks", href: "/tutorial/state/hooks" }}
+  next={{ label: "Hooks", href: "/tutorial/hooks/useState" }}
 />

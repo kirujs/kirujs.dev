@@ -1,0 +1,187 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
+
+export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
+
+## useCallback Hook
+
+The `useCallback` hook memoizes functions to prevent unnecessary re-renders of child components. Let's optimize a task list.
+
+<TutorialStep 
+  stepId="useCallback-memo-component"
+  validator={(code) => {
+    return code.includes('import { memo } from "kaioken"') &&
+      code.includes('const TaskItem = memo(') &&
+      code.includes('console.log("TaskItem rendered:")')
+  }}
+>
+  First, let's wrap TaskItem with `memo` to see unnecessary re-renders:
+
+  ```jsx
+  import { useState, memo } from "kaioken" // [!code ++]
+
+  const TaskItem = memo(function TaskItem({ task, onToggle }) { // [!code ++]
+    console.log("TaskItem rendered:", task.text)
+    
+    return (
+      <li>
+        <input 
+          type="checkbox" 
+          checked={task.completed}
+          onchange={() => onToggle(task.id)}
+        />
+        {task.text}
+      </li>
+    )
+  |~~})~~| // [!code --]
+
+  export function App() {
+    const [tasks, setTasks] = useState([
+      { id: 1, text: "Learn hooks", completed: false },
+      { id: 2, text: "Build app", completed: false }
+    ])
+    const [count, setCount] = useState(0) // [!code ++]
+
+    const toggleTask = (id) => {
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      ))
+    }
+
+    return (
+      <div>
+        <h1>Task List</h1>
+        |++<button onclick={() => setCount(c => c + 1)}>Re-render ({count})</button>++|
+        <ul>
+          {tasks.map(task => (
+            <TaskItem key={task.id} task={task} onToggle={toggleTask} />
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  Click "Re-render" and see both TaskItems re-render even though they didn't change!
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useCallback-memoize-function"
+  validator={(code) => {
+    return code.includes('import { useState, memo, useCallback } from "kaioken"') &&
+      code.includes('const toggleTask = useCallback(') &&
+      code.includes('[tasks]')
+  }}
+>
+  Now let's memoize the `toggleTask` function with `useCallback`:
+
+  ```jsx
+  import { useState, memo, useCallback } from "kaioken" // [!code ++]
+
+  const TaskItem = memo(function TaskItem({ task, onToggle }) {
+    console.log("TaskItem rendered:", task.text)
+    
+    return (
+      <li>
+        <input 
+          type="checkbox" 
+          checked={task.completed}
+          onchange={() => onToggle(task.id)}
+        />
+        {task.text}
+      </li>
+    )
+  })
+
+  export function App() {
+    const [tasks, setTasks] = useState([
+      { id: 1, text: "Learn hooks", completed: false },
+      { id: 2, text: "Build app", completed: false }
+    ])
+    const [count, setCount] = useState(0)
+
+    const toggleTask = useCallback((id) => { // [!code ++]
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      ))
+    }, [tasks]) // [!code ++]
+
+    return (
+      <div>
+        <h1>Task List</h1>
+        <button onclick={() => setCount(c => c + 1)}>Re-render ({count})</button>
+        <ul>
+          {tasks.map(task => (
+            <TaskItem key={task.id} task={task} onToggle={toggleTask} />
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  Now TaskItems only re-render when `tasks` changes, not on every parent re-render!
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useCallback-setter-optimization"
+  validator={(code) => {
+    return code.includes('setTasks(prevTasks =>') &&
+      code.includes('prevTasks.map(task =>') &&
+      code.includes('}, [])')
+  }}
+>
+  Let's optimize further by using the setter function pattern:
+
+  ```jsx
+  import { useState, memo, useCallback } from "kaioken"
+
+  const TaskItem = memo(function TaskItem({ task, onToggle }) {
+    console.log("TaskItem rendered:", task.text)
+    
+    return (
+      <li>
+        <input 
+          type="checkbox" 
+          checked={task.completed}
+          onchange={() => onToggle(task.id)}
+        />
+        {task.text}
+      </li>
+    )
+  })
+
+  export function App() {
+    const [tasks, setTasks] = useState([
+      { id: 1, text: "Learn hooks", completed: false },
+      { id: 2, text: "Build app", completed: false }
+    ])
+    const [count, setCount] = useState(0)
+
+    const toggleTask = useCallback((id) => {
+      setTasks(|~~prevTasks => prevTasks.map(task =>~~| // [!code --]
+        task.id === id ? { ...task, completed: !task.completed } : task
+      |~~))~~| // [!code --]
+    }, |~~[]~~|) // [!code --]
+
+    return (
+      <div>
+        <h1>Task List</h1>
+        <button onclick={() => setCount(c => c + 1)}>Re-render ({count})</button>
+        <ul>
+          {tasks.map(task => (
+            <TaskItem key={task.id} task={task} onToggle={toggleTask} />
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  Using the setter function removes the `tasks` dependency, making the callback completely stable!
+</TutorialStep>
+
+<TutorialContentFooter
+  previous={{ label: "useMemo", href: "/tutorial/hooks/useMemo" }}
+  next={{ label: "Signals", href: "/tutorial/state/signals" }}
+/> 

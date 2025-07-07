@@ -1,0 +1,1 @@
+export default "/tutorial/hooks"

@@ -1,0 +1,157 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
+
+export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
+
+## useRef Hook
+
+The `useRef` hook gives you direct access to DOM elements and persists values between renders. Let's create an input that we can focus programmatically.
+
+<TutorialStep 
+  stepId="useRef-basic-dom"
+  validator={(code) => {
+    return code.includes('import { useRef } from "kaioken"') &&
+      code.includes('const inputRef = useRef(null)') &&
+      code.includes('ref={inputRef}') &&
+      code.includes('inputRef.current.focus()')
+  }}
+>
+  First, create a ref to access the input element:
+
+  ```jsx
+  import { useRef } from "kaioken" // [!code ++]
+
+  export function App() {
+    const inputRef = useRef(null) // [!code ++]
+    
+    const focusInput = () => { // [!code ++]
+      inputRef.current.focus() // [!code ++]
+    } // [!code ++]
+    
+    return (
+      <div>
+        <h1>Focus App</h1>
+        <input 
+          |++ref={inputRef}++|
+          type="text" 
+          placeholder="Enter your name" 
+        />
+        |++<button onclick={focusInput}>Focus Input</button>++|
+      </div>
+    )
+  }
+  ```
+
+  `useRef` returns a mutable object with a `current` property that holds the DOM element.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useRef-persistent-value"
+  validator={(code) => {
+    return code.includes('const countRef = useRef(0)') &&
+      code.includes('countRef.current++') &&
+      code.includes('Click count:') &&
+      code.includes('useState')
+  }}
+>
+  Now let's use a ref to store a value that persists but doesn't cause re-renders:
+
+  ```jsx
+  import { useRef, useState } from "kaioken"
+
+  export function App() {
+    const inputRef = useRef(null)
+    const countRef = useRef(0) // [!code ++]
+    const [renders, setRenders] = useState(0) // [!code ++]
+    
+    const focusInput = () => {
+      inputRef.current.focus()
+    }
+    
+    const handleClick = () => { // [!code ++]
+      countRef.current++ // [!code ++]
+      setRenders(r => r + 1) // [!code ++]
+    } // [!code ++]
+    
+    return (
+      <div>
+        <h1>Focus App</h1>
+        <input 
+          ref={inputRef}
+          type="text" 
+          placeholder="Enter your name" 
+        />
+        <button onclick={focusInput}>Focus Input</button>
+        |++<button onclick={handleClick}>Click Me</button>++|
+        |++<p>Click count: {countRef.current}</p>++|
+        |++<p>Renders: {renders}</p>++|
+      </div>
+    )
+  }
+  ```
+
+  Unlike state, updating a ref doesn't trigger re-renders. Perfect for counters!
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useRef-previous-value"
+  validator={(code) => {
+    return code.includes('const prevValueRef = useRef') &&
+      code.includes('useEffect(() => {') &&
+      code.includes('prevValueRef.current = ') &&
+      code.includes('Previous:')
+  }}
+>
+  Finally, let's track the previous value of our input:
+
+  ```jsx
+  import { useRef, useState, useEffect } from "kaioken"
+
+  export function App() {
+    const inputRef = useRef(null)
+    const countRef = useRef(0)
+    const [renders, setRenders] = useState(0)
+    const [inputValue, setInputValue] = useState("") // [!code ++]
+    const prevValueRef = useRef("") // [!code ++]
+    
+    useEffect(() => { // [!code ++]
+      prevValueRef.current = inputValue // [!code ++]
+    }) // [!code ++]
+    
+    const focusInput = () => {
+      inputRef.current.focus()
+    }
+    
+    const handleClick = () => {
+      countRef.current++
+      setRenders(r => r + 1)
+    }
+    
+    return (
+      <div>
+        <h1>Focus App</h1>
+        <input 
+          ref={inputRef}
+          type="text" 
+          placeholder="Enter your name"
+          |++value={inputValue}++|
+          |++oninput={(e) => setInputValue(e.target.value)}++|
+        />
+        <button onclick={focusInput}>Focus Input</button>
+        <button onclick={handleClick}>Click Me</button>
+        <p>Click count: {countRef.current}</p>
+        <p>Renders: {renders}</p>
+        |++<p>Current: {inputValue}</p>++|
+        |++<p>Previous: {prevValueRef.current}</p>++|
+      </div>
+    )
+  }
+  ```
+
+  Refs are perfect for storing previous values without causing extra renders.
+</TutorialStep>
+
+<TutorialContentFooter
+  previous={{ label: "useEffect", href: "/tutorial/hooks/useEffect" }}
+  next={{ label: "useMemo", href: "/tutorial/hooks/useMemo" }}
+/> 

@@ -1,0 +1,174 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
+
+export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
+
+## useMemo Hook
+
+The `useMemo` hook optimizes performance by memoizing expensive calculations. Let's create a number filter that shows when calculations run.
+
+<TutorialStep 
+  stepId="useMemo-expensive-calculation"
+  validator={(code) => {
+    return code.includes('const filteredNumbers = numbers.filter') &&
+      code.includes('console.log("Filtering numbers")') &&
+      code.includes('toString().includes(filter)')
+  }}
+>
+  First, let's add an expensive filtering operation:
+
+  ```jsx
+  import { useState } from "kaioken"
+
+  export function App() {
+    const [numbers, setNumbers] = useState([1, 2, 3, 4, 5])
+    const [filter, setFilter] = useState("")
+    const [rerenders, setRerenders] = useState(0) // [!code ++]
+
+    // Expensive calculation (imagine this is much slower) // [!code ++]
+    console.log("Filtering numbers") // [!code ++]
+    const filteredNumbers = numbers.filter(num => // [!code ++]
+      num.toString().includes(filter) // [!code ++]
+    ) // [!code ++]
+
+    return (
+      <div>
+        <h1>Number Filter</h1>
+        <input 
+          type="text" 
+          placeholder="Filter numbers" 
+          value={filter}
+          oninput={(e) => setFilter(e.target.value)}
+        />
+        |++<button onclick={() => setRerenders(r => r + 1)}>++|
+          |++Re-render ({rerenders})++|
+        |++</button>++|
+        <ul>
+          {|~~filteredNumbers~~|.map(num => (
+            <li key={num}>{num}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  Notice the console message runs on every render, even when just clicking the button!
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useMemo-memoize-calculation"
+  validator={(code) => {
+    return code.includes('import { useState, useMemo } from "kaioken"') &&
+      code.includes('const filteredNumbers = useMemo(() => {') &&
+      code.includes('[numbers, filter]')
+  }}
+>
+  Now let's optimize with `useMemo` to only recalculate when needed:
+
+  ```jsx
+  import { useState, useMemo } from "kaioken" // [!code ++]
+
+  export function App() {
+    const [numbers, setNumbers] = useState([1, 2, 3, 4, 5])
+    const [filter, setFilter] = useState("")
+    const [rerenders, setRerenders] = useState(0)
+
+    // Memoized calculation - only runs when dependencies change // [!code ++]
+    const filteredNumbers = useMemo(() => { // [!code ++]
+      console.log("Filtering numbers") // [!code ++]
+      return numbers.filter(num => // [!code ++]
+        num.toString().includes(filter) // [!code ++]
+      ) // [!code ++]
+    }, [numbers, filter]) // [!code ++]
+
+    return (
+      <div>
+        <h1>Number Filter</h1>
+        <input 
+          type="text" 
+          placeholder="Filter numbers" 
+          value={filter}
+          oninput={(e) => setFilter(e.target.value)}
+        />
+        <button onclick={() => setRerenders(r => r + 1)}>
+          Re-render ({rerenders})
+        </button>
+        <ul>
+          {filteredNumbers.map(num => (
+            <li key={num}>{num}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  Now the filtering only runs when `numbers` or `filter` changes!
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useMemo-complex-object"
+  validator={(code) => {
+    return code.includes('const stats = useMemo(() => {') &&
+      code.includes('total: filteredNumbers.length') &&
+      code.includes('sum: filteredNumbers.reduce') &&
+      code.includes('Stats:')
+  }}
+>
+  Let's also memoize an expensive object calculation:
+
+  ```jsx
+  import { useState, useMemo } from "kaioken"
+
+  export function App() {
+    const [numbers, setNumbers] = useState([1, 2, 3, 4, 5])
+    const [filter, setFilter] = useState("")
+    const [rerenders, setRerenders] = useState(0)
+
+    const filteredNumbers = useMemo(() => {
+      console.log("Filtering numbers")
+      return numbers.filter(num =>
+        num.toString().includes(filter)
+      )
+    }, [numbers, filter])
+
+    const stats = useMemo(() => { // [!code ++]
+      console.log("Calculating stats") // [!code ++]
+      return { // [!code ++]
+        total: filteredNumbers.length, // [!code ++]
+        sum: filteredNumbers.reduce((a, b) => a + b, 0), // [!code ++]
+        average: filteredNumbers.reduce((a, b) => a + b, 0) / filteredNumbers.length || 0 // [!code ++]
+      } // [!code ++]
+    }, [filteredNumbers]) // [!code ++]
+
+    return (
+      <div>
+        <h1>Number Filter</h1>
+        <input 
+          type="text" 
+          placeholder="Filter numbers" 
+          value={filter}
+          oninput={(e) => setFilter(e.target.value)}
+        />
+        <button onclick={() => setRerenders(r => r + 1)}>
+          Re-render ({rerenders})
+        </button>
+        |++<p>Stats: {stats.total} numbers, sum: {stats.sum}, avg: {stats.average.toFixed(1)}</p>++|
+        <ul>
+          {filteredNumbers.map(num => (
+            <li key={num}>{num}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  ```
+
+  Both calculations are now optimized - they only run when their dependencies change!
+</TutorialStep>
+
+<TutorialContentFooter
+  previous={{ label: "useRef", href: "/tutorial/hooks/useRef" }}
+  next={{ label: "useCallback", href: "/tutorial/hooks/useCallback" }}
+/> 

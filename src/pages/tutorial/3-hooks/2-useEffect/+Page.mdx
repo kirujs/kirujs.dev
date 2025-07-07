@@ -1,0 +1,141 @@
+import { TutorialStep } from "$/components/tutorials/TutorialStep"
+import { TutorialContentFooter } from "$/components/tutorials/TutorialContentFooter"
+
+export const files = import.meta.glob("./files/*", { eager: true, query: "?raw" })
+
+## useEffect Hook
+
+The `useEffect` hook lets you perform side effects like timers, API calls, and DOM updates. Let's create a simple timer.
+
+<TutorialStep 
+  stepId="useEffect-basic-timer"
+  validator={(code) => {
+    return code.includes('import { useState, useEffect } from "kaioken"') &&
+      code.includes('const [seconds, setSeconds] = useState(0)') &&
+      code.includes('useEffect(() => {') &&
+      code.includes('setInterval')
+  }}
+>
+  First, create a timer that counts up every second:
+
+  ```jsx
+  import { useState, useEffect } from "kaioken" // [!code ++]
+
+  export function App() {
+    const [seconds, setSeconds] = useState(0) // [!code ++]
+    
+    useEffect(() => { // [!code ++]
+      const interval = setInterval(() => { // [!code ++]
+        setSeconds(s => s + 1) // [!code ++]
+      }, 1000) // [!code ++]
+    }, []) // [!code ++]
+    
+    return (
+      <div>
+        <h1>Timer: {seconds}s</h1>
+        <p>Let's learn about side effects.</p>
+      </div>
+    )
+  }
+  ```
+
+  `useEffect` runs after every render. The empty `[]` means it only runs once.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useEffect-cleanup"
+  validator={(code) => {
+    return code.includes('return () => {') &&
+      code.includes('clearInterval(interval)') &&
+      code.includes('Start') &&
+      code.includes('Stop')
+  }}
+>
+  Now add cleanup to prevent memory leaks and start/stop controls:
+
+  ```jsx
+  import { useState, useEffect } from "kaioken"
+
+  export function App() {
+    const [seconds, setSeconds] = useState(0)
+    const [isRunning, setIsRunning] = useState(false) // [!code ++]
+    
+    useEffect(() => {
+      |++if (!isRunning) return++|
+      
+      const interval = setInterval(() => {
+        setSeconds(s => s + 1)
+      }, 1000)
+      
+      |++return () => {++|
+        |++clearInterval(interval)++|
+      |++}++|
+    }, |~~[isRunning]~~|) // [!code --]
+    
+    return (
+      <div>
+        <h1>Timer: {seconds}s</h1>
+        |++<button onclick={() => setIsRunning(!isRunning)}>++|
+          |++{isRunning ? 'Stop' : 'Start'}++|
+        |++</button>++|
+        |++<button onclick={() => setSeconds(0)}>Reset</button>++|
+      </div>
+    )
+  }
+  ```
+
+  Return a cleanup function from `useEffect` to prevent memory leaks.
+</TutorialStep>
+
+<TutorialStep 
+  stepId="useEffect-dependencies"
+  validator={(code) => {
+    return code.includes('const [title, setTitle] = useState') &&
+      code.includes('document.title = ') &&
+      code.includes('[title]')
+  }}
+>
+  Finally, let's update the document title when the timer changes:
+
+  ```jsx
+  import { useState, useEffect } from "kaioken"
+
+  export function App() {
+    const [seconds, setSeconds] = useState(0)
+    const [isRunning, setIsRunning] = useState(false)
+    
+    useEffect(() => {
+      if (!isRunning) return
+      
+      const interval = setInterval(() => {
+        setSeconds(s => s + 1)
+      }, 1000)
+      
+      return () => {
+        clearInterval(interval)
+      }
+    }, [isRunning])
+    
+    |++useEffect(() => {++|
+      |++document.title = `Timer: ${seconds}s`++|
+    |++}, [seconds])++|
+    
+    return (
+      <div>
+        <h1>Timer: {seconds}s</h1>
+        <button onclick={() => setIsRunning(!isRunning)}>
+          {isRunning ? 'Stop' : 'Start'}
+        </button>
+        <button onclick={() => setSeconds(0)}>Reset</button>
+      </div>
+    )
+  }
+  ```
+
+  Dependencies in `[]` determine when the effect runs. Include all values used inside.
+</TutorialStep>
+
+<TutorialContentFooter
+  previous={{ label: "useState", href: "/tutorial/hooks/useState" }}
+  next={{ label: "useRef", href: "/tutorial/hooks/useRef" }}
+/> 
