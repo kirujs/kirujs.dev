@@ -27,8 +27,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       kiru:
-        specifier: 0.47.0
-        version: 0.47.0
+        specifier: 0.48.3
+        version: 0.48.3
       lit-match:
         specifier: ^1.0.3
         version: 1.0.3
@@ -71,7 +71,7 @@ importers:
         version: 5.9.2
       vite-plugin-kiru:
         specifier: 0.26.0
-        version: 0.26.0(kiru@0.47.0)
+        version: 0.26.0(kiru@0.48.3)
 
 packages:
 
@@ -904,8 +904,8 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  kiru@0.47.0:
-    resolution: {integrity: sha512-ZeP56oIuwnEj1hJF/ObI9eOWtf8A4dV6AYfMSgG9yVbWSIATEmpq4KnJWUT8SHJqjZRwPe/J+JA2hE5YqI1fog==}
+  kiru@0.48.3:
+    resolution: {integrity: sha512-Da9Q7ccbTAGwBpVGsQ9Cc1Kd3qdXgSnCVtrlQQt35E5ZyuUpZZIzfLOSkeG5AHtap8ZKoMbBhs3H9VuLe51Zig==}
 
   lightningcss-darwin-arm64@1.30.1:
     resolution: {integrity: sha512-c8JK7hyE65X1MHMN+Viq9n11RRC7hgin3HhYKhrMyaXflk5GVplZ60IxyoVtzILeKr+xAJwg6zK6sjTBJ0FKYQ==}
@@ -2342,7 +2342,7 @@ snapshots:
 
   json5@2.2.3: {}
 
-  kiru@0.47.0: {}
+  kiru@0.48.3: {}
 
   lightningcss-darwin-arm64@1.30.1:
     optional: true
@@ -3138,9 +3138,9 @@ snapshots:
     optionalDependencies:
       vite: 7.1.3(@types/node@24.3.0)(jiti@2.5.1)(lightningcss@1.30.1)
 
-  vite-plugin-kiru@0.26.0(kiru@0.47.0):
+  vite-plugin-kiru@0.26.0(kiru@0.48.3):
     dependencies:
-      kiru: 0.47.0
+      kiru: 0.48.3
       magic-string: 0.30.18
 
   vite@7.1.3(@types/node@24.3.0)(jiti@2.5.1)(lightningcss@1.30.1):

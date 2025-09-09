@@ -33,7 +33,7 @@
     "@shikijs/transformers": "^3.11.0",
     "compression": "^1.8.1",
     "express": "^5.1.0",
-    "kiru": "0.47.0",
+    "kiru": "0.48.3",
     "lit-match": "^1.0.3",
     "vike": "^0.4.237",
     "vite": "^7.1.3"
