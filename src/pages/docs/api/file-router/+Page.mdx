@@ -1,14 +1,6 @@
 import { match } from "lit-match"
 import { TabGroup } from "$/components/TabGroup"
-import { CodePreview } from "$/components/CodePreview"
-import { linkTypePreview } from "$/components/previews/link.type.preview"
-import { routeTypePreview } from "$/components/previews/route.type.preview"
-import { routerTypePreview } from "$/components/previews/router.type.preview"
-import { navigateTypePreview } from "$/components/previews/navigate.type.preview"
-import { useRouterTypePreview } from "$/components/previews/useRouter.type.preview"
-import { refTypePreview } from "$/components/previews/Ref.type.preview"
 import { siteCodeLang } from "$/state/siteCodeLang"
-import { ExternalLink } from "$/components/atoms/ExternalLink"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { selectedTab, tabs } from "./selectedTab"
 
@@ -18,17 +10,67 @@ import ExamplePagesLayout from "./example.pages-layout.md"
 import ExamplePagesLayoutTs from "./example.pages-layout.ts.md"
 import ExamplePagesIndex from "./example.pages-index.md"
 import ExamplePagesIndexTs from "./example.pages-index.ts.md"
-import ExamplePagesIndexId from "./example.pages-index-[id].md"
-import ExamplePagesIndexIdTs from "./example.pages-index-[id].ts.md"
+import ExamplePagesId from "./example.pages-id.md"
+import ExamplePagesIdTs from "./example.pages-id.ts.md"
 
 
 # FileRouter
 
 ### Overview
 
-INFO TO GO HERE
+The `FileRouter` module provides a file-based routing system for 
+single-page applications (SPA). It automatically generates routes 
+based on your file structure, enabling you to create pages and 
+layouts using conventional file naming patterns. This approach 
+simplifies route management and provides a familiar development 
+experience similar to Next.js and other modern frameworks.
 
-### Example
+### Key Components
+
+1. **FileRouter**
+    - The main router component that handles file-based routing.
+    - Automatically generates routes from your file structure.
+    - Properties:
+        - **config**: Configuration object containing:
+            - **pages**: Glob pattern for page files (e.g., `import.meta.glob("/**/index.{tsx,jsx}")`)
+            - **layouts**: Glob pattern for layout files (e.g., `import.meta.glob("/**/layout.{tsx,jsx}")`)
+
+2. **definePageConfig**
+    - Function to configure page-specific behavior and data loading.
+    - Returns a configuration object that can be exported from page components.
+    - Properties:
+        - **loader**: Object containing:
+            - **load**: Async function that loads data for the page, receives `{ signal, params }` parameters.
+
+3. **PageProps**
+    - TypeScript interface for page component props.
+    - Provides typed access to `data`, `loading`, `error`, and other page-specific properties.
+
+4. **Link**
+    - An anchor tag that handles client-side navigation without full
+      page reloads.
+    - Maintains crawlability by providing a valid href attribute for
+      search engines.
+    - Properties:
+        - **to**: The destination URL for navigation.
+        - **replace** (optional, default `false`): A boolean
+          indicating whether to replace the current history entry.
+
+5. **useFileRouter**
+    - A hook that provides access to the router state and navigation methods.
+    - Returns an object containing:
+        - **state**: Current router state including `pathname`, `params`, `query`
+        - **navigate**: Function for programmatic navigation
+        - **reload**: Function to reload the current page
+
+### Examples
+
+The following examples demonstrate how to set up a file-based routing system with FileRouter:
+
+- **main**: Shows how to initialize the FileRouter with page and layout glob patterns
+- **pages/layout**: Demonstrates creating a root layout component with navigation
+- **pages/index**: Shows a page component with data loading using `definePageConfig`
+- **pages/[id]/index**: Demonstrates dynamic routes with parameter access and navigation
 
 <div>
   <div className="not-prose">
@@ -45,14 +87,14 @@ INFO TO GO HERE
             .with("main", () => <ExampleMain />)
             .with("pages/layout", () => <ExamplePagesLayout />)
             .with("pages/index", () => <ExamplePagesIndex />)
-            .else(() => <ExamplePagesIndexId />)
+            .else(() => <ExamplePagesId />)
         })
         .else(() => {
           return match(selectedTab.value)
             .with("main", () => <ExampleMainTs />)
             .with("pages/layout", () => <ExamplePagesLayoutTs />)
             .with("pages/index", () => <ExamplePagesIndexTs />)
-            .else(() => <ExamplePagesIndexIdTs />)
+            .else(() => <ExamplePagesIdTs />)
         })}
     </CopyInnerText>
   </div>
