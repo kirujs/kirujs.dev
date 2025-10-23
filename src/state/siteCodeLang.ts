@@ -6,7 +6,7 @@ if ("window" in globalThis) {
   window.__kiru?.on("mount", () => {
     const storageValue = localStorage.getItem(storageKey)
     if (storageValue && ["js", "ts"].includes(storageValue)) {
-      siteCodeLang.value = storageValue as "js" | "ts"
+      queueMicrotask(() => (siteCodeLang.value = storageValue as "js" | "ts"))
     }
     siteCodeLang.subscribe((val) => localStorage.setItem(storageKey, val))
   })
