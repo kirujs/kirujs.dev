@@ -1,6 +1,13 @@
 import { match } from "lit-match"
 import { TabGroup } from "$/components/TabGroup"
+import { CodePreview } from "$/components/CodePreview"
+import { fileRouterTypePreview } from "$/components/previews/FileRouter.type.preview"
+import { definePageConfigTypePreview } from "$/components/previews/definePageConfig.type.preview"
+import { pagePropsTypePreview } from "$/components/previews/PageProps.type.preview"
+import { linkTypePreview } from "$/components/previews/link.type.preview"
+import { useFileRouterTypePreview } from "$/components/previews/useFileRouter.type.preview"
 import { siteCodeLang } from "$/state/siteCodeLang"
+import { ExternalLink } from "$/components/atoms/ExternalLink"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { selectedTab, tabs } from "./selectedTab"
 
@@ -18,52 +25,34 @@ import ExamplePagesIdTs from "./example.pages-id.ts.md"
 
 ### Overview
 
-The `FileRouter` module provides a file-based routing system for 
-single-page applications (SPA). It automatically generates routes 
-based on your file structure, enabling you to create pages and 
-layouts using conventional file naming patterns. This approach 
-simplifies route management and provides a familiar development 
-experience similar to Next.js and other modern frameworks.
+The <CodePreview data={fileRouterTypePreview} /> provides a file-based routing system for 
+single-page applications (SPA). It automatically generates routes based on your file 
+structure, enabling you to create pages and layouts using conventional file naming patterns. 
+This approach simplifies route management and provides a familiar development experience 
+similar to <ExternalLink href="https://nextjs.org/">Next.js</ExternalLink> and other modern frameworks.
 
 ### Key Components
 
-1. **FileRouter**
+1. <CodePreview data={fileRouterTypePreview} />
     - The main router component that handles file-based routing.
     - Automatically generates routes from your file structure.
-    - Properties:
-        - **config**: Configuration object containing:
-            - **pages**: Glob pattern for page files (e.g., `import.meta.glob("/**/index.{tsx,jsx}")`)
-            - **layouts**: Glob pattern for layout files (e.g., `import.meta.glob("/**/layout.{tsx,jsx}")`)
 
-2. **definePageConfig**
+2. <CodePreview data={definePageConfigTypePreview} />
     - Function to configure page-specific behavior and data loading.
-    - Returns a configuration object that can be exported from page components.
-    - Properties:
-        - **loader**: Object containing:
-            - **load**: Async function that loads data for the page, receives `{ signal, params }` parameters.
+    - Returns a configuration object to be exported from page components.
 
-3. **PageProps**
+3. <CodePreview data={pagePropsTypePreview} />
     - TypeScript interface for page component props.
     - Provides typed access to `data`, `loading`, `error`, and other page-specific properties.
 
-4. **Link**
-    - An anchor tag that handles client-side navigation without full
-      page reloads.
-    - Maintains crawlability by providing a valid href attribute for
-      search engines.
-    - Properties:
-        - **to**: The destination URL for navigation.
-        - **replace** (optional, default `false`): A boolean
-          indicating whether to replace the current history entry.
+4. <CodePreview data={linkTypePreview} />
+    - An anchor tag that handles client-side navigation without full page reloads.
+    - Maintains crawlability by providing a valid href attribute for search engines.
 
-5. **useFileRouter**
+5. <CodePreview data={useFileRouterTypePreview} />
     - A hook that provides access to the router state and navigation methods.
-    - Returns an object containing:
-        - **state**: Current router state including `pathname`, `params`, `query`
-        - **navigate**: Function for programmatic navigation
-        - **reload**: Function to reload the current page
 
-### Examples
+### Example
 
 The following examples demonstrate how to set up a file-based routing system with FileRouter:
 
