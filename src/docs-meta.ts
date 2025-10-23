@@ -30,36 +30,40 @@ type DocSectionLink = {
   isNew?: DocItemStatus
 }
 
-const STATUS_MAP = {
-  // 2025-05-01
-  swrApi: {
+const STATUS_MAP: Record<string, DocItemStatus> = {
+  // // 2025-05-01
+  // swrApi: {
+  //   type: "new",
+  //   since: "0.38.0",
+  // },
+  // // 2025-05-01
+  // formApi: {
+  //   type: "new",
+  //   since: "0.38.0",
+  // },
+  // // 2025-05-05
+  // elementBindings: {
+  //   type: "new",
+  //   since: "0.38.2",
+  // },
+  // // 2025-05-06
+  // ForComponent: {
+  //   type: "new",
+  //   since: "0.38.4",
+  // },
+  // // 2025-05-06
+  // DeriveComponent: {
+  //   type: "new",
+  //   since: "0.38.4",
+  // },
+  // // 2025-05-15
+  // useViewTransition: {
+  //   type: "new",
+  //   since: "0.39.0",
+  // },
+  fileRouterApi: {
     type: "new",
-    since: "0.38.0",
-  },
-  // 2025-05-01
-  formApi: {
-    type: "new",
-    since: "0.38.0",
-  },
-  // 2025-05-05
-  elementBindings: {
-    type: "new",
-    since: "0.38.2",
-  },
-  // 2025-05-06
-  ForComponent: {
-    type: "new",
-    since: "0.38.4",
-  },
-  // 2025-05-06
-  DeriveComponent: {
-    type: "new",
-    since: "0.38.4",
-  },
-  // 2025-05-15
-  useViewTransition: {
-    type: "new",
-    since: "0.39.0",
+    since: "0.50.0",
   },
 } as const
 
@@ -142,9 +146,10 @@ export const docMeta: DocItem[] = [
         href: "/docs/api/portal",
       },
       {
-        title: "Router",
-        href: "/docs/api/router",
-        keywords: ["Router", "Route", "Link", "navigate", "useRouter"],
+        title: "File Router",
+        href: "/docs/api/file-router",
+        keywords: ["FileRouter", "Router", "Route", "Link", "useFileRouter"],
+        status: STATUS_MAP.fileRouterApi,
       },
       {
         title: "Signal",

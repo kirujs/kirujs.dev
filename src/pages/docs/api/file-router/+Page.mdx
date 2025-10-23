@@ -1,0 +1,59 @@
+import { match } from "lit-match"
+import { TabGroup } from "$/components/TabGroup"
+import { CodePreview } from "$/components/CodePreview"
+import { linkTypePreview } from "$/components/previews/link.type.preview"
+import { routeTypePreview } from "$/components/previews/route.type.preview"
+import { routerTypePreview } from "$/components/previews/router.type.preview"
+import { navigateTypePreview } from "$/components/previews/navigate.type.preview"
+import { useRouterTypePreview } from "$/components/previews/useRouter.type.preview"
+import { refTypePreview } from "$/components/previews/Ref.type.preview"
+import { siteCodeLang } from "$/state/siteCodeLang"
+import { ExternalLink } from "$/components/atoms/ExternalLink"
+import { CopyInnerText } from "$/components/CopyInnerText"
+import { selectedTab, tabs } from "./selectedTab"
+
+import ExampleMain from "./example.main.md"
+import ExampleMainTs from "./example.main.ts.md"
+import ExamplePagesLayout from "./example.pages-layout.md"
+import ExamplePagesLayoutTs from "./example.pages-layout.ts.md"
+import ExamplePagesIndex from "./example.pages-index.md"
+import ExamplePagesIndexTs from "./example.pages-index.ts.md"
+import ExamplePagesIndexId from "./example.pages-index-[id].md"
+import ExamplePagesIndexIdTs from "./example.pages-index-[id].ts.md"
+
+
+# FileRouter
+
+### Overview
+
+INFO TO GO HERE
+
+### Example
+
+<div>
+  <div className="not-prose">
+    <TabGroup
+      items={tabs}
+      onSelect={(value) => (selectedTab.value = value)}
+      value={selectedTab.value}
+      itemSuffix={() => `.${siteCodeLang.value}x`}
+    />
+    <CopyInnerText>
+    {match(siteCodeLang.value)
+        .with("js", () => { 
+          return match(selectedTab.value)
+            .with("main", () => <ExampleMain />)
+            .with("pages/layout", () => <ExamplePagesLayout />)
+            .with("pages/index", () => <ExamplePagesIndex />)
+            .else(() => <ExamplePagesIndexId />)
+        })
+        .else(() => {
+          return match(selectedTab.value)
+            .with("main", () => <ExampleMainTs />)
+            .with("pages/layout", () => <ExamplePagesLayoutTs />)
+            .with("pages/index", () => <ExamplePagesIndexTs />)
+            .else(() => <ExamplePagesIndexIdTs />)
+        })}
+    </CopyInnerText>
+  </div>
+</div>

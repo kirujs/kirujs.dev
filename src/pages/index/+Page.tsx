@@ -10,7 +10,7 @@ export function Page() {
   return (
     <div className="w-full h-full overflow-x-hidden">
       <section>
-        <Container className="min-h-[100vh] flex flex-col items-center justify-center h-full pt-60">
+        <Container className="min-h-screen flex flex-col items-center justify-center h-full pt-60">
           <h1 className="text-6xl xs:text-8xl sm:text-9xl font-bold leading-snug! text-shadow text-light">
             Kiru
           </h1>
