@@ -33,8 +33,8 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3
       vike:
-        specifier: ^0.4.237
-        version: 0.4.237(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2))
+        specifier: ^0.4.244
+        version: 0.4.244(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2))
       vite:
         specifier: ^7.1.12
         version: 7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)
@@ -995,6 +995,9 @@ packages:
   magic-string@0.30.19:
     resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
 
+  magic-string@0.30.21:
+    resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+
   markdown-extensions@2.0.0:
     resolution: {integrity: sha512-o5vL7aDWatOTX8LzaS1WMoaoxIiLRQJuIKKe2wAw6IeULDHaqbiqiggmx+pKvZDb1Sj+pE46Sn1T7lCqfFtg1Q==}
     engines: {node: '>=16'}
@@ -1422,13 +1425,13 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vike@0.4.237:
-    resolution: {integrity: sha512-+Fro/OPiu3X8LOKCQ640hGKcLr7luyi6euWwixsxE/ow9VFxpcU+i0IaUaVkcH7njvWLACay0lv45UkiyeP8TA==}
-    engines: {node: '>=18.0.0'}
+  vike@0.4.244:
+    resolution: {integrity: sha512-Cq9Xye5l7k/J6QF3/PI3KklAh5BKi6a956GpfVH5pIeznOWRu80DIUHHZFwKceDZscgLnb9ZKxQ5G0UeZk/yCA==}
+    engines: {node: '>=20.19.0'}
     hasBin: true
     peerDependencies:
       react-streaming: '>=0.3.42'
-      vite: '>=5.1.0'
+      vite: '>=6.3.0'
     peerDependenciesMeta:
       react-streaming:
         optional: true
@@ -2386,6 +2389,10 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  magic-string@0.30.21:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+
   markdown-extensions@2.0.0: {}
 
   math-intrinsics@1.1.0: {}
@@ -3085,7 +3092,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vike@0.4.237(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)):
+  vike@0.4.244(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)):
     dependencies:
       '@brillout/import': 0.2.6
       '@brillout/json-serializer': 0.5.21
@@ -3097,7 +3104,7 @@ snapshots:
       es-module-lexer: 1.7.0
       esbuild: 0.25.11
       json5: 2.2.3
-      magic-string: 0.30.19
+      magic-string: 0.30.21
       picomatch: 4.0.3
       semver: 7.7.3
       sirv: 3.0.2
