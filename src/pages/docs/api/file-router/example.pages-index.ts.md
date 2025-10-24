@@ -38,7 +38,7 @@ export default function Page({
       <div className="flex flex-col gap-2">
         {data.users.map((user) => (
           <div key={user.id} className="flex gap-2">
-            <Link to={`/users/${user.id}`}>
+            <Link to={`/${user.id}`}>
               {user.firstName} {user.lastName}
             </Link>
             <img

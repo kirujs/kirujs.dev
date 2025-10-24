@@ -17,8 +17,8 @@ import ExamplePagesLayout from "./example.pages-layout.md"
 import ExamplePagesLayoutTs from "./example.pages-layout.ts.md"
 import ExamplePagesIndex from "./example.pages-index.md"
 import ExamplePagesIndexTs from "./example.pages-index.ts.md"
-import ExamplePagesId from "./example.pages-id.md"
-import ExamplePagesIdTs from "./example.pages-id.ts.md"
+import ExamplePagesIdIndex from "./example.pages-[id]-index.md"
+import ExamplePagesIdIndexTs from "./example.pages-[id]-index.ts.md"
 
 
 # FileRouter
@@ -76,14 +76,14 @@ The following examples demonstrate how to set up a file-based routing system wit
             .with("main", () => <ExampleMain />)
             .with("pages/layout", () => <ExamplePagesLayout />)
             .with("pages/index", () => <ExamplePagesIndex />)
-            .else(() => <ExamplePagesId />)
+            .else(() => <ExamplePagesIdIndex />)
         })
         .else(() => {
           return match(selectedTab.value)
             .with("main", () => <ExampleMainTs />)
             .with("pages/layout", () => <ExamplePagesLayoutTs />)
             .with("pages/index", () => <ExamplePagesIndexTs />)
-            .else(() => <ExamplePagesIdTs />)
+            .else(() => <ExamplePagesIdIndexTs />)
         })}
     </CopyInnerText>
   </div>
