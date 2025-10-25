@@ -27,8 +27,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       kiru:
-        specifier: 0.50.0
-        version: 0.50.0
+        specifier: 0.50.3
+        version: 0.50.3
       lit-match:
         specifier: ^1.0.3
         version: 1.0.3
@@ -49,8 +49,8 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
       '@types/express':
-        specifier: ^5.0.3
-        version: 5.0.3
+        specifier: ^5.0.4
+        version: 5.0.4
       '@types/mdx':
         specifier: ^2.0.13
         version: 2.0.13
@@ -70,8 +70,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       vite-plugin-kiru:
-        specifier: 0.28.0
-        version: 0.28.0(kiru@0.50.0)
+        specifier: 0.28.3
+        version: 0.28.3(kiru@0.50.3)
 
 packages:
 
@@ -537,8 +537,8 @@ packages:
   '@types/express-serve-static-core@5.1.0':
     resolution: {integrity: sha512-jnHMsrd0Mwa9Cf4IdOzbz543y4XJepXrbia2T4b6+spXC2We3t1y6K44D3mR8XMFSXMCf3/l7rCgddfx7UNVBA==}
 
-  '@types/express@5.0.3':
-    resolution: {integrity: sha512-wGA0NX93b19/dZC1J18tKWVIYWyyF2ZjT9vin/NRu0qzzvfVzWjs04iq2rQ3H65vCTQYlRqs3YHfY7zjdV+9Kw==}
+  '@types/express@5.0.4':
+    resolution: {integrity: sha512-g64dbryHk7loCIrsa0R3shBnEu5p6LPJ09bu9NG58+jz+cRUjFrc3Bz0kNQ7j9bXeCsrRDvNET1G54P/GJkAyA==}
 
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
@@ -567,14 +567,14 @@ packages:
   '@types/range-parser@1.2.7':
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
 
-  '@types/send@0.17.5':
-    resolution: {integrity: sha512-z6F2D3cOStZvuk2SaP6YrwkNO65iTZcwA2ZkSABegdkAh/lf+Aa/YQndZVfmEXT5vgAp6zv06VQ3ejSVjAny4w==}
+  '@types/send@0.17.6':
+    resolution: {integrity: sha512-Uqt8rPBE8SY0RK8JB1EzVOIZ32uqy8HwdxCnoCOsYrvnswqmFZ/k+9Ikidlk/ImhsdvBsloHbAlewb2IEBV/Og==}
 
-  '@types/send@1.2.0':
-    resolution: {integrity: sha512-zBF6vZJn1IaMpg3xUF25VK3gd3l8zwE0ZLRX7dsQyQi+jp4E8mMDJNGDYnYse+bQhYwWERTxVwHpi3dMOq7RKQ==}
+  '@types/send@1.2.1':
+    resolution: {integrity: sha512-arsCikDvlU99zl1g69TcAB3mzZPpxgw0UQnaHeC1Nwb015xp8bknZv5rIfri9xTOcMuaVgvabfIRA7PSZVuZIQ==}
 
-  '@types/serve-static@1.15.9':
-    resolution: {integrity: sha512-dOTIuqpWLyl3BBXU3maNQsS4A3zuuoYRNIvYSxxhebPfXg2mzWQEPne/nlJ37yOse6uGgR386uTpdsx4D0QZWA==}
+  '@types/serve-static@1.15.10':
+    resolution: {integrity: sha512-tRs1dB+g8Itk72rlSI2ZrW6vZg0YrLI81iQSTkMmOqnqCaNr/8Ek4VwWcN5vZgCYWbg/JJSGBlUaYGAOP73qBw==}
 
   '@types/unist@2.0.11':
     resolution: {integrity: sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==}
@@ -913,8 +913,8 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  kiru@0.50.0:
-    resolution: {integrity: sha512-1VkEQNJgposyfAI7z+xKQ83bW/s8iMaXJZqjxEH8C86jmlQHq1pbmdRt4h1LNlBKNnsUiZax5DEfsA4sOqOl7g==}
+  kiru@0.50.3:
+    resolution: {integrity: sha512-Ao6h3fstILb9YskJtE9p9TxjW+IIvv4TP5VZXFBZMmsL10XMwR66+XMxbgsvhZuKZmxK92rQRhlZQNLyGDk1IA==}
 
   lightningcss-android-arm64@1.30.2:
     resolution: {integrity: sha512-BH9sEdOCahSgmkVhBLeU7Hc9DWeZ1Eb6wNS6Da8igvUwAe0sqROHddIlvU06q3WyXVEOYDZ6ykBZQnjTbmo4+A==}
@@ -991,9 +991,6 @@ packages:
 
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
-
-  magic-string@0.30.19:
-    resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -1438,10 +1435,10 @@ packages:
       vite:
         optional: true
 
-  vite-plugin-kiru@0.28.0:
-    resolution: {integrity: sha512-sYPOmzSWhVypTzxpY3ulROdonVSshIYsIAs0cjIw2mobi8LkzUMYL6g7nLJuAH2LqPsEbbG/X74osf1SBdMcFg==}
+  vite-plugin-kiru@0.28.3:
+    resolution: {integrity: sha512-NnCo+lP/d+mk7WbRt5EL/SZObpFEq9jnWs/+bdrYDQMh9bBiBGT//ZMwTkotrjL2EwVpAeLWp2IBzBS7XxKl7A==}
     peerDependencies:
-      kiru: '>=0.50.0-preview.1'
+      kiru: '>=0.50.3'
 
   vite@7.1.12:
     resolution: {integrity: sha512-ZWyE8YXEXqJrrSLvYgrRP7p62OziLW7xI5HYGWFzOvupfAlrLvURSzv/FyGyy0eidogEM3ujU+kUG1zuHgb6Ug==}
@@ -1772,7 +1769,7 @@ snapshots:
       enhanced-resolve: 5.18.3
       jiti: 2.6.1
       lightningcss: 1.30.2
-      magic-string: 0.30.19
+      magic-string: 0.30.21
       source-map-js: 1.2.1
       tailwindcss: 4.1.16
 
@@ -1847,7 +1844,7 @@ snapshots:
 
   '@types/compression@1.8.1':
     dependencies:
-      '@types/express': 5.0.3
+      '@types/express': 5.0.4
       '@types/node': 24.9.1
 
   '@types/connect@3.4.38':
@@ -1869,13 +1866,13 @@ snapshots:
       '@types/node': 24.9.1
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
-      '@types/send': 1.2.0
+      '@types/send': 1.2.1
 
-  '@types/express@5.0.3':
+  '@types/express@5.0.4':
     dependencies:
       '@types/body-parser': 1.19.6
       '@types/express-serve-static-core': 5.1.0
-      '@types/serve-static': 1.15.9
+      '@types/serve-static': 1.15.10
 
   '@types/hast@3.0.4':
     dependencies:
@@ -1901,20 +1898,20 @@ snapshots:
 
   '@types/range-parser@1.2.7': {}
 
-  '@types/send@0.17.5':
+  '@types/send@0.17.6':
     dependencies:
       '@types/mime': 1.3.5
       '@types/node': 24.9.1
 
-  '@types/send@1.2.0':
+  '@types/send@1.2.1':
     dependencies:
       '@types/node': 24.9.1
 
-  '@types/serve-static@1.15.9':
+  '@types/serve-static@1.15.10':
     dependencies:
       '@types/http-errors': 2.0.5
       '@types/node': 24.9.1
-      '@types/send': 0.17.5
+      '@types/send': 0.17.6
 
   '@types/unist@2.0.11': {}
 
@@ -2330,7 +2327,7 @@ snapshots:
 
   json5@2.2.3: {}
 
-  kiru@0.50.0: {}
+  kiru@0.50.3: {}
 
   lightningcss-android-arm64@1.30.2:
     optional: true
@@ -2384,10 +2381,6 @@ snapshots:
   lit-match@1.0.3: {}
 
   longest-streak@3.1.0: {}
-
-  magic-string@0.30.19:
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
 
   magic-string@0.30.21:
     dependencies:
@@ -3113,10 +3106,10 @@ snapshots:
     optionalDependencies:
       vite: 7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)
 
-  vite-plugin-kiru@0.28.0(kiru@0.50.0):
+  vite-plugin-kiru@0.28.3(kiru@0.50.3):
     dependencies:
-      kiru: 0.50.0
-      magic-string: 0.30.19
+      kiru: 0.50.3
+      magic-string: 0.30.21
 
   vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2):
     dependencies:
