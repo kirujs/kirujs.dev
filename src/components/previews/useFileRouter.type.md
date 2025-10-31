@@ -7,6 +7,7 @@
     signal: AbortSignal
   }
   navigate: (path: string, options?: { replace?: boolean; transition?: boolean }) => void
+  prefetchRouteModules: (path: string) => void
   reload: (options?: { transition?: boolean }) => void
 }
 ```

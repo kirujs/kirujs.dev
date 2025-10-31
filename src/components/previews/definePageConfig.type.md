@@ -1,5 +1,5 @@
 ```ts
-(config: {
+;(config: {
   loader?: {
     load: (context: {
       signal: AbortSignal
@@ -7,6 +7,7 @@
       query: Record<string, string>
       path: string
     }) => Promise<any>
+    transition?: boolean
   }
 }) => PageConfig
 ```

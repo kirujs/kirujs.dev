@@ -28,8 +28,6 @@ import ExamplePagesIdIndexTs from "./example.pages-[id]-index.ts.md"
 The <CodePreview data={fileRouterTypePreview} /> provides a file-based routing system for 
 single-page applications (SPA). It automatically generates routes based on your file 
 structure, enabling you to create pages and layouts using conventional file naming patterns. 
-This approach simplifies route management and provides a familiar development experience 
-similar to <ExternalLink href="https://nextjs.org/">Next.js</ExternalLink> and other modern frameworks.
 
 ### Key Components
 
@@ -48,9 +46,10 @@ similar to <ExternalLink href="https://nextjs.org/">Next.js</ExternalLink> and o
 4. <CodePreview data={linkTypePreview} />
     - An anchor tag that handles client-side navigation without full page reloads.
     - Maintains crawlability by providing a valid href attribute for search engines.
+    - Automatically prefetches the route's module & dependencies when hovered or focused.
 
 5. <CodePreview data={useFileRouterTypePreview} />
-    - A hook that provides access to the router state and navigation methods.
+    - A hook that provides access to the router state and navigation methods, as well as manual route module prefetching.
 
 ### Example
 
@@ -70,7 +69,7 @@ The following demonstrates how to set up a file-based routing system with FileRo
       itemSuffix={() => `.${siteCodeLang.value}x`}
     />
     <CopyInnerText>
-    {match(siteCodeLang.value)
+      {match(siteCodeLang.value)
         .with("js", () => { 
           return match(selectedTab.value)
             .with("main", () => <ExampleMain />)
@@ -84,7 +83,7 @@ The following demonstrates how to set up a file-based routing system with FileRo
             .with("pages/layout", () => <ExamplePagesLayoutTs />)
             .with("pages/index", () => <ExamplePagesIndexTs />)
             .else(() => <ExamplePagesIdIndexTs />)
-        })}
+      })}
     </CopyInnerText>
   </div>
 </div>
