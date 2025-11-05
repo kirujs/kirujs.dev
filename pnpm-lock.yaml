@@ -21,8 +21,8 @@ importers:
         specifier: ^3.13.0
         version: 3.13.0
       kiru:
-        specifier: 0.51.4
-        version: 0.51.4
+        specifier: 0.51.5
+        version: 0.51.5
       lit-match:
         specifier: ^1.0.3
         version: 1.0.3
@@ -55,8 +55,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       vite-plugin-kiru:
-        specifier: 0.29.3
-        version: 0.29.3(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.51.4)(lightningcss@1.30.2)
+        specifier: ^0.29.5
+        version: 0.29.5(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.51.5)(lightningcss@1.30.2)
 
 packages:
 
@@ -682,8 +682,8 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
-  kiru@0.51.4:
-    resolution: {integrity: sha512-dtugfmDUYwEBsV3TfuJ1d5pDXm/+5bowTF+kHQuGL3hJiPibvYdvj/veruF0IPSlkCAcsttAogWezgTlmCjLoA==}
+  kiru@0.51.5:
+    resolution: {integrity: sha512-ZieOu+9X/ApbGa2sS87nl84x9qCa4u50fWDCX+F2egRJechGYRDiKJsuP+pav8dHrE/zvq9RU2pz8yBxurMpow==}
 
   lightningcss-android-arm64@1.30.2:
     resolution: {integrity: sha512-BH9sEdOCahSgmkVhBLeU7Hc9DWeZ1Eb6wNS6Da8igvUwAe0sqROHddIlvU06q3WyXVEOYDZ6ykBZQnjTbmo4+A==}
@@ -1042,8 +1042,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite-plugin-kiru@0.29.3:
-    resolution: {integrity: sha512-Ws6gq7fJQz1bKlR7OVsX5AUz7dVcT5PskX/ZyF6q81LYDOhUsChFvFHQ+lUlLH9gEsbTHOB8yXnQS7yA43CM8w==}
+  vite-plugin-kiru@0.29.5:
+    resolution: {integrity: sha512-Bu0zLkuJABD8hG2jdEaNKin3xBt54yNm2+qxIWhoYILkip2DljjWAJ4AjO//zSw9mppsskAJqTeKHWx9WxsGPQ==}
     peerDependencies:
       kiru: '>=0.51.3'
 
@@ -1677,7 +1677,7 @@ snapshots:
 
   jiti@2.6.1: {}
 
-  kiru@0.51.4: {}
+  kiru@0.51.5: {}
 
   lightningcss-android-arm64@1.30.2:
     optional: true
@@ -2282,9 +2282,9 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-kiru@0.29.3(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.51.4)(lightningcss@1.30.2):
+  vite-plugin-kiru@0.29.5(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.51.5)(lightningcss@1.30.2):
     dependencies:
-      kiru: 0.51.4
+      kiru: 0.51.5
       magic-string: 0.30.21
       mime: 4.1.0
       vite: 7.1.12(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)
