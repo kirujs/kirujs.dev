@@ -1,7 +1,7 @@
-import { usePageContext } from "$/context/pageContext"
 import { CodePreviewData } from "$/types"
 import { isLinkActive } from "$/utils"
 import { Portal, Transition, useCallback, useRef, useState } from "kiru"
+import { Link, useFileRouter } from "kiru/router"
 
 function clearTimeoutRef(timeoutRef: Kiru.MutableRefObject<number>) {
   if (timeoutRef.current !== -1) {
@@ -17,7 +17,7 @@ export function CodePreview({
   data: CodePreviewData
   text?: string
 }) {
-  const { urlPathname } = usePageContext()
+  const router = useFileRouter()
   const linkRef = useRef<any>(null)
   const linkBounds = useRef<DOMRect | null>(null)
   const [open, setOpen] = useState(false)
@@ -38,7 +38,7 @@ export function CodePreview({
 
   return (
     <>
-      {isLinkActive(data.link.href, urlPathname) ? (
+      {isLinkActive(data.link.href, router.state.path) ? (
         <button
           className="preview-button"
           ariaLabel="Show code preview"
@@ -51,8 +51,8 @@ export function CodePreview({
           {text ?? data.link.text}
         </button>
       ) : (
-        <a
-          href={data.link.href}
+        <Link
+          to={data.link.href}
           ref={linkRef}
           onfocus={handleOpen}
           onblur={handleClose}
@@ -60,7 +60,7 @@ export function CodePreview({
           onpointerleave={handleClose}
         >
           {text ?? data.link.text}
-        </a>
+        </Link>
       )}
 
       <Portal container={() => document.getElementById("portal-root")!}>

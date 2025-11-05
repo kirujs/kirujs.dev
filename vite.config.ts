@@ -1,6 +1,5 @@
 import path from "node:path"
 import { defineConfig } from "vite"
-import vike from "vike/plugin"
 import kiru from "vite-plugin-kiru"
 import mdx from "@mdx-js/rollup"
 import shiki, { type RehypeShikiOptions } from "@shikijs/rehype"
@@ -39,7 +38,10 @@ export default defineConfig({
         ],
       }),
     },
-    vike(),
-    kiru(),
+    kiru({
+      ssg: {
+        page: "index.{tsx,mdx}",
+      },
+    }),
   ],
 })

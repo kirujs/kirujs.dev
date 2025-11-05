@@ -4,7 +4,6 @@ import { GithubIcon } from "./icons/GithubIcon"
 import { CommandKeyIcon } from "./icons/keys/CommandKeyIcon"
 import { useNavDrawer } from "$/state/navDrawer"
 import { DISCORD_LINK, OS, SITE_LINKS } from "$/constants"
-import { usePageContext } from "$/context/pageContext"
 import { isLinkActive } from "$/utils"
 import { useCommandPallete } from "$/state/commandPallete"
 import { DiscordIcon } from "./icons/DiscordIcon"
@@ -13,10 +12,11 @@ import { SiteLangToggle } from "./SiteLangToggle"
 import { useCallback, useLayoutEffect, useSignal } from "kiru"
 import { match } from "lit-match"
 import { SearchIcon } from "./icons/SearchIcon"
+import { Link, useFileRouter } from "kiru/router"
 
 export function Navbar() {
   const { setOpen } = useNavDrawer()
-  const { urlPathname } = usePageContext()
+  const router = useFileRouter()
 
   return (
     <nav className="flex items-center justify-between py-3 gap-2 w-full">
@@ -30,33 +30,43 @@ export function Navbar() {
           <MenuIcon />
         </button>
 
-        <a href="/" className="hidden sm:flex items-center gap-1 h-full">
+        <Link to="/" className="hidden sm:flex items-center gap-1 h-full">
           <div className="flex items-center justify-center">
             <LogoIcon />
           </div>
           <span className="text-primary font-bold text-xl flex items-center">
             Kiru
           </span>
-        </a>
+        </Link>
 
         <div className="hidden sm:flex items-center gap-4 ml-2 h-full text-sm md:text-base">
-          {SITE_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              target={link.external ? "_blank" : "_self"}
-              className={`text-md flex items-center h-full ${
-                isLinkActive(link.activePath ?? link.href, urlPathname)
-                  ? "text-light"
-                  : "text-muted hover:text-light"
-              }`}
-            >
-              <span className="flex items-center">
-                {link.title}
-                {link.external && <ExternalLinkIcon className="ml-1" />}
-              </span>
-            </a>
-          ))}
+          {SITE_LINKS.map((link) =>
+            link.external ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                className="text-md flex items-center h-full text-muted hover:text-light"
+              >
+                <span className="flex items-center">
+                  {link.title}
+                  <ExternalLinkIcon className="ml-1" />
+                </span>
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={`text-md flex items-center h-full ${
+                  isLinkActive(link.activePath ?? link.href, router.state.path)
+                    ? "text-light"
+                    : "text-muted hover:text-light"
+                }`}
+              >
+                <span className="flex items-center">{link.title}</span>
+              </Link>
+            )
+          )}
         </div>
       </div>
 

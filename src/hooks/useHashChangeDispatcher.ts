@@ -1,14 +1,14 @@
-import { usePageContext } from "$/context/pageContext"
 import { customEvents } from "$/custom-events"
 import { navEvent } from "$/state/navigationEvent"
 import { useEffect, useRef, useState } from "kiru"
+import { useFileRouter } from "kiru/router"
 export const useHashChangeDispatcher = (sectionIds: string[]) => {
   const [currentSection, setCurrentSection] = useState<string>("")
-  const { urlPathname } = usePageContext()
+  const router = useFileRouter()
   const hasScrolled = useRef(false)
   useEffect(() => {
     hasScrolled.current = false
-  }, [urlPathname])
+  }, [router.state.path])
 
   function findSectionCompletelyInViewport() {
     for (const sectionId of sectionIds) {

@@ -7,16 +7,18 @@ import {
   useSignal,
 } from "kiru"
 import { className as cls } from "kiru/utils"
-import { usePageContext } from "$/context/pageContext"
 import { docMeta } from "$/docs-meta"
 import { useNavDrawer } from "$/state/navDrawer"
 import { isLinkActive } from "$/utils"
 import { DocItemStatus } from "./DocItemStatus"
+import { Link, LinkProps, useFileRouter } from "kiru/router"
 
 export function SidebarContent() {
-  const { urlPathname, urlParsed } = usePageContext()
+  const router = useFileRouter()
   const { value: open, setOpen } = useNavDrawer((state) => state.open)
-  const hash = useSignal(urlParsed.hash)
+  const hash = useSignal(
+    "window" in globalThis ? window.location.hash.substring(1) : ""
+  )
 
   useEffect(() => {
     const onHashChange = () => {
@@ -34,13 +36,13 @@ export function SidebarContent() {
         <div key={data.title} className="px-1 mb-3">
           <Header>
             {data.href ? (
-              <a
-                href={data.href}
+              <Link
+                to={data.href}
                 onclick={() => open && setOpen(false)}
                 className="block"
               >
                 {data.title}
-              </a>
+              </Link>
             ) : (
               <span>{data.title}</span>
             )}
@@ -48,7 +50,7 @@ export function SidebarContent() {
           {data.pages && (
             <LinkList>
               {data.pages.map((page) => {
-                const isActive = isLinkActive(page.href, urlPathname)
+                const isActive = isLinkActive(page.href, router.state.path)
                 let hasNewSection = false
                 if (page.status?.type !== "new") {
                   hasNewSection = !!page.sections?.some((s) => s.isNew)
@@ -59,16 +61,16 @@ export function SidebarContent() {
                 return (
                   <Tag key={page.href}>
                     {page.disabled ? (
-                      <Link key={page.title}>
+                      <StyledLink to="/" key={page.title}>
                         <span className="opacity-75">{page.title}</span>
                         <span className="badge">Upcoming</span>
-                      </Link>
+                      </StyledLink>
                     ) : (
-                      <Link
+                      <StyledLink
                         key={page.href}
-                        href={page.href}
+                        to={page.href}
                         onclick={() =>
-                          isLinkActive(page.href, urlPathname) &&
+                          isLinkActive(page.href, router.state.path) &&
                           open &&
                           setOpen(false)
                         }
@@ -79,7 +81,7 @@ export function SidebarContent() {
                           status={page.status}
                           hasNewSection={hasNewSection}
                         />
-                      </Link>
+                      </StyledLink>
                     )}
                     <Derive from={hash}>
                       {(hash) =>
@@ -87,10 +89,10 @@ export function SidebarContent() {
                         page.sections && (
                           <LinkList className="px-2 py-1 my-2 bg-white/5 text-sm rounded border border-white/5">
                             {page.sections.map((section) => (
-                              <Link
+                              <StyledLink
                                 isActive={section.id === hash}
                                 key={section.id}
-                                href={
+                                to={
                                   page.href +
                                   (section.id ? `#${section.id}` : "")
                                 }
@@ -105,7 +107,7 @@ export function SidebarContent() {
                                     New
                                   </span>
                                 )}
-                              </Link>
+                              </StyledLink>
                             ))}
                           </LinkList>
                         )
@@ -119,13 +121,13 @@ export function SidebarContent() {
           {data.sections && (
             <LinkList>
               {data.sections.map((section) => (
-                <Link
+                <StyledLink
                   key={section.id}
-                  href={data.href + (section.id ? `#${section.id}` : "")}
+                  to={data.href + (section.id ? `#${section.id}` : "")}
                   onclick={() => open && setOpen(false)}
                 >
                   {section.title}
-                </Link>
+                </StyledLink>
               ))}
             </LinkList>
           )}
@@ -148,17 +150,17 @@ function LinkList({ className, ...props }: ElementProps<"div">) {
   )
 }
 
-function Link({
+function StyledLink({
   isActive,
   children,
   ...props
-}: ElementProps<"a"> & { isActive?: boolean }) {
+}: LinkProps & { isActive?: boolean }) {
   return (
-    <a
+    <Link
       className={`flex items-center justify-between ${isActive ? "text-light" : "text-muted"}`}
       {...props}
     >
       {children}
-    </a>
+    </Link>
   )
 }

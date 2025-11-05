@@ -8,10 +8,10 @@ import { DialogBody } from "./dialog/DialogBody"
 import { OS, SITE_LINKS } from "$/constants"
 import { SearchIcon } from "./icons/SearchIcon"
 import { CloseIcon } from "./icons/CloseIcon"
-import { usePageContext } from "$/context/pageContext"
 import { isLinkActive } from "$/utils"
 import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
 import { DocItemStatus } from "./DocItemStatus"
+import { Link, useFileRouter } from "kiru/router"
 
 const groupData: Record<string, DocPageLink[]> = {
   Links: SITE_LINKS,
@@ -24,7 +24,7 @@ export function CommandPallete() {
     value: { open, event },
     setOpen,
   } = useCommandPallete()
-  const { urlPathname } = usePageContext()
+  const router = useFileRouter()
 
   const prevActiveElement = useRef<Element | null>(null)
 
@@ -35,7 +35,7 @@ export function CommandPallete() {
     }
   }, [])
 
-  useEffect(() => (open && setOpen(false), void 0), [urlPathname])
+  useEffect(() => (open && setOpen(false), void 0), [router.state.path])
 
   function focusSender() {
     const el = prevActiveElement.current
@@ -191,10 +191,11 @@ function CommandPalleteItem({
   external?: boolean
 }) {
   const { setOpen } = useCommandPallete()
-  const { urlPathname } = usePageContext()
+  const router = useFileRouter()
+
   if (item.disabled) {
     return (
-      <a className="w-full text-muted bg-white/[1%] border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5">
+      <a className="w-full text-muted bg-white/1 border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5">
         <span className="w-full flex justify-between items-center text-xs">
           {item.title}
           <span className="badge">Upcoming</span>
@@ -211,10 +212,12 @@ function CommandPalleteItem({
   }
 
   return (
-    <a
-      className="w-full text-muted bg-white/[1%] border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5"
-      href={item.href}
-      onclick={() => isLinkActive(item.href, urlPathname) && setOpen(false)}
+    <Link
+      className="w-full text-muted bg-white/1 border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5"
+      to={item.href}
+      onclick={() =>
+        isLinkActive(item.href, router.state.path) && setOpen(false)
+      }
       target={external ? "_blank" : "_self"}
     >
       <div className="flex items-start justify-between">
@@ -225,7 +228,7 @@ function CommandPalleteItem({
         <DocItemStatus status={item.status} hasNewSection={hasNewSection} />
       </div>
       <CommandPalleteBadges item={item} />
-    </a>
+    </Link>
   )
 }
 
