@@ -277,6 +277,55 @@ elements while preserving the parent layouts.
 
 </DocsSection>
 
+<DocsSection id="404" title="404">
+
+Kiru's FileRouter mirrors Cloudflare Pages' 404 and SPA fallback behavior:
+
+- If a matching page isn't found, FileRouter will look for the nearest `404` page by walking up the directory tree (for example, `pages/docs/404/index.tsx` then `pages/404/index.tsx`).
+- If you don't provide a top-level `pages/404/index.tsx` in a CSR setup, deep links will render the root route and your app can handle a client-side 404 — similar to Cloudflare's SPA rendering mode, which maps unmatched URLs to the root when no top-level `404.html` exists.
+
+Reference: [Cloudflare Pages – SPA rendering and 404 behavior](https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering).
+
+### Recommended setup
+
+Provide explicit 404 pages where you need them:
+
+<CopyInnerText>
+```tsx
+// pages/404/index.tsx
+export default function NotFound() {
+  return (
+    <div>
+      <h1>Page not found</h1>
+      <p>We couldn't find what you were looking for.</p>
+    </div>
+  )
+}
+```
+</CopyInnerText>
+
+Scoped 404 for a docs subtree:
+
+<CopyInnerText>
+```tsx
+// pages/docs/404/index.tsx
+export default function DocsNotFound() {
+  return (
+    <div>
+      <h1>Docs page not found</h1>
+      <p>Check the sidebar or search the docs.</p>
+    </div>
+  )
+}
+```
+</CopyInnerText>
+
+<CalloutBlock>
+  In CSR deployments without a top-level `404` page, deep links will load the app shell and you should display a client-side 404 when no route matches. In SSG builds, ensure `pages/404/index.tsx` exists so a static 404 is emitted.
+ </CalloutBlock>
+
+</DocsSection>
+
 <DocsSection id="useFileRouter" title="useFileRouter">
 
 The <CodePreview data={useFileRouterTypePreview} /> hook provides access to the router 
