@@ -205,6 +205,21 @@ function CommandPalleteItem({
       </a>
     )
   }
+  if (external) {
+    return (
+      <a
+        className="w-full text-muted bg-white/1 border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5"
+        href={item.href}
+        target="_blank"
+      >
+        <div className="flex items-start justify-between">
+          <span className="flex gap-1 items-center text-sm font-light">
+            {item.title} <ExternalLinkIcon width=".85rem" height=".85rem" />
+          </span>
+        </div>
+      </a>
+    )
+  }
 
   let hasNewSection = false
   if (item.status?.type !== "new") {
@@ -218,12 +233,10 @@ function CommandPalleteItem({
       onclick={() =>
         isLinkActive(item.href, router.state.path) && setOpen(false)
       }
-      target={external ? "_blank" : "_self"}
     >
       <div className="flex items-start justify-between">
         <span className="flex gap-1 items-center text-sm font-light">
           {item.title}{" "}
-          {external ? <ExternalLinkIcon width=".85rem" height=".85rem" /> : ""}
         </span>
         <DocItemStatus status={item.status} hasNewSection={hasNewSection} />
       </div>
