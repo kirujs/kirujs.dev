@@ -95,7 +95,7 @@ const filteredGroups = computed(() => {
         const defs = [
           sectionTitleLower,
           ...item.title.toLowerCase().split(" "),
-          ...(item.keywords ?? []).map((word) => word.toLowerCase()),
+          ...(item.tags ?? []).map((word) => word.toLowerCase()),
         ]
         let matched = 0
         for (let i = 0; i < terms.length; i++) {
@@ -201,7 +201,7 @@ function CommandPalleteItem({
           <span className="badge">Upcoming</span>
         </span>
 
-        <CommandPalleteBadges item={item} />
+        {item.tags && <CommandPalleteItemTags tags={item.tags} />}
       </a>
     )
   }
@@ -227,16 +227,16 @@ function CommandPalleteItem({
         </span>
         <DocItemStatus status={item.status} hasNewSection={hasNewSection} />
       </div>
-      <CommandPalleteBadges item={item} />
+      {item.tags && <CommandPalleteItemTags tags={item.tags} />}
     </Link>
   )
 }
 
-function CommandPalleteBadges({ item }: { item: DocPageLink }) {
-  if (!item.keywords) return null
+function CommandPalleteItemTags({ tags }: { tags: string[] }) {
+  if (!tags) return null
   return (
     <div className="flex flex-wrap gap-1 mt-1">
-      {item.keywords.map((keyword) => (
+      {tags.map((keyword) => (
         <span key={keyword} className="badge badge-muted">
           {keyword}
         </span>

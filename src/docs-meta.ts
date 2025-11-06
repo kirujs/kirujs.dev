@@ -19,7 +19,7 @@ export type DocPageLink = {
   title: string
   href: string
   disabled?: boolean
-  keywords?: string[]
+  tags?: string[]
   status?: DocItemStatus
   sections?: DocSectionLink[]
 }
@@ -110,12 +110,12 @@ export const docMeta: DocItem[] = [
       {
         title: "Context",
         href: "/docs/api/context",
-        keywords: ["createContext"],
+        tags: ["createContext"],
       },
       {
         title: "Form",
         href: "/docs/api/form",
-        keywords: ["useForm", "form", "validation", "Field", "Subscribe"],
+        tags: ["useForm", "form", "validation", "Field", "Subscribe"],
         status: STATUS_MAP.formApi,
         sections: [
           {
@@ -135,7 +135,7 @@ export const docMeta: DocItem[] = [
       {
         title: "Lazy",
         href: "/docs/api/lazy",
-        keywords: ["code-splitting"],
+        tags: ["code-splitting"],
       },
       {
         title: "Memo",
@@ -148,7 +148,7 @@ export const docMeta: DocItem[] = [
       {
         title: "File Router",
         href: "/docs/api/file-router",
-        keywords: ["FileRouter", "Link", "SSG", "useFileRouter"],
+        tags: ["FileRouter", "Link", "SSG", "useFileRouter", "404"],
         status: STATUS_MAP.fileRouterApi,
         sections: [
           {
@@ -176,6 +176,10 @@ export const docMeta: DocItem[] = [
             title: "Layouts",
           },
           {
+            id: "404",
+            title: "404",
+          },
+          {
             id: "useFileRouter",
             title: "useFileRouter",
           },
@@ -184,7 +188,7 @@ export const docMeta: DocItem[] = [
       {
         title: "Signal",
         href: "/docs/api/signal",
-        keywords: [
+        tags: [
           "state",
           "computed",
           "effect",
@@ -229,12 +233,12 @@ export const docMeta: DocItem[] = [
       {
         title: "Store",
         href: "/docs/api/store",
-        keywords: ["createStore", "useStore", "MethodFactory", "state"],
+        tags: ["createStore", "useStore", "MethodFactory", "state"],
       },
       {
         title: "SWR",
         href: "/docs/api/swr",
-        keywords: ["swr", "useSWR", "fetcher", "mutate", "revalidate", "cache"],
+        tags: ["swr", "useSWR", "fetcher", "mutate", "revalidate", "cache"],
         status: STATUS_MAP.swrApi,
         sections: [
           {
@@ -254,7 +258,7 @@ export const docMeta: DocItem[] = [
       {
         title: "Transition",
         href: "/docs/api/transition",
-        keywords: ["transitions", "animation"],
+        tags: ["transitions", "animation"],
       },
     ],
   },
@@ -300,7 +304,7 @@ export const docMeta: DocItem[] = [
       {
         title: "useRef",
         href: "/docs/hooks/useRef",
-        keywords: ["Ref"],
+        tags: ["Ref"],
       },
       {
         title: "useState",
@@ -309,12 +313,12 @@ export const docMeta: DocItem[] = [
       {
         title: "useSyncExternalStore",
         href: "/docs/hooks/useSyncExternalStore",
-        keywords: ["state", "global state"],
+        tags: ["state", "global state"],
       },
       {
         title: "useViewTransition",
         href: "/docs/hooks/useViewTransition",
-        keywords: ["view transition", "animation"],
+        tags: ["view transition", "animation"],
         status: STATUS_MAP.useViewTransition,
       },
       {
@@ -324,7 +328,7 @@ export const docMeta: DocItem[] = [
       {
         title: "Custom hooks",
         href: "/docs/hooks/custom-hooks",
-        keywords: ["useHook"],
+        tags: ["useHook"],
       },
     ],
   },
