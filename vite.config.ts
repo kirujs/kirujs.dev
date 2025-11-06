@@ -41,6 +41,7 @@ export default defineConfig({
     kiru({
       ssg: {
         page: "index.{tsx,mdx}",
+        layout: "layout.{tsx,mdx}",
       },
     }),
   ],

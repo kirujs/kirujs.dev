@@ -148,8 +148,38 @@ export const docMeta: DocItem[] = [
       {
         title: "File Router",
         href: "/docs/api/file-router",
-        keywords: ["FileRouter", "Router", "Route", "Link", "useFileRouter"],
+        keywords: ["FileRouter", "Link", "SSG", "useFileRouter"],
         status: STATUS_MAP.fileRouterApi,
+        sections: [
+          {
+            id: "general-usage",
+            title: "General Usage",
+          },
+          {
+            id: "file-structure",
+            title: "File Structure & Routing",
+          },
+          {
+            id: "data-loading",
+            title: "Data Loading",
+          },
+          {
+            id: "static-site-generation",
+            title: "Static Site Generation (SSG)",
+          },
+          {
+            id: "navigation",
+            title: "Navigation",
+          },
+          {
+            id: "layouts",
+            title: "Layouts",
+          },
+          {
+            id: "useFileRouter",
+            title: "useFileRouter",
+          },
+        ],
       },
       {
         title: "Signal",
