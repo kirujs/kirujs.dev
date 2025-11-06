@@ -113,26 +113,6 @@ export const docMeta: DocItem[] = [
         tags: ["createContext"],
       },
       {
-        title: "Form",
-        href: "/docs/api/form",
-        tags: ["useForm", "form", "validation", "Field", "Subscribe"],
-        status: STATUS_MAP.formApi,
-        sections: [
-          {
-            id: "basic-usage",
-            title: "Basic Usage",
-          },
-          {
-            id: "validation",
-            title: "Validation",
-          },
-          {
-            id: "form-components",
-            title: "Form Components",
-          },
-        ],
-      },
-      {
         title: "Lazy",
         href: "/docs/api/lazy",
         tags: ["code-splitting"],
@@ -182,6 +162,26 @@ export const docMeta: DocItem[] = [
           {
             id: "useFileRouter",
             title: "useFileRouter",
+          },
+        ],
+      },
+      {
+        title: "Form",
+        href: "/docs/api/form",
+        tags: ["useForm", "form", "validation", "Field", "Subscribe"],
+        status: STATUS_MAP.formApi,
+        sections: [
+          {
+            id: "basic-usage",
+            title: "Basic Usage",
+          },
+          {
+            id: "validation",
+            title: "Validation",
+          },
+          {
+            id: "form-components",
+            title: "Form Components",
           },
         ],
       },
