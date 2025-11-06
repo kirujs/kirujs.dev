@@ -33,10 +33,10 @@ import { match } from "lit-match"
       <PackageManagerSelector />
       <CopyInnerText>
         {match(packageManager.value)
-          .with("Bun", () => <BunInstallBash />)
-          .with("NPM", () => <NpmInstallBash />)
-          .with("Yarn", () => <YarnInstallBash />)
-          .with("PNPM", () => <PnpmInstallBash />)
+          .with("Bun", () => <BunCliBash />)
+          .with("NPM", () => <NpmCliBash />)
+          .with("Yarn", () => <YarnCliBash />)
+          .with("PNPM", () => <PnpmCliBash />)
           .exhaustive()}
       </CopyInnerText>
     </div>

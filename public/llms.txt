@@ -18,26 +18,46 @@ Kiru is a batteries-included, easy-to-use rendering library with a tiny footprin
 
 ### Start a New Project
 
+Use the `create-kiru` CLI tool to quickly scaffold a new Kiru application:
+
 ```bash
-# Using npm
-npm create vite@latest my-kiru-app -- --template vanilla-ts
-cd my-kiru-app
-npm install kiru vite-plugin-kiru
+# Interactive mode (will prompt for directory and options)
+npx create-kiru
 
-# Using pnpm
-pnpm create vite my-kiru-app --template vanilla-ts
-cd my-kiru-app
-pnpm add kiru vite-plugin-kiru
+# Or specify options directly
+npx create-kiru -d my-kiru-app --template CSR --install --start
+```
 
-# Using yarn
-yarn create vite my-kiru-app --template vanilla-ts
-cd my-kiru-app
-yarn add kiru vite-plugin-kiru
+**Available Templates:**
+- `CSR` - Client-Side Rendering (SPA)
+- `SSG` - Static Site Generation
+- `SSR` - Server-Side Rendering
+- `Tauri` - Tauri desktop application
 
-# Using bun
-bun create vite my-kiru-app --template vanilla-ts
-cd my-kiru-app
-bun add kiru vite-plugin-kiru
+**CLI Options:**
+- `-v, --version` - Output the current version
+- `-d, --dir <dir>` - Destination directory (required)
+- `-t, --template <template>` - Choose template (required)
+- `-i, --install` - Install dependencies automatically (required)
+- `-s, --start` - Start the app after creation
+- `-h, --help` - Show help
+
+**Note:** When using non-interactive mode (providing options via CLI flags), all of `-d`, `-t`, `-i`, and `-s` are required. Use interactive mode to be prompted for these options.
+
+**Examples:**
+
+```bash
+# Create CSR app with all required options
+npx create-kiru -d my-app --template CSR --install --start
+
+# Create SSG app with all required options
+npx create-kiru --dir ./my-site --template SSG --install --start
+
+# Create Tauri desktop app with all required options
+npx create-kiru -d my-desktop-app --template Tauri --install --start
+
+# Interactive mode (will prompt for all required options)
+npx create-kiru
 ```
 
 ### Add to Existing Project
