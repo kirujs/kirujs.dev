@@ -231,7 +231,7 @@ function App() {
   return (
     <div>
       <input type="text" bind:value={userName} />
-      <p>Hello, {userName.value}!</p>
+      <p>Hello, {userName}!</p>
     </div>
   )
 }
@@ -288,16 +288,16 @@ The Store API provides external state management with precision updates:
 ```tsx
 import { createStore, useStore } from "kiru"
 
-const counterStore = createStore(
+const useCounterStore = createStore(
   { count: 0 },  // Initial state
   (setState, getState) => ({
     increment: () => setState({ count: getState().count + 1 }),
-    decrement: () => setState({ count: getState().count - 1 }),
+    decrement: () => setState((prev) => ({ ...prev, count: prev.count + 1 })),
   })
 )
 
 function Counter() {
-  const { value, increment, decrement } = useStore(counterStore)
+  const { value, increment, decrement } = useCounterStore()
   
   return (
     <div>
@@ -309,9 +309,118 @@ function Counter() {
 }
 ```
 
+You can provide a callback to 'select' a portion of the store:
+
+```tsx
+function TodoItem({ id }: { id: number }) {
+  const { value: todo, toggle } = useTodoStore((state) => {
+    return state.find((item) => item.id === id)
+  })
+  // ...
+}
+```
+
+When the store is updated, the component will only update if the value it previously returned has changed. By default, this uses shallow diffing.
+For more control, you can provide your own 'comparison' function:
+
+```tsx
+function TodoList() {
+  const { value: items } = useTodoStore(null, (prev, next) => {
+    return prev.length === next.length
+  })
+
+  return (
+    <ul>
+      {items.map((item) => (
+        <TodoItem key={item.id} id={item.id} />
+      ))}
+    </ul>
+  )
+}
+```
+
+In this example, we also demonstrated how you can pass `null` as the selector, as a stand-in for `(state) => state`.
+
+You can also access the store's methods and state directly using the returned object from createStore:
+
+```ts
+useCountStore.getState() // Returns the current state
+useCountStore.setState((state) => state + 1) // Updates the state
+useCountStore.methods.increment() // Calls the method defined in the method factory
+
+/**
+* Subscribe to the store, providing a function to run whenever state changes. 
+* Subscribing in this way returns a function to unsubscribe.
+*/
+const unsub = useCountStore.subscribe((newValue) => console.log(newValue))
+```ts
+
 ### FileRouter - File-Based Routing
 
-FileRouter provides convention-over-configuration routing with automatic route generation:
+FileRouter provides configurable convention-based routing with automatic route generation:
+
+**CSR setup:**
+```ts
+// src/main.tsx
+import { mount } from "kiru"
+import { FileRouter } from "kiru/router"
+import "./styles.css"
+
+mount(
+  <FileRouter
+    config={{
+      pages: import.meta.glob("/∗∗/index.{tsx,jsx}"),
+      layouts: import.meta.glob("/∗∗/layout.{tsx,jsx}"),
+    }}
+  />,
+  document.getElementById("app")
+)
+```
+
+**SSG setup:**
+```ts
+// vite.config.ts
+import { defineConfig } from "vite"
+import kiru from "vite-plugin-kiru"
+
+export default defineConfig({
+  plugins: [
+    kiru({
+      ssg: {
+        baseUrl: "/",
+        dir: "src/pages",
+        page: "index.{tsx,jsx}",
+        layout: "layout.{tsx,jsx}",
+        document: "document.{tsx,jsx}",
+        transition: false,
+        build: {
+          maxConcurrentRenders: 100,
+        },
+      },
+      // or, if you're happy with the default settings above, you can just use:
+      ssg: true,
+    }),
+  ],
+})
+
+// src/pages/document.tsx
+import { Body, Head } from "kiru/router"
+import "../styles.css"
+
+export default function Document() {
+  return (
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <Head.Outlet />
+      </head>
+      <Body.Outlet />
+    </html>
+  )
+}
+```
 
 **File Structure:**
 ```
