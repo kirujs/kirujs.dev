@@ -42,6 +42,15 @@ export default defineConfig({
       ssg: {
         page: "index.{tsx,mdx}",
         layout: "layout.{tsx,mdx}",
+        sitemap: {
+          domain: "https://kirujs.dev",
+          overrides: {
+            "/": {
+              changefreq: "daily",
+              priority: 0.9,
+            },
+          },
+        },
       },
     }),
   ],
