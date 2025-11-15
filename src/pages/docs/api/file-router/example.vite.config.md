@@ -16,7 +16,7 @@ export default defineConfig({
           maxConcurrentRenders: 100,
         },
       },
-      // or, if you're happy with the default settings, you can just use:
+      // or, if you're happy with the above default settings, you can just use:
       ssg: true,
     }),
   ],
