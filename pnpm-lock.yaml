@@ -55,8 +55,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       vite-plugin-kiru:
-        specifier: ^0.30.0
-        version: 0.30.0(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.52.4)(lightningcss@1.30.2)
+        specifier: ^0.30.1
+        version: 0.30.1(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.52.4)(lightningcss@1.30.2)
 
 packages:
 
@@ -690,8 +690,8 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  glob@11.0.3:
-    resolution: {integrity: sha512-2Nim7dha1KVkaiF4q6Dj+ngPPMdfvLJEOpZk/jKiUAkqKebpGAWQXAq9z1xu9HKu5lWfqw/FASuccEjyznjPaA==}
+  glob@12.0.0:
+    resolution: {integrity: sha512-5Qcll1z7IKgHr5g485ePDdHcNQY0k2dtv/bjYy0iuyGxQw2qSOiiXUXJ+AYQpg3HNoUMHqAruX478Jeev7UULw==}
     engines: {node: 20 || >=22}
     hasBin: true
 
@@ -1161,8 +1161,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite-plugin-kiru@0.30.0:
-    resolution: {integrity: sha512-jFDyh+M9qvcM2v9yWrEjG5Xpu1HAx7uqfJoehzEnjFY+usZxP9fsucsHnxxOjvH0IfGjDyA/8BS0QZ5cQlsGFg==}
+  vite-plugin-kiru@0.30.1:
+    resolution: {integrity: sha512-TzYzE2y4W6naxhqqG794TrSY0L6sk5fp+6hMifTNXmyK7lWoUzYAfFnCrej35TyU4W5sdh6b9vkByN46IoWAaw==}
     peerDependencies:
       kiru: '>=0.51.8'
 
@@ -1773,7 +1773,7 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  glob@11.0.3:
+  glob@12.0.0:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 4.1.1
@@ -2524,9 +2524,9 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-kiru@0.30.0(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.52.4)(lightningcss@1.30.2):
+  vite-plugin-kiru@0.30.1(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.52.4)(lightningcss@1.30.2):
     dependencies:
-      glob: 11.0.3
+      glob: 12.0.0
       kiru: 0.52.4
       magic-string: 0.30.21
       mime: 4.1.0
