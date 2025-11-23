@@ -1,0 +1,27 @@
+import { Head } from "kiru/router"
+import { CopyInnerText } from "$/components/CopyInnerText"
+import { siteCodeLang } from "$/state/siteCodeLang"
+import ExampleCode from "./example.md"
+import ExampleCodeTS from "./example.ts.md"
+
+<Head.Content>
+  <title>Kiru - ErrorBoundary</title>
+  <meta name="keywords" content="ErrorBoundary, error handling, error boundary" />
+  <meta name="description" content="Learn how to use ErrorBoundary in Kiru to catch and handle errors in component trees, preventing the entire application from crashing." />
+</Head.Content>
+
+# ErrorBoundary
+
+`ErrorBoundary` is a component that catches errors in its child component tree, preventing the entire 
+application from crashing. When an error occurs, the `fallback` prop is rendered instead of the 
+component tree.
+
+You can provide a simple JSX element as the `fallback`, or a function that receives the error and 
+returns JSX. Additionally, you can use the `onError` prop to handle errors (e.g., for logging).
+
+### Example
+
+<CopyInnerText>
+{siteCodeLang.value === "js" ? <ExampleCode /> : <ExampleCodeTS />}
+</CopyInnerText>
+

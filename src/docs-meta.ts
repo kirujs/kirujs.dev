@@ -39,6 +39,10 @@ const STATUS_MAP: Record<string, DocItemStatus> = {
     type: "new",
     since: "0.53.0",
   },
+  errorBoundary: {
+    type: "new",
+    since: "0.53.0",
+  },
   usePromiseHook: {
     type: "new",
     since: "0.53.0",
@@ -95,6 +99,12 @@ export const docMeta: DocItem[] = [
         href: "/docs/api/derive",
         tags: ["derive", "promise", "fallback", "mode", "signals"],
         status: STATUS_MAP.deriveApi,
+      },
+      {
+        title: "ErrorBoundary",
+        href: "/docs/api/error-boundary",
+        tags: ["error handling", "error boundary"],
+        status: STATUS_MAP.errorBoundary,
       },
       {
         title: "Lazy",
