@@ -39,6 +39,10 @@ const STATUS_MAP: Record<string, DocItemStatus> = {
     type: "new",
     since: "0.53.0",
   },
+  usePromiseHook: {
+    type: "new",
+    since: "0.53.0",
+  },
 } as const
 
 export const docMeta: DocItem[] = [
@@ -264,6 +268,12 @@ export const docMeta: DocItem[] = [
       {
         title: "useMemo",
         href: "/docs/hooks/useMemo",
+      },
+      {
+        title: "usePromise",
+        href: "/docs/hooks/usePromise",
+        tags: ["promise", "async", "Derive"],
+        status: STATUS_MAP.usePromiseHook,
       },
       {
         title: "useReducer",

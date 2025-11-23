@@ -1,0 +1,40 @@
+import { Head, Link } from "kiru/router"
+
+import { siteCodeLang } from "$/state/siteCodeLang"
+import { CopyInnerText } from "$/components/CopyInnerText"
+import { ExternalLink } from "$/components/atoms/ExternalLink"
+import ExampleCode from "./example.md"
+import ExampleCodeTS from "./example.ts.md"
+
+<Head.Content>
+  <title>Kiru - usePromise</title>
+  <meta name="keywords" content="usePromise, hooks, promise, async" />
+  <meta name="description" content="Learn how to use usePromise hook in Kiru to create promises that work seamlessly with Derive and support SSR streaming." />
+</Head.Content>
+
+# usePromise
+
+Similar to <Link to="/docs/hooks/useAsync">useAsync</Link>,
+but returns a promise that can be used with <Link to="/docs/api/derive">{"<Derive>"}</Link> 
+for fine-grained reactivity and SSR support.
+
+`usePromise` creates an <ExternalLink href="https://developer.mozilla.org/en-US/docs/Web/API/AbortController" external>AbortController</ExternalLink> 
+and passes the controller's abort signal to the async function.
+When `usePromise` re-runs, the signal is aborted, making it easy to cancel a running async function or request.
+
+The promise returned by `usePromise` is designed to work with `<Derive />`, which provides automatic 
+handling of loading states, stale data, and SSR streaming.
+
+### Example
+
+<CopyInnerText>
+{siteCodeLang.value === "js" ? <ExampleCode /> : <ExampleCodeTS />}
+</CopyInnerText>
+
+### Related
+<ul>
+  <li><Link to="/docs/api/derive">{"<Derive>"}</Link></li>
+  <li><Link to="/docs/hooks/useAsync">useAsync</Link></li>
+  <li><Link to="/docs/hooks/dependency-arrays">Dependency arrays</Link></li>
+</ul>
+
