@@ -12,8 +12,9 @@ In Kiru, the dependency array is a crucial part of the
 <Link to="/docs/hooks/useAsync">useAsync</Link>, 
 <Link to="/docs/hooks/useCallback">useCallback</Link>, 
 <Link to="/docs/hooks/useEffect">useEffect</Link>, 
-<Link to="/docs/hooks/useLayoutEffect">useLayoutEffect</Link>, and 
-<Link to="/docs/hooks/useMemo">useMemo</Link> hooks. 
+<Link to="/docs/hooks/useLayoutEffect">useLayoutEffect</Link>, 
+<Link to="/docs/hooks/useMemo">useMemo</Link>, and
+<Link to="/docs/hooks/usePromise">usePromise</Link> hooks. 
 It allows you to specify dependencies that the hook 
 should watch for changes. When any of the dependencies 
 change, the hook will re-run its logic.
@@ -43,7 +44,11 @@ array and its significance:
     during the initial render. It's useful for scenarios 
     where you want to perform an action only once or where 
     the hook's logic doesn't depend on any external values. 
-    This is only valid for `useEffect` and `useLayoutEffect`. 
+  </li>
+  <li>
+    <b>Omitting the Dependency Array</b>: Not providing a 
+    dependency array means that the hook will run on every render.
+    Only valid for `useEffect` and `useLayoutEffect`.
   </li>
 </ol>
 
@@ -56,4 +61,5 @@ array and its significance:
   <li><Link to="/docs/hooks/useEffect">useEffect</Link></li>
   <li><Link to="/docs/hooks/useLayoutEffect">useLayoutEffect</Link></li>
   <li><Link to="/docs/hooks/useMemo">useMemo</Link></li>
+  <li><Link to="/docs/hooks/usePromise">usePromise</Link></li>
 </ul>
