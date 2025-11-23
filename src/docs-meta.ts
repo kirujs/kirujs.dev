@@ -31,39 +31,13 @@ type DocSectionLink = {
 }
 
 const STATUS_MAP: Record<string, DocItemStatus> = {
-  // // 2025-05-01
-  // swrApi: {
-  //   type: "new",
-  //   since: "0.38.0",
-  // },
-  // // 2025-05-01
-  // formApi: {
-  //   type: "new",
-  //   since: "0.38.0",
-  // },
-  // // 2025-05-05
-  // elementBindings: {
-  //   type: "new",
-  //   since: "0.38.2",
-  // },
-  // // 2025-05-06
-  // ForComponent: {
-  //   type: "new",
-  //   since: "0.38.4",
-  // },
-  // // 2025-05-06
-  // DeriveComponent: {
-  //   type: "new",
-  //   since: "0.38.4",
-  // },
-  // // 2025-05-15
-  // useViewTransition: {
-  //   type: "new",
-  //   since: "0.39.0",
-  // },
   fileRouterApi: {
     type: "new",
     since: "0.50.0",
+  },
+  deriveApi: {
+    type: "new",
+    since: "0.53.0",
   },
 } as const
 
@@ -111,6 +85,12 @@ export const docMeta: DocItem[] = [
         title: "Context",
         href: "/docs/api/context",
         tags: ["createContext"],
+      },
+      {
+        title: "Derive",
+        href: "/docs/api/derive",
+        tags: ["derive", "promise", "fallback", "mode", "signals"],
+        status: STATUS_MAP.deriveApi,
       },
       {
         title: "Lazy",
@@ -188,14 +168,7 @@ export const docMeta: DocItem[] = [
       {
         title: "Signal",
         href: "/docs/api/signal",
-        tags: [
-          "state",
-          "computed",
-          "effect",
-          "two way binding",
-          "For",
-          "Derive",
-        ],
+        tags: ["state", "computed", "effect", "two way binding", "For"],
         sections: [
           {
             id: "general-usage",
@@ -222,11 +195,6 @@ export const docMeta: DocItem[] = [
             id: "for-component",
             title: "For",
             isNew: STATUS_MAP.ForComponent,
-          },
-          {
-            id: "derive-component",
-            title: "Derive",
-            isNew: STATUS_MAP.DeriveComponent,
           },
         ],
       },
