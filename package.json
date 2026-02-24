@@ -29,7 +29,7 @@
     "@mdx-js/rollup": "^3.1.1",
     "@shikijs/rehype": "^3.22.0",
     "@shikijs/transformers": "^3.22.0",
-    "kiru": "0.54.2",
+    "kiru": "0.54.4",
     "lit-match": "^1.0.3",
     "vite": "^7.3.1"
   }
