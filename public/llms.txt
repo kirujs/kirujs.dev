@@ -2,75 +2,44 @@
 
 ## Overview
 
-Kiru is a batteries-included, easy-to-use rendering library with a tiny footprint. It's a lightweight framework designed to empower developers to build applications with expressivity and customizability. Kiru offers a rich feature set including routing, state management, responsive forms, asynchronous state, and more - all in one framework without requiring additional dependencies.
+Kiru is a batteries-included, easy-to-use rendering library with a tiny footprint. It is a lightweight framework designed to empower developers to build applications with expressivity and customizability. Kiru offers routing, state management via signals, responsive forms, and more — all in one framework without requiring additional dependencies.
+
+**Important: Kiru is NOT React-like.** State is managed with **signals** and **computed** values. When a component needs **local state**, it must **return a render function** (a function that returns JSX) so that state created in the component body is persisted across renders. The component body runs once (setup); the returned function is invoked for each render and closes over that state. This lets you build features and functionalities as individual units.
 
 **Key Characteristics:**
-- **Performance**: Fine-grained reactivity with "reactivity where it matters" philosophy - only updates what changes
-- **Batteries-Included**: Built-in routing (FileRouter), state management (Signal, Store), forms, async state (SWR), and more
-- **TypeScript-first**: Full TypeScript support with type checking
-- **JSX/TSX syntax**: Familiar React-like component syntax
-- **Reactive state**: Signal-based reactivity with computed values, effects, and two-way binding
-- **File-based routing**: Convention-over-configuration routing with automatic route generation
-- **SSG support**: Built-in static site generation capabilities
-- **Zero dependencies**: Build complete web apps without additional libraries
+- **Performance**: Fine-grained reactivity — only the DOM nodes that observe a signal update when it changes
+- **Batteries-Included**: Built-in routing (FileRouter), signals, computed, effect, lifecycles (onMount, onCleanup), Context, Portal, Transition, ViewTransitions, and more
+- **TypeScript-first**: Full TypeScript support
+- **JSX/TSX syntax**: Component syntax with JSX
+- **Reactive state**: Signal-based reactivity with computed values, effects, and two-way binding (`bind:`)
+- **File-based routing**: FileRouter with convention-over-configuration
+- **SSG support**: Static site generation via vite-plugin-kiru
+- **Component model**: Stateless components return JSX; stateful components create signals in the body and return a render function
 
 ## Installation & Setup
 
 ### Start a New Project
 
-Use the `create-kiru` CLI tool to quickly scaffold a new Kiru application:
+Use the `create-kiru` CLI to scaffold a new Kiru application:
 
 ```bash
-# Interactive mode (will prompt for directory and options)
 npx create-kiru
-
-# Or specify options directly
+# or with options:
 npx create-kiru -d my-kiru-app --template CSR --install --start
 ```
 
-**Available Templates:**
-- `CSR` - Client-Side Rendering (SPA)
-- `SSG` - Static Site Generation
-- `SSR` - Server-Side Rendering
-- `Tauri` - Tauri desktop application
+**Templates:** `CSR` (client-side), `SSG`, `SSR`, `Tauri`
 
-**CLI Options:**
-- `-v, --version` - Output the current version
-- `-d, --dir <dir>` - Destination directory (required)
-- `-t, --template <template>` - Choose template (required)
-- `-i, --install` - Install dependencies automatically (required)
-- `-s, --start` - Start the app after creation
-- `-h, --help` - Show help
-
-**Note:** When using non-interactive mode (providing options via CLI flags), all of `-d`, `-t`, `-i`, and `-s` are required. Use interactive mode to be prompted for these options.
-
-**Examples:**
-
-```bash
-# Create CSR app with all required options
-npx create-kiru -d my-app --template CSR --install --start
-
-# Create SSG app with all required options
-npx create-kiru --dir ./my-site --template SSG --install --start
-
-# Create Tauri desktop app with all required options
-npx create-kiru -d my-desktop-app --template Tauri --install --start
-
-# Interactive mode (will prompt for all required options)
-npx create-kiru
-```
+**CLI flags:** `-d, --dir <dir>`, `-t, --template <template>`, `-i, --install`, `-s, --start`. In non-interactive mode, `-d`, `-t`, `-i`, and `-s` are required.
 
 ### Add to Existing Project
 
-Install Kiru and the Vite plugin:
-
 ```bash
-npm install kiru 
+npm install kiru
 npm install vite-plugin-kiru -D
-# or pnpm/yarn/bun equivalent
 ```
 
-Update `vite.config.ts`:
+`vite.config.ts`:
 
 ```ts
 import { defineConfig } from "vite"
@@ -81,25 +50,15 @@ export default defineConfig({
 })
 ```
 
-Add JSX support in `tsconfig.json`:
+`tsconfig.json`: add `"jsx": "preserve"`.
 
-```json
-{
-  "compilerOptions": {
-    "jsx": "preserve"
-  }
-}
-```
-
-Create a simple app:
+Simple app and mount:
 
 ```tsx
 export function App() {
   return <h1>Hello world!</h1>
 }
 ```
-
-Mount your app:
 
 ```ts
 import { mount } from "kiru"
@@ -108,11 +67,11 @@ import { App } from "./App"
 mount(document.getElementById("app")!, <App />)
 ```
 
-## Core Syntax & Concepts
+## Core: Component Model
 
-### Component Definition
+### Stateless components
 
-Components are regular functions that return JSX:
+Components that need no local state can return JSX directly:
 
 ```tsx
 function Button(props: { text: string; onClick: () => void }) {
@@ -122,113 +81,140 @@ function Button(props: { text: string; onClick: () => void }) {
     </button>
   )
 }
+```
 
-function App() {
-  return <Button text="Click me" onclick={() => console.log("Clicked!")} />
+### Stateful components: return a render function
+
+When a component has **local state** (signals, refs, etc.), it must **return a function** that returns JSX. That function is the render function; the component body runs once, and the returned function is called on each render. State created in the body is closed over and persists.
+
+```tsx
+import { signal } from "kiru"
+
+function Counter() {
+  const count = signal(0)
+
+  return () => (
+    <div>
+      <p>Count: {count}</p>
+      <button onclick={() => (count.value += 1)}>Increment</button>
+    </div>
+  )
 }
 ```
 
-### Signal - Reactive State
+With props, the render function receives them:
 
-Signals are reactive primitives for managing state. They provide fine-grained reactivity where only the parts of the UI that depend on the signal update when it changes.
+```tsx
+function Greeter(props: { name: string }) {
+  const greeted = signal(false)
+
+  return (p: { name: string }) => (
+    <div>
+      <p>Hello, {p.name}!</p>
+      <button onclick={() => (greeted.value = true)}>Mark greeted</button>
+    </div>
+  )
+}
+```
+
+Layout with children:
+
+```tsx
+const Layout: Kiru.FC<{ children: JSX.Children }> = () => {
+  return ({ children }) => (
+    <div className="layout">
+      {children}
+    </div>
+  )
+}
+```
+
+**Why this model:** You can build features as self-contained units: create signals and logic in the component body, and use lifecycle hooks (onMount, onCleanup) there. No React-like hook rules or dependency arrays.
+
+### Building features as units (no lifecycle hooks in the React sense)
+
+Logic that doesn’t belong in a single component can be extracted into a factory that returns an API. Example: a hash-change dispatcher that uses signals and returns `{ init }` with cleanup:
+
+```ts
+import { signal } from "kiru"
+
+export function createHashChangeDispatcher(
+  getSectionIds: () => string[],
+  router: { setHash: (hash: string, opts?: { replace?: boolean }) => void }
+) {
+  const currentSection = signal("")
+
+  const handleScroll = () => {
+    const sectionIds = getSectionIds()
+    // ... compute sectionId from scroll position
+    currentSection.value = sectionId
+    router.setHash(sectionId ? `#${sectionId}` : "", { replace: true })
+  }
+
+  const init = () => {
+    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("resize", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("resize", handleScroll)
+    }
+  }
+
+  return { init }
+}
+```
+
+A layout component can call `onMount(() => hashChangeDispatcher.init())` so the cleanup from `init()` runs on unmount. Features stay in one place without being tied to React-like lifecycles.
+
+## Signal — Reactive State
+
+Signals are reactive primitives. Only the parts of the UI that observe a signal update when it changes.
 
 ```tsx
 import { signal, computed } from "kiru"
 
-// Create a signal
 const userName = signal("bob")
-
-// Create a computed signal (derived value)
 const userGreeting = computed(() => `Hello, ${userName.value}!`)
 
-// Read value
-console.log(userName.value)  // "bob"
-
-// Update value (triggers reactivity)
+console.log(userName.value)
 userName.value = "alice"
 ```
 
-**Key Signal Properties:**
-- `value`: Gets or sets the signal's current value
-- `subscribe`: Registers a function to be called when the signal's value changes
-- `peek`: Retrieves the value without tracking reactivity
-- `sneak`: Sets the value without emitting a signal change
-- `notify`: Manually triggers a signal change
+**Signal API:**
+- `value`: get/set current value
+- `subscribe(fn)`: run when value changes; returns unsubscribe
+- `peek()`: read without tracking
+- `sneak(v)`: set without notifying
+- `notify()`: trigger notification without changing value
 
-### ⚠️ Critical: Reactivity via Observation
-
-**IMPORTANT**: Kiru's reactivity works through "observation" - when you read a signal's value during component render, the component automatically subscribes to that signal. This is the core of Kiru's "reactivity where it matters" philosophy.
-
-```tsx
-// Component observes the signal during render
-function App() {
-  return (
-    <div>
-      <h1>{userGreeting.value}</h1>  {/* Component subscribes to userGreeting */}
-      <input 
-        value={userName.value} 
-        oninput={(e) => (userName.value = e.target.value)} 
-      />
-    </div>
-  )
-}
-```
-
-However, for better performance, you can use signals directly in JSX without `.value`:
+**Reactivity via observation:** When you read a signal’s value during render, that part of the tree subscribes. Use the signal directly in JSX (without `.value`) when possible so only the specific nodes that display it update:
 
 ```tsx
 function App() {
-  return (
-    <div>
-      <h1>{userGreeting}</h1>  {/* Signal used directly - fine-grained update */}
-      <input 
-        value={userName} 
-        oninput={(e) => (userName.value = e.target.value)} 
-      />
-    </div>
-  )
-}
-```
+  const userName = signal("bob")
+  const userGreeting = computed(() => `Hello, ${userName.value}!`)
 
-When signals are used directly in JSX (without `.value`), only the specific DOM nodes that display those signals update when they change - not the entire component. This provides unmatched performance.
-
-### Using Signals in Components
-
-You can create local signals in components using hooks:
-
-```tsx
-import { useSignal, useComputed, useWatch } from "kiru"
-
-function App() {
-  const userName = useSignal("bob")
-  const userGreeting = useComputed(() => `Hello, ${userName.value}!`)
-
-  useWatch(() => console.log(`Greeting updated: ${userGreeting.value}`))
-
-  return (
+  return () => (
     <div>
       <h1>{userGreeting}</h1>
-      <input 
-        type="text" 
-        value={userName} 
-        oninput={(e) => (userName.value = e.target.value)} 
+      <input
+        value={userName}
+        oninput={(e) => (userName.value = (e.target as HTMLInputElement).value)}
       />
     </div>
   )
 }
 ```
 
-### Two-Way Binding
+### Two-way binding
 
-Use the `bind:` prefix to create two-way binding for form inputs:
+Use the `bind:` prefix for two-way binding on inputs:
 
 ```tsx
-import { useSignal } from "kiru"
-
 function App() {
-  const userName = useSignal("bob")
+  const userName = signal("bob")
 
-  return (
+  return () => (
     <div>
       <input type="text" bind:value={userName} />
       <p>Hello, {userName}!</p>
@@ -237,150 +223,312 @@ function App() {
 }
 ```
 
-### Computed Signals
+### Computed signals
 
-Computed signals are lazily evaluated and automatically track dependencies:
+`computed(getter)` creates a derived signal. It is lazy and tracks dependencies. The getter can receive the previous value:
 
 ```tsx
-import { signal, computed } from "kiru"
-
 const count = signal(0)
 const double = computed(() => count.value * 2)
-const quadruple = computed(() => double.value * 2)
-
-// Computed signals also receive previous value
-const withPrevious = computed((prev) => {
-  // prev is the previous value
-  return count.value + (prev ?? 0)
-})
+const withPrev = computed((prev) => count.value + (prev ?? 0))
 ```
 
-### Watch Effects
+### Effect
 
-Use `watch` to create effects that run when observed signals change:
+`effect` runs a callback when observed signals change. It runs immediately and is re-queued when dependencies change (microtask batching). You can pass a list of signals and receive their values in the callback:
 
 ```tsx
-import { watch, signal } from "kiru"
+import { effect, signal } from "kiru"
 
 const userName = signal("bob")
 
-const watcher = watch(() => {
-  console.log(`User name changed: ${userName.value}`)
+const handle = effect(() => {
+  console.log("Name:", userName.value)
 })
 
-// Watch specific signals
-const watcher2 = watch([userName, userGreeting], (name, greeting) => {
-  console.log(`Name: ${name}, Greeting: ${greeting}`)
+effect([userName], (name) => {
+  console.log("Name:", name)
 })
 
-watcher.stop()  // Stop watching
-watcher.start() // Resume watching
+handle.stop()
+handle.start()
 ```
 
-Watch callbacks fire immediately and are queued to run again within a microtask when dependencies change, allowing automatic batching.
+## Ref
 
-## Advanced Features
-
-### Store API
-
-The Store API provides external state management with precision updates:
+`ref(initialValue)` creates a mutable ref object (e.g. for DOM nodes or timers). No reactivity:
 
 ```tsx
-import { createStore, useStore } from "kiru"
+import { ref } from "kiru"
 
-const useCounterStore = createStore(
-  { count: 0 },  // Initial state
-  (setState, getState) => ({
-    increment: () => setState({ count: getState().count + 1 }),
-    decrement: () => setState((prev) => ({ ...prev, count: prev.count + 1 })),
+function Input() {
+  const inputRef = ref<HTMLInputElement | null>(null)
+
+  return () => (
+    <input
+      ref={inputRef}
+      onblur={() => inputRef.current?.focus()}
+    />
+  )
+}
+```
+
+## Lifecycles
+
+All lifecycle hooks must be called synchronously during component initialization (in the component body, not inside the render function).
+
+- **onMount(callback)**: Runs after the component is first painted. Return a function to clean up on unmount.
+- **onBeforeMount(callback)**: Runs before paint, after DOM nodes are created.
+- **onCleanup(fn)**: Registers a teardown that runs when the component unmounts. Can be called from lifecycle hooks or at top level of the component.
+
+Example:
+
+```tsx
+import { signal, onMount, onCleanup } from "kiru"
+
+function Timer() {
+  const seconds = signal(0)
+
+  onMount(() => {
+    const id = setInterval(() => (seconds.value += 1), 1000)
+    return () => clearInterval(id)
   })
-)
 
-function Counter() {
-  const { value, increment, decrement } = useCounterStore()
-  
-  return (
+  onCleanup(() => console.log("Timer unmounting"))
+
+  return () => <p>Seconds: {seconds}</p>
+}
+```
+
+## Derive — Fine-grained reactivity in JSX
+
+`<Derive from={signalOrSignals} fallback={...}>` subscribes to the given signal(s) and re-renders only the Derive subtree when they change. Use it to avoid re-running entire components.
+
+```tsx
+import { signal, Derive } from "kiru"
+
+function App() {
+  const name = signal("bob")
+
+  return () => (
     <div>
-      <p>Count: {value.count}</p>
-      <button onclick={increment}>+</button>
-      <button onclick={decrement}>-</button>
+      <Derive from={name}>
+        {(n) => <h1>Hello, {n}!</h1>}
+      </Derive>
     </div>
   )
 }
 ```
 
-You can provide a callback to 'select' a portion of the store:
+Multiple sources and fallback:
 
 ```tsx
-function TodoItem({ id }: { id: number }) {
-  const { value: todo, toggle } = useTodoStore((state) => {
-    return state.find((item) => item.id === id)
-  })
-  // ...
-}
+<Derive from={{ name, count }} fallback={<div>Loading...</div>}>
+  {({ name, count }) => (
+    <p>{name} — {count}</p>
+  )}
+</Derive>
 ```
 
-When the store is updated, the component will only update if the value it previously returned has changed. By default, this uses shallow diffing.
-For more control, you can provide your own 'comparison' function:
+## For — Reactive lists
+
+`<For each={signal} fallback={...}>` iterates over a signal’s value and updates only when the list changes (fine-grained list updates):
 
 ```tsx
-function TodoList() {
-  const { value: items } = useTodoStore(null, (prev, next) => {
-    return prev.length === next.length
-  })
+import { For, signal } from "kiru"
 
-  return (
+function TodoList() {
+  const todos = signal([{ id: "1", text: "One" }, { id: "2", text: "Two" }])
+
+  return () => (
     <ul>
-      {items.map((item) => (
-        <TodoItem key={item.id} id={item.id} />
-      ))}
+      <For each={todos} fallback={<li>No items</li>}>
+        {({ id, text }) => (
+          <li key={id}>
+            {text}
+            <button onclick={() => remove(id)}>Remove</button>
+          </li>
+        )}
+      </For>
     </ul>
   )
 }
 ```
 
-In this example, we also demonstrated how you can pass `null` as the selector, as a stand-in for `(state) => state`.
+## Async data: statefulPromise + Derive
 
-You can also access the store's methods and state directly using the returned object from createStore:
+Use `statefulPromise` to create a promise that can be observed, and `<Derive from={...} fallback={...}>` to render it. Derive can show stale data while revalidating or show only the fallback until data is ready:
+
+```tsx
+import { signal, statefulPromise, Derive } from "kiru"
+
+function Page() {
+  const count = signal(0)
+  const data = statefulPromise(async (signal) => {
+    const res = await fetch("https://api.example.com/data", { signal })
+    if (!res.ok) throw new Error(res.statusText)
+    return res.json()
+  })
+
+  return () => (
+    <Derive from={{ data, count }} fallback={<div>Loading...</div>}>
+      {({ data, count }, isStale) => (
+        <div className={isStale ? "opacity-50" : ""}>
+          <p>Count: {count}</p>
+          <ul>
+            {data.items.map((item) => <li key={item.id}>{item.name}</li>)}
+          </ul>
+        </div>
+      )}
+    </Derive>
+  )
+}
+```
+
+Use the `mode` prop on Derive: `"swr"` (default) or `"fallback"` to control whether stale data is shown.
+
+## Context
+
+Share state across the tree with createContext and useContext. The Provider is a component that hosts the context value; children use `useContext` to read it (or the initial value if no provider):
+
+```tsx
+import { createContext, useContext } from "kiru"
+
+const ThemeContext = createContext<"light" | "dark">("light")
+
+function App() {
+  return () => (
+    <ThemeContext.Provider value="dark">
+      <Child />
+    </ThemeContext.Provider>
+  )
+}
+
+function Child() {
+  const theme = useContext(ThemeContext)
+  return () => <div>Theme: {theme}</div>
+}
+```
+
+## Portal
+
+Render children into another DOM node (e.g. modals, tooltips):
+
+```tsx
+import { Portal } from "kiru"
+
+function App() {
+  return () => (
+    <div>
+      <h1>My App</h1>
+      <Portal container={() => document.getElementById("portal-root")!}>
+        <div className="modal">Content in portal</div>
+      </Portal>
+    </div>
+  )
+}
+```
+
+## Transition
+
+Animate enter/exit with a procedural, state-driven API. Use `in` (signal or boolean) and `element` (function that receives transition state and returns JSX):
+
+```tsx
+import { signal, Transition } from "kiru"
+
+function Modal() {
+  const open = signal(false)
+
+  return () => (
+    <>
+      <button onclick={() => (open.value = true)}>Open</button>
+      <Transition
+        in={open}
+        element={(state) => {
+          if (state === "exited") return null
+          return (
+            <div className="modal" style={{ opacity: state === "entered" ? 1 : 0 }}>
+              Modal content
+            </div>
+          )
+        }}
+      />
+    </>
+  )
+}
+```
+
+## ViewTransitions
+
+Wrap the browser View Transitions API with batching and queue management:
+
+```tsx
+import { signal, ViewTransitions } from "kiru"
+
+const current = signal(0)
+
+function next() {
+  ViewTransitions.run(() => {
+    current.value = (current.value + 1) % images.length
+  })
+}
+```
+
+Options: `signal` (AbortSignal) to cancel. `ViewTransitions.stop()` skips the active transition and clears the queue.
+
+## ErrorBoundary
+
+Catch errors in the child tree and render a fallback:
+
+```tsx
+import { ErrorBoundary } from "kiru"
+
+<ErrorBoundary
+  fallback={(err) => <div>Error: {err.message}</div>}
+  onError={(err) => console.error(err)}
+>
+  <MaybeFailingComponent />
+</ErrorBoundary>
+```
+
+## Lazy
+
+Code-split by loading a component asynchronously:
+
+```tsx
+import { lazy } from "kiru"
+
+const Heavy = lazy(() => import("./Heavy"))
+
+function App() {
+  return () => (
+    <Heavy fallback={<div>Loading...</div>} />
+  )
+}
+```
+
+## FileRouter — File-based routing
+
+**CSR:**
 
 ```ts
-useCountStore.getState() // Returns the current state
-useCountStore.setState((state) => state + 1) // Updates the state
-useCountStore.methods.increment() // Calls the method defined in the method factory
-
-/**
-* Subscribe to the store, providing a function to run whenever state changes. 
-* Subscribing in this way returns a function to unsubscribe.
-*/
-const unsub = useCountStore.subscribe((newValue) => console.log(newValue))
-```ts
-
-### FileRouter - File-Based Routing
-
-FileRouter provides configurable convention-based routing with automatic route generation:
-
-**CSR setup:**
-```ts
-// src/main.tsx
 import { mount } from "kiru"
 import { FileRouter } from "kiru/router"
-import "./styles.css"
 
 mount(
   <FileRouter
     config={{
-      pages: import.meta.glob("/∗∗/index.{tsx,jsx}"),
-      layouts: import.meta.glob("/∗∗/layout.{tsx,jsx}"),
+      pages: import.meta.glob("/**/index.{tsx,jsx}"),
+      layouts: import.meta.glob("/**/layout.{tsx,jsx}"),
     }}
   />,
   document.getElementById("app")
 )
 ```
 
-**SSG setup:**
+**SSG (vite.config.ts):**
+
 ```ts
-// vite.config.ts
-import { defineConfig } from "vite"
 import kiru from "vite-plugin-kiru"
 
 export default defineConfig({
@@ -392,333 +540,92 @@ export default defineConfig({
         page: "index.{tsx,jsx}",
         layout: "layout.{tsx,jsx}",
         document: "document.{tsx,jsx}",
-        transition: false,
-        build: {
-          maxConcurrentRenders: 100,
-        },
       },
-      // or, if you're happy with the default settings above, you can just use:
-      ssg: true,
+      // or ssg: true for defaults
     }),
   ],
 })
-
-// src/pages/document.tsx
-import { Body, Head } from "kiru/router"
-import "../styles.css"
-
-export default function Document() {
-  return (
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <Head.Outlet />
-      </head>
-      <Body.Outlet />
-    </html>
-  )
-}
 ```
 
-**File Structure:**
-```
-pages/
-  index.tsx              → /
-  about.tsx              → /about
-  users/
-    [id].tsx             → /users/:id
-  layout.tsx             → Root layout (wraps all routes)
-```
+**Pages:** `pages/index.tsx` → `/`, `pages/about.tsx` → `/about`, `pages/users/[id].tsx` → `/users/:id`.
 
-**Basic Page:**
+**useFileRouter:** Inside a component (in the body, before the render function), call `useFileRouter()` from `kiru/router` to get the router instance (e.g. `router.state.pathname`, `router.state.params`, `router.setHash`, `Link`).
+
+**Page config (loader, SSG):**
 
 ```tsx
-import { definePageConfig } from "kiru/router"
+import { definePageConfig, useFileRouter } from "kiru/router"
 
 export default function Page() {
-  return <h1>Home</h1>
+  const router = useFileRouter()
+  const id = router.state.params.id
+  return () => <h1>User {id}</h1>
 }
 
-// Optional: Data loading
 export const config = definePageConfig({
   loader: {
     load: async ({ signal, params, query }) => {
-      const res = await fetch(`/api/data`, { signal })
-      return await res.json()
-    }
-  }
-})
-```
-
-**Dynamic Routes:**
-
-```tsx
-// pages/users/[id].tsx
-import { useFileRouter } from "kiru/router"
-
-export default function UserPage() {
-  const router = useFileRouter()
-  const userId = router.state.params.id
-  
-  return <h1>User {userId}</h1>
-}
-```
-
-**Static Site Generation (SSG):**
-
-```tsx
-export const config = definePageConfig({
-  loader: {
-    mode: "static",  // Pre-render at build time
-    load: async ({ params }) => {
-      const res = await fetch(`https://api.example.com/posts/${params.id}`)
-      return await res.json()
-    }
-  },
-  generateStaticParams: async () => {
-    const res = await fetch("https://api.example.com/posts")
-    const posts = await res.json()
-    return posts.map((p: { id: string }) => ({ id: p.id }))
-  }
-})
-```
-
-### Form API
-
-Powerful form handling inspired by TanStack Form:
-
-```tsx
-import { useForm } from "kiru"
-
-function LoginForm() {
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      password: ""
+      const res = await fetch(`/api/data/${params.id}`, { signal })
+      return res.json()
     },
-    onSubmit: async (values) => {
-      console.log("Submitted:", values)
-    }
-  })
-
-  return (
-    <form onSubmit={form.handleSubmit}>
-      <form.Field name="email" validators={{ onChange: (v) => !v ? "Required" : null }}>
-        {(field) => (
-          <div>
-            <input 
-              value={field.state.value} 
-              oninput={(e) => field.handleChange(e.target.value)}
-              onblur={field.handleBlur}
-            />
-            {field.state.errors.map(err => <span key={err}>{err}</span>)}
-          </div>
-        )}
-      </form.Field>
-      <button type="submit">Submit</button>
-    </form>
-  )
-}
-```
-
-### Context API
-
-Share state across components:
-
-```tsx
-import { createContext, useContext } from "kiru"
-
-const ThemeContext = createContext<"light" | "dark">("light")
-
-function App() {
-  return (
-    <ThemeContext.Provider value="dark">
-      <Child />
-    </ThemeContext.Provider>
-  )
-}
-
-function Child() {
-  const theme = useContext(ThemeContext)
-  return <div>Theme: {theme}</div>
-}
-```
-
-### Portal Component
-
-Render content outside the component tree:
-
-```tsx
-import { Portal } from "kiru"
-
-function App() {
-  return (
-    <div>
-      <h1>My App</h1>
-      <Portal target={document.body}>
-        <div className="modal">
-          <h2>I'm rendered in document.body!</h2>
-        </div>
-      </Portal>
-    </div>
-  )
-}
-```
-
-### SWR (Stale-While-Revalidate)
-
-Built-in data fetching with caching:
-
-```tsx
-import { useSWR } from "kiru"
-
-function UserProfile({ userId }: { userId: string }) {
-  const { data, error, isLoading } = useSWR(
-    `/api/users/${userId}`,
-    (url) => fetch(url).then(r => r.json())
-  )
-
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
-  
-  return <div>{data.name}</div>
-}
-```
-
-### Memoization
-
-Optimize component renders:
-
-```tsx
-import { memo } from "kiru"
-
-const ExpensiveComponent = memo(function ExpensiveComponent({ data }: { data: any }) {
-  // Expensive computation
-  return <div>{/* ... */}</div>
+  },
+  // SSG: mode: "static", generateStaticParams: async () => [...]
 })
 ```
 
-## TypeScript Integration
+## TypeScript
 
-### Component Types
+- **JSX**: Use the global `JSX` namespace; `JSX.Children` for children.
+- **Component props**: Type the first argument of the render function (or the component’s props type).
+- **Signal**: `Signal<T>` from `kiru`.
+- **Ref**: `ref<T>(initialValue)`; `RefObject<T>` for refs to DOM/elements.
+- **Element props**: `ElementProps<"div">` etc. from `kiru` for extending native props.
 
-```tsx
-// JSX is a global type
-
-interface Props {
-  value: string
-  label: string
-  children?: JSX.Children
-}
-
-function MyComponent(props: Props) {
-  return (
-    <div>
-      <label>{props.label}</label>
-      <input value={props.value} />
-      {props.children}
-    </div>
-  )
-}
-```
-
-### Signal Types
-
-```tsx
-import { signal, Signal } from "kiru"
-
-const count: Signal<number> = signal(0)
-```
-
-## File Structure
-
-```
-src/
-  pages/
-    index.tsx          # Home page (/)
-    layout.tsx         # Root layout
-    about.tsx          # /about route
-    users/
-      [id].tsx        # /users/:id route
-  App.tsx             # Main app component
-  main.ts             # Entry point with mount()
-```
-
-## Development Tools
-
-### Vite Plugin
-
-The `vite-plugin-kiru` provides:
-- Hot Module Replacement (HMR)
-- Devtools integration
-- JSX/TSX transformation
-- Static Site Generation (SSG)
-
-```ts
-// vite.config.ts
-import { defineConfig } from "vite"
-import kiru from "vite-plugin-kiru"
-
-export default defineConfig({
-  plugins: [kiru()],
-})
-```
-
-## Key Differences from Other Frameworks
+## Key differences from other frameworks
 
 ### vs React
-- **Reactivity**: Signal-based fine-grained reactivity instead of component-level re-renders
-- **Performance**: Only updates what changes, not entire component trees
-- **Built-in features**: Routing, forms, async state, SSG included - no need for React Router, React Hook Form, SWR, etc.
-- **Ability to escape the virtual DOM via Signals**: Direct DOM updates for better performance when needed
-- **Two-way binding**: Native `bind:` syntax for form inputs
+
+- **State model:** State is created with `signal()`/`computed()` in the component body; components that need state return a render function so that state persists.
+- **Reactivity:** Signal-based, fine-grained: only nodes that observe a signal update.
+- **Built-in:** Routing, context, transitions, portals, async via statefulPromise + Derive.
+- **Two-way binding:** `bind:` for inputs.
 
 ### vs Svelte
-- **JSX syntax**: Uses JSX/TSX instead of HTML templates
-- **Runtime framework**: Not compiled away, but still highly performant
-- **FileRouter**: Built-in file-based routing system
-- **TypeScript**: First-class TypeScript support
+
+- **Syntax:** JSX/TSX instead of Svelte templates.
+- **Runtime:** Framework runs at runtime; no “compile away” model.
+- **State:** Explicit signals and render function; no reactive declarations in the template.
 
 ### vs Solid
-- **Component model**: Function-based components with JSX, similar to React
-- **Hooks**: React-like hooks (useState, useEffect, etc.) in addition to signals
-- **FileRouter**: Built-in routing solution
-- **Form API**: Comprehensive form handling built-in
 
+- **State:** Local state = signals in component body + return a render function.
+- **Lifecycles:** onMount, onBeforeMount, onCleanup — called once during setup.
 
-## Best Practices
+## Best practices
 
-1. **Reactivity**: Use signals directly in JSX (without `.value`) for fine-grained updates when possible
-2. **Local State**: Use `useSignal`, `useComputed`, `useWatch` for component-local reactive state
-3. **Global State**: Use Store API for shared state that needs precision updates
-4. **Forms**: Use Form API for complex form handling with validation
-5. **Routing**: Leverage FileRouter's convention-over-configuration for clean route organization
-6. **Data Fetching**: Use SWR for async data with automatic caching and revalidation
-7. **Performance**: Use `memo` for expensive components, `computed` for derived values
-8. **TypeScript**: Always use TypeScript for better developer experience and type safety
+1. **Stateful components:** If you create `signal`, `computed`, or `ref` in a component, return a **render function** (`return () => (...)` or `return (props) => (...)`) so state persists.
+2. **Reactivity:** Prefer using signals directly in JSX (e.g. `{name}`) so only the dependent DOM nodes update.
+3. **Lists:** Use `<For each={signal}>` instead of `signal.value.map(...)` for reactive lists.
+4. **Derived UI:** Use `<Derive from={...}>` for parts of the tree that depend on one or a few signals.
+5. **Async:** Use `statefulPromise` + `<Derive from={...} fallback={...}>`.
+6. **Shared state:** Use Context (createContext + useContext) or shared signals in modules.
+7. **Side effects and cleanup:** Use `onMount`/`onBeforeMount` and return a cleanup function, or `onCleanup`.
+8. **Features as units:** Extract logic into factories (like createHashChangeDispatcher) that return init/teardown and call them from `onMount` when needed.
 
-## Current Limitations & Roadmap
+## Current limitations & roadmap
 
-### Current State
-- **SSR**: Basic SSR support exists via integrations (e.g., Vike), native solution in development
-- **Ecosystem**: Early stage - growing community and ecosystem
-- **Production Ready**: Yes - framework is stable and used in production
+- **SSR:** Basic support via integrations (e.g. Vike); native solution in development.
+- **Ecosystem:** Early stage.
+- **Production:** Framework is stable and used in production.
 
-### Roadmap
-- **Full-Stack Rendering**: Enhanced native SSR and SSG support
-- **Compiled Component Declaration API**: Web Components support with performance optimizations
-- **Community-driven**: Features evolve based on community feedback
+**Roadmap:** Native SSR/SSG improvements, compiled component/Web Components API, community-driven features.
 
 ## Resources
 
-- **Website**: https://kirujs.dev
-- **GitHub**: https://github.com/kirujs/kiru
-- **Discord**: https://discord.gg/Pf9zbgBaRw
-- **Playground**: https://stackblitz.com/~/github.com/kirujs/kiru-csr-template
-- **Documentation**: https://kirujs.dev/docs
+- Website: https://kirujs.dev
+- GitHub: https://github.com/kirujs/kiru
+- Discord: https://discord.gg/Pf9zbgBaRw
+- Playground: https://stackblitz.com/~/github.com/kirujs/kiru-csr-template
+- Docs: https://kirujs.dev/docs
 
----
-
-This documentation is optimized for AI/LLM understanding of the Kiru framework. For the most up-to-date information, visit https://kirujs.dev or the GitHub repository.
+This document is for AI/LLM understanding of Kiru. For the latest details, see https://kirujs.dev and the GitHub repo.
