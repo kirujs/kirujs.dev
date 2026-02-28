@@ -134,18 +134,14 @@ const Layout: Kiru.FC<{ children: JSX.Children }> = ({ children }) => (
 Logic that doesn’t belong in a single component can be extracted into a factory that returns an API. Example: a hash-change dispatcher that uses signals and returns `{ init }` with cleanup:
 
 ```ts
-import { signal } from "kiru"
-
 export function createHashChangeDispatcher(
   getSectionIds: () => string[],
   router: { setHash: (hash: string, opts?: { replace?: boolean }) => void }
 ) {
-  const currentSection = signal("")
 
   const handleScroll = () => {
     const sectionIds = getSectionIds()
     // ... compute sectionId from scroll position
-    currentSection.value = sectionId
     router.setHash(sectionId ? `#${sectionId}` : "", { replace: true })
   }
 
