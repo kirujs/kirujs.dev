@@ -58,9 +58,9 @@ export default function Page() {
               </h2>
               <p className="text-lg font-light">
                 Kiru aims to embody the word 'framework' in a literal sense.
-                Routing, state management, asynchronous state and more - Kiru
-                makes it possible to build incredible web apps without any other
-                libraries.
+                Routing, state management, asynchronous state, ViewTransitions,
+                animations, and more - Kiru makes it possible to build
+                incredible web apps without any other libraries.
               </p>
             </Container>
             <Container breakpoint="md" mobilePadding={false}>
