@@ -1,26 +1,18 @@
-import {
-  Derive,
-  ElementProps,
-  Fragment,
-  unwrap,
-  useEffect,
-  useSignal,
-} from "kiru"
+import { Derive, ElementProps, Fragment, onMount, signal, unwrap } from "kiru"
 import { className as cls } from "kiru/utils"
 import { docMeta } from "$/docs-meta"
-import { useNavDrawer } from "$/state/navDrawer"
 import { isLinkActive } from "$/utils"
 import { DocItemStatus } from "./DocItemStatus"
 import { Link, LinkProps, useFileRouter } from "kiru/router"
+import { navDrawerOpen } from "../state"
 
 export function SidebarContent() {
   const router = useFileRouter()
-  const { value: open, setOpen } = useNavDrawer((state) => state.open)
-  const hash = useSignal(
+  const hash = signal(
     "window" in globalThis ? window.location.hash.substring(1) : ""
   )
 
-  useEffect(() => {
+  onMount(() => {
     const onHashChange = () => {
       hash.value = window.location.hash.substring(1)
     }
@@ -28,19 +20,19 @@ export function SidebarContent() {
     return () => {
       window.removeEventListener("hashchange", onHashChange)
     }
-  }, [])
+  })
 
-  return (
+  const closeDrawer = () => {
+    navDrawerOpen.value = false
+  }
+
+  return () => (
     <>
       {docMeta.map((data) => (
         <div key={data.title} className="px-1 mb-3">
           <Header>
             {data.href ? (
-              <Link
-                to={data.href}
-                onclick={() => open && setOpen(false)}
-                className="block"
-              >
+              <Link to={data.href} onclick={closeDrawer} className="block">
                 {data.title}
               </Link>
             ) : (
@@ -71,8 +63,7 @@ export function SidebarContent() {
                         to={page.href}
                         onclick={() =>
                           isLinkActive(page.href, router.state.pathname) &&
-                          open &&
-                          setOpen(false)
+                          (navDrawerOpen.value = false)
                         }
                         isActive={isActive}
                       >
@@ -97,7 +88,7 @@ export function SidebarContent() {
                                   page.href +
                                   (section.id ? `#${section.id}` : "")
                                 }
-                                onclick={() => open && setOpen(false)}
+                                onclick={closeDrawer}
                               >
                                 {section.title}
                                 {section.isNew && (
@@ -125,7 +116,7 @@ export function SidebarContent() {
                 <StyledLink
                   key={section.id}
                   to={data.href + (section.id ? `#${section.id}` : "")}
-                  onclick={() => open && setOpen(false)}
+                  onclick={closeDrawer}
                 >
                   {section.title}
                 </StyledLink>

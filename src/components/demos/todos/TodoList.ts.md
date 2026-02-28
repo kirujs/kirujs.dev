@@ -1,9 +1,9 @@
 ```tsx
 function App() {
-  const inputText = useSignal(""),
-    todos = useSignal<Todo[]>([])
+  const inputText = signal(""),
+    todos = signal<Todo[]>([])
 
-  const handleSubmit = (e: Event) => {
+  const handleSubmit = (e: Kiru.FormEvent) => {
     e.preventDefault()
     const id = crypto.randomUUID(),
       text = inputText.peek(),
@@ -15,7 +15,7 @@ function App() {
 
   console.log("Hello from Kiru! This component never rerenders 😉")
 
-  return (
+  return () => (
     <>
       <form onsubmit={handleSubmit}>
         <input bind:value={inputText} />

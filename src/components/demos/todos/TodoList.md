@@ -1,7 +1,7 @@
 ```tsx
 function App() {
-  const inputText = useSignal(""),
-    todos = useSignal([])
+  const inputText = signal(""),
+    todos = signal([])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -15,7 +15,7 @@ function App() {
 
   console.log("Hello from Kiru! This component never rerenders 😉")
 
-  return (
+  return () => (
     <>
       <form onsubmit={handleSubmit}>
         <input bind:value={inputText} />

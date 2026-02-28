@@ -1,12 +1,13 @@
 ```tsx
-import { useState, Transition } from "kiru"
+import { signal, Transition } from "kiru"
 
 function App() {
-  const [expanded, setExpanded] = useState(false)
+  const expanded = signal(false)
+  const toggleExpanded = () => (expanded.value = !expanded.value)
 
-  return (
+  return () => (
     <div className="flex flex-col">
-      <button onclick={() => setExpanded((prev) => !prev)}>Show More</button>
+      <button onclick={toggleExpanded}>Show More</button>
 
       <Transition
         in={expanded}

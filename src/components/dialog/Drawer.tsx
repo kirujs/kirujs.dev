@@ -1,4 +1,4 @@
-import { useRef, type TransitionState, useEffect } from "kiru"
+import { ref, onMount, type TransitionState } from "kiru"
 import { Backdrop } from "./Backdrop"
 import { isClickEventFromKeyboard, trapFocus } from "$/utils"
 
@@ -11,7 +11,7 @@ type DrawerProps = {
 }
 
 export function Drawer({ state, close, side, sender, children }: DrawerProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null)
+  const wrapperRef = ref<HTMLDivElement>(null)
   if (state == "exited") return null
   const opacity = state === "entered" ? "1" : "0"
   const translateX =
@@ -26,9 +26,13 @@ export function Drawer({ state, close, side, sender, children }: DrawerProps) {
         : 0
   const translateY = side === "bottom" ? (state === "entered" ? 0 : 100) : 0
 
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown)
+  const handleClose = () => {
+    if (sender && sender.target && sender.target instanceof HTMLElement)
+      sender.target.focus()
+    close()
+  }
 
+  onMount(() => {
     // if the drawer was opened via keyboard 'click', focus the first internal element
     if (sender && isClickEventFromKeyboard(sender)) {
       const firstFocussable = wrapperRef.current!.querySelector(
@@ -40,25 +44,19 @@ export function Drawer({ state, close, side, sender, children }: DrawerProps) {
       }
     }
 
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [])
-
-  function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      e.preventDefault()
-      handleClose()
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault()
+        handleClose()
+      }
+      wrapperRef.current && trapFocus(wrapperRef.current, e)
     }
 
-    wrapperRef.current && trapFocus(wrapperRef.current, e)
-  }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  })
 
-  function handleClose() {
-    if (sender && sender.target && sender.target instanceof HTMLElement)
-      sender.target.focus()
-    close()
-  }
-
-  return (
+  return () => (
     <Backdrop
       ref={wrapperRef}
       onclick={(e) => e.target === wrapperRef.current && handleClose()}

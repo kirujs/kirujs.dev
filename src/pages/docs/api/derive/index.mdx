@@ -1,6 +1,6 @@
 import { Head, Link } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
-import { siteCodeLang } from "$/state/siteCodeLang"
+import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
 import ExampleCodeTS from "./example.ts.md"
 import ExamplePromiseCode from "./example.promise.md"
@@ -18,7 +18,7 @@ Similar to <Link to="/docs/api/signal#for-component">{"<For>"}</Link>, `Derive` 
 The `<Derive>` component produces a JSX element that automatically updates whenever the 
 provided `from` signal changes. 
 
-<CopyInnerText importsOverride={`import { useSignal, useComputed, Derive } from "kiru"`}>
+<CopyInnerText importsOverride={`import { signal, computed, Derive } from "kiru"`}>
 {siteCodeLang.value === "js" ? <ExampleCode /> : <ExampleCodeTS />}
 </CopyInnerText>
 

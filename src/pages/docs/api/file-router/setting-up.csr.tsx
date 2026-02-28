@@ -1,4 +1,4 @@
-import { siteCodeLang } from "$/state/siteCodeLang"
+import { siteCodeLang } from "$/state"
 import ExampleMain from "./example.main.md"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { TabGroup } from "$/components/TabGroup"

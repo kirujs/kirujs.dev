@@ -1,5 +1,4 @@
-import { useCommandPallete } from "$/state/commandPallete"
-import { computed, For, signal, Transition, useEffect, useRef } from "kiru"
+import { computed, For, signal, Transition, effect, ref, onMount } from "kiru"
 import { Modal } from "./dialog/Modal"
 import { DialogHeader } from "./dialog/DialogHeader"
 import { Input } from "./atoms/Input"
@@ -12,30 +11,26 @@ import { isLinkActive } from "$/utils"
 import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
 import { DocItemStatus } from "./DocItemStatus"
 import { Link, useFileRouter } from "kiru/router"
+import { commandPalleteOpen } from "../state"
 
 const groupData: Record<string, DocPageLink[]> = {
   Links: SITE_LINKS,
   API: docMeta.find((d) => d.title === "API")!.pages!,
-  Hooks: docMeta.find((d) => d.title === "Hooks")!.pages!,
 }
 
 export function CommandPallete() {
-  const {
-    value: { open, event },
-    setOpen,
-  } = useCommandPallete()
   const router = useFileRouter()
 
-  const prevActiveElement = useRef<Element | null>(null)
+  const prevActiveElement = ref<Element | null>(null)
 
-  useEffect(() => {
+  onMount(() => {
     document.addEventListener("keydown", handleKeyboardEvent)
     return () => {
       document.removeEventListener("keydown", handleKeyboardEvent)
     }
-  }, [])
+  })
 
-  useEffect(() => (open && setOpen(false), void 0), [router.state.pathname])
+  //effect(() => (commandPalleteOpen && setOpen(false), void 0), [router.state.pathname])
 
   function focusSender() {
     const el = prevActiveElement.current
@@ -48,20 +43,19 @@ export function CommandPallete() {
     if (!isHandled) return
 
     e.preventDefault()
-    const { open } = useCommandPallete.getState()
 
-    if (!open) {
+    if (!commandPalleteOpen.value) {
       prevActiveElement.current = document.activeElement
     } else {
       focusSender()
     }
 
-    setOpen(!open)
+    commandPalleteOpen.value = !commandPalleteOpen.value
   }
 
-  return (
+  return () => (
     <Transition
-      in={open}
+      in={commandPalleteOpen}
       duration={{
         in: 50,
         out: 250,
@@ -71,8 +65,8 @@ export function CommandPallete() {
           <Modal
             state={state}
             close={() => {
-              if (!event) focusSender()
-              setOpen(false)
+              //focusSender()
+              commandPalleteOpen.value = false
             }}
             sender={event}
             className="max-w-[min(400px,100vw)]"
@@ -112,27 +106,24 @@ const filteredGroups = computed(() => {
 })
 
 function CommandPalleteDisplay() {
-  const { setOpen } = useCommandPallete()
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = ref<HTMLInputElement>(null)
 
-  useEffect(() => {
+  onMount(() => {
     searchInputRef.current?.focus()
     searchInputRef.current?.select()
-  }, [])
 
-  useEffect(() => {
+    const handleKeyboardEvent = (e: KeyboardEvent) => {
+      const isHandled = e.key.toLowerCase() === "l" && e.ctrlKey
+      if (!isHandled) return
+      e.preventDefault()
+      searchInputRef.current?.focus()
+    }
+
     document.addEventListener("keydown", handleKeyboardEvent)
     return () => document.removeEventListener("keydown", handleKeyboardEvent)
-  }, [])
+  })
 
-  function handleKeyboardEvent(e: KeyboardEvent) {
-    const isHandled = e.key.toLowerCase() === "l" && e.ctrlKey
-    if (!isHandled) return
-    e.preventDefault()
-    searchInputRef.current?.focus()
-  }
-
-  return (
+  return () => (
     <>
       <DialogHeader className="border-b-0 relative">
         <SearchIcon className="absolute top-[calc(50%-.75rem)] left-2 opacity-35" />
@@ -145,7 +136,7 @@ function CommandPalleteDisplay() {
         />
         <button
           ariaLabel="Close"
-          onclick={() => setOpen(false)}
+          onclick={() => (commandPalleteOpen.value = false)}
           className="flex px-2 items-center opacity-35 hover:opacity-100 focus:opacity-100"
         >
           <CloseIcon width="1em" height="1em" />
@@ -190,7 +181,6 @@ function CommandPalleteItem({
   item: DocPageLink
   external?: boolean
 }) {
-  const { setOpen } = useCommandPallete()
   const router = useFileRouter()
 
   if (item.disabled) {
@@ -231,7 +221,8 @@ function CommandPalleteItem({
       className="w-full text-muted bg-white/1 border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5"
       to={item.href}
       onclick={() =>
-        isLinkActive(item.href, router.state.pathname) && setOpen(false)
+        isLinkActive(item.href, router.state.pathname) &&
+        (commandPalleteOpen.value = false)
       }
     >
       <div className="flex items-start justify-between">

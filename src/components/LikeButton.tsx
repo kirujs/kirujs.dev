@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "kiru"
+import { effect, ref, signal } from "kiru"
 import { HeartIcon } from "./icons/HeartIcon"
 import "./LikeButton.css"
 
@@ -9,16 +9,16 @@ export function LikeButton({
   liked: boolean
   toggleLiked: () => void
 }) {
-  const prevLiked = useRef(liked)
-  const [justLiked, setJustLiked] = useState(false)
-  useEffect(() => {
+  const prevLiked = ref(liked)
+  const justLiked = signal(false)
+  effect(() => {
     if (liked !== prevLiked.current) {
-      setJustLiked(liked)
+      justLiked.value = true
       prevLiked.current = liked
     }
   })
 
-  return (
+  return () => (
     <button
       data-liked={liked}
       just-liked={justLiked}

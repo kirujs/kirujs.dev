@@ -1,9 +1,9 @@
 ```jsx
-import { useState } from "kiru"
+import { signal } from "kiru"
 import { ThemeContext } from "./themeContext"
 
 export function ThemeContextProvider({ children }) {
-  const [theme, setTheme] = useState("light")
+  const theme = signal("light")
 
   return (
     <ThemeContext.Provider

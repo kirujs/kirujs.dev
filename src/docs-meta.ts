@@ -43,10 +43,6 @@ const STATUS_MAP: Record<string, DocItemStatus> = {
     type: "new",
     since: "0.53.0",
   },
-  usePromiseHook: {
-    type: "new",
-    since: "0.53.0",
-  },
 } as const
 
 export const docMeta: DocItem[] = [
@@ -112,10 +108,6 @@ export const docMeta: DocItem[] = [
         tags: ["code-splitting"],
       },
       {
-        title: "Memo",
-        href: "/docs/api/memo",
-      },
-      {
         title: "Portal",
         href: "/docs/api/portal",
       },
@@ -160,26 +152,6 @@ export const docMeta: DocItem[] = [
         ],
       },
       {
-        title: "Form",
-        href: "/docs/api/form",
-        tags: ["useForm", "form", "validation", "Field", "Subscribe"],
-        status: STATUS_MAP.formApi,
-        sections: [
-          {
-            id: "basic-usage",
-            title: "Basic Usage",
-          },
-          {
-            id: "validation",
-            title: "Validation",
-          },
-          {
-            id: "form-components",
-            title: "Form Components",
-          },
-        ],
-      },
-      {
         title: "Signal",
         href: "/docs/api/signal",
         tags: ["state", "computed", "effect", "two way binding", "For"],
@@ -194,7 +166,7 @@ export const docMeta: DocItem[] = [
           },
           {
             id: "signal-effects",
-            title: "Watch",
+            title: "Effect",
           },
           {
             id: "usage-in-components",
@@ -213,110 +185,9 @@ export const docMeta: DocItem[] = [
         ],
       },
       {
-        title: "Store",
-        href: "/docs/api/store",
-        tags: ["createStore", "useStore", "MethodFactory", "state"],
-      },
-      {
-        title: "SWR",
-        href: "/docs/api/swr",
-        tags: ["swr", "useSWR", "fetcher", "mutate", "revalidate", "cache"],
-        status: STATUS_MAP.swrApi,
-        sections: [
-          {
-            id: "basic-usage",
-            title: "Basic Usage",
-          },
-          {
-            id: "mutations",
-            title: "Mutations",
-          },
-          {
-            id: "caching",
-            title: "Caching",
-          },
-        ],
-      },
-      {
         title: "Transition",
         href: "/docs/api/transition",
         tags: ["transitions", "animation"],
-      },
-    ],
-  },
-  {
-    title: "Hooks",
-    pages: [
-      {
-        title: "useAsync",
-        href: "/docs/hooks/useAsync",
-      },
-      {
-        title: "useCallback",
-        href: "/docs/hooks/useCallback",
-      },
-      {
-        title: "useContext",
-        href: "/docs/hooks/useContext",
-      },
-      {
-        title: "useEffect",
-        href: "/docs/hooks/useEffect",
-      },
-      {
-        title: "useEffectEvent",
-        href: "/docs/hooks/useEffectEvent",
-      },
-      {
-        title: "useId",
-        href: "/docs/hooks/useId",
-      },
-      {
-        title: "useLayoutEffect",
-        href: "/docs/hooks/useLayoutEffect",
-      },
-      {
-        title: "useMemo",
-        href: "/docs/hooks/useMemo",
-      },
-      {
-        title: "usePromise",
-        href: "/docs/hooks/usePromise",
-        tags: ["promise", "async", "Derive"],
-        status: STATUS_MAP.usePromiseHook,
-      },
-      {
-        title: "useReducer",
-        href: "/docs/hooks/useReducer",
-      },
-      {
-        title: "useRef",
-        href: "/docs/hooks/useRef",
-        tags: ["Ref"],
-      },
-      {
-        title: "useState",
-        href: "/docs/hooks/useState",
-      },
-      {
-        title: "useSyncExternalStore",
-        href: "/docs/hooks/useSyncExternalStore",
-        tags: ["state", "global state"],
-      },
-      {
-        title: "useViewTransition",
-        href: "/docs/hooks/useViewTransition",
-        tags: ["view transition", "animation"],
-        status: STATUS_MAP.useViewTransition,
-      },
-      {
-        title: "Dependency arrays",
-        href: "/docs/hooks/dependency-arrays",
-      },
-      {
-        title: "Custom hooks",
-        href: "/docs/hooks/custom-hooks",
-        tags: ["useHook"],
       },
     ],
   },

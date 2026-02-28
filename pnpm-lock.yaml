@@ -21,8 +21,8 @@ importers:
         specifier: ^3.22.0
         version: 3.22.0
       kiru:
-        specifier: 0.54.4
-        version: 0.54.4
+        specifier: file:/C:/repos/kiru/kiru/packages/lib
+        version: file:../kiru/packages/lib
       lit-match:
         specifier: ^1.0.3
         version: 1.0.3
@@ -55,8 +55,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       vite-plugin-kiru:
-        specifier: ^0.32.3
-        version: 0.32.3(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.54.4)(lightningcss@1.30.2)
+        specifier: file:/C:/repos/kiru/kiru/packages/vite-plugin-kiru
+        version: file:../kiru/packages/vite-plugin-kiru(@types/node@24.9.1)(jiti@2.6.1)(kiru@file:../kiru/packages/lib)(lightningcss@1.30.2)
 
 packages:
 
@@ -697,8 +697,8 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
-  kiru@0.54.4:
-    resolution: {integrity: sha512-HOgNCCklsv6J/1v/JfdRtQe1OyqPuMK2m3syuX9mJrz6gqzksTDdzfZzPP4RjrKOzc9wYbzOEHIAQu1BbxmRwg==}
+  kiru@file:../kiru/packages/lib:
+    resolution: {directory: ../kiru/packages/lib, type: directory}
 
   lightningcss-android-arm64@1.30.2:
     resolution: {integrity: sha512-BH9sEdOCahSgmkVhBLeU7Hc9DWeZ1Eb6wNS6Da8igvUwAe0sqROHddIlvU06q3WyXVEOYDZ6ykBZQnjTbmo4+A==}
@@ -1057,8 +1057,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite-plugin-kiru@0.32.3:
-    resolution: {integrity: sha512-xtQ5GpXUldYGTFx6nEdwaHwUEWqtRTPR/8g6c251EAvyeRRqAqyuFOIwINHwikhnfmIb7EUw30Es+XkkEUuLiA==}
+  vite-plugin-kiru@file:../kiru/packages/vite-plugin-kiru:
+    resolution: {directory: ../kiru/packages/vite-plugin-kiru, type: directory}
     peerDependencies:
       kiru: '>=0.54.1'
 
@@ -1701,7 +1701,7 @@ snapshots:
 
   jiti@2.6.1: {}
 
-  kiru@0.54.4: {}
+  kiru@file:../kiru/packages/lib: {}
 
   lightningcss-android-arm64@1.30.2:
     optional: true
@@ -2309,9 +2309,9 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-kiru@0.32.3(@types/node@24.9.1)(jiti@2.6.1)(kiru@0.54.4)(lightningcss@1.30.2):
+  vite-plugin-kiru@file:../kiru/packages/vite-plugin-kiru(@types/node@24.9.1)(jiti@2.6.1)(kiru@file:../kiru/packages/lib)(lightningcss@1.30.2):
     dependencies:
-      kiru: 0.54.4
+      kiru: file:../kiru/packages/lib
       magic-string: 0.30.21
       mime: 4.1.0
       tinyglobby: 0.2.15

@@ -1,25 +1,21 @@
-import { Transition, useEffect } from "kiru"
+import { Transition, effect } from "kiru"
 import { Drawer } from "./dialog/Drawer"
-import { useNavDrawer } from "$/state/navDrawer"
 import { SITE_LINKS } from "$/constants"
 import { LogoIcon } from "./icons/LogoIcon"
 import { SidebarContent } from "./SidebarContent"
 import { isLinkActive } from "$/utils"
 import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
 import { Link, useFileRouter } from "kiru/router"
+import { navDrawerOpen } from "../state"
 
 export function NavDrawer() {
-  const {
-    value: { open, event },
-    setOpen,
-  } = useNavDrawer()
   const router = useFileRouter()
 
-  useEffect(() => (open && setOpen(false), void 0), [router.state.pathname])
+  //effect(() => (open && setOpen(false), void 0), [router.state.pathname])
 
   return (
     <Transition
-      in={open}
+      in={navDrawerOpen}
       duration={{
         in: 30,
         out: 250,
@@ -29,7 +25,7 @@ export function NavDrawer() {
           <Drawer
             side="left"
             state={state}
-            close={() => setOpen(false)}
+            close={() => (navDrawerOpen.value = false)}
             sender={event}
           >
             <div className="p-4 text-lg">

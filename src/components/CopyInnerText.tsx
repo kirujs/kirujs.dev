@@ -1,4 +1,4 @@
-import { useSignal, useRef, useEffect, useCallback, Derive } from "kiru"
+import { signal, Derive, ref, onCleanup } from "kiru"
 import { CopyIcon } from "./icons/CopyIcon"
 
 type CopyInnerTextProps = {
@@ -12,23 +12,20 @@ export function CopyInnerText({
   prefix = "",
   importsOverride = "",
 }: CopyInnerTextProps) {
-  const copied = useSignal(false)
-  const ref = useRef<HTMLDivElement>(null)
-  const copiedTimeout = useRef(-1)
+  const copied = signal(false)
+  const elRef = ref<HTMLDivElement>(null)
+  const copiedTimeout = ref(-1)
 
-  useEffect(
-    () => () =>
-      copiedTimeout.current !== -1 &&
-      window.clearTimeout(copiedTimeout.current),
-    []
-  )
+  onCleanup(() => {
+    copiedTimeout.current !== -1 && window.clearTimeout(copiedTimeout.current)
+  })
 
-  const copyToClipboard = useCallback(async () => {
+  const copyToClipboard = async () => {
     if (copiedTimeout.current !== -1) {
       window.clearTimeout(copiedTimeout.current!)
     }
 
-    const allLines = (prefix + ref.current!.textContent!).split("\n")
+    const allLines = (prefix + elRef.current!.textContent!).split("\n")
     let toWrite = allLines
     if (importsOverride) {
       toWrite = allLines.map((line) =>
@@ -42,10 +39,10 @@ export function CopyInnerText({
       () => (copied.value = false),
       1500
     )
-  }, [])
+  }
 
-  return (
-    <div ref={ref} className="relative code-copy-wrapper">
+  return () => (
+    <div ref={elRef} className="relative code-copy-wrapper">
       {children}
       <div className="absolute top-0 right-0">
         <div className="flex justify-end">

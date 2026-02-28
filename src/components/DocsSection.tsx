@@ -1,5 +1,5 @@
 import { customEvents } from "$/custom-events"
-import { useEffect, useRef } from "kiru"
+import { onMount, ref } from "kiru"
 
 type DocsSectionProps = {
   children: JSX.Children
@@ -8,19 +8,19 @@ type DocsSectionProps = {
 }
 
 export function DocsSection({ children, title, id }: DocsSectionProps) {
-  const ref = useRef<HTMLDivElement>(null)
-  const timeoutRef = useRef(-1)
-  useEffect(() => {
+  const sectionRef = ref<HTMLDivElement>(null)
+  const timeoutRef = ref(-1)
+  onMount(() => {
     const handleHashChange = (e?: Event) => {
       if (e instanceof customEvents.scrollHashChangeEvent) return
-      if (!ref.current) return
+      if (!sectionRef.current) return
       if (window.location.hash === `#${id}`) {
-        ref.current.classList.add("highlight")
+        sectionRef.current.classList.add("highlight")
         if (timeoutRef.current !== -1) {
           window.clearTimeout(timeoutRef.current)
         }
         timeoutRef.current = window.setTimeout(
-          () => ref.current?.classList.remove("highlight"),
+          () => sectionRef.current?.classList.remove("highlight"),
           1000
         )
       }
@@ -32,8 +32,8 @@ export function DocsSection({ children, title, id }: DocsSectionProps) {
       window.removeEventListener("hashchange", handleHashChange)
       window.removeEventListener("popstate", handleHashChange)
     }
-  }, [])
-  return (
+  })
+  return () => (
     <div className="docs-section" id={id} ref={ref}>
       <div className="docs-section-header mb-5">
         <a href={`#${id}`} className="text-light">
