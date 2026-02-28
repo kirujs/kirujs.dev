@@ -105,12 +105,12 @@ function Counter() {
 With props, the render function receives them:
 
 ```tsx
-function Greeter(props: { name: string }) {
+const Greeter: Kiru.FC<{ name: string }> = (initialProps) => {
   const greeted = signal(false)
-
-  return (p: { name: string }) => (
+  
+  return (currentProps) => (
     <div>
-      <p>Hello, {p.name}!</p>
+      <p>Hello, {currentProps.name}!</p>
       <button onclick={() => (greeted.value = true)}>Mark greeted</button>
     </div>
   )
@@ -120,13 +120,11 @@ function Greeter(props: { name: string }) {
 Layout with children:
 
 ```tsx
-const Layout: Kiru.FC<{ children: JSX.Children }> = () => {
-  return ({ children }) => (
-    <div className="layout">
-      {children}
-    </div>
-  )
-}
+const Layout: Kiru.FC<{ children: JSX.Children }> = ({ children }) => (
+  <div className="layout">
+    {children}
+  </div>
+)
 ```
 
 **Why this model:** You can build features as self-contained units: create signals and logic in the component body, and use lifecycle hooks (onMount, onCleanup) there. No React-like hook rules or dependency arrays.
@@ -389,7 +387,9 @@ Use the `mode` prop on Derive: `"swr"` (default) or `"fallback"` to control whet
 
 ## Context
 
-Share state across the tree with createContext and useContext. The Provider is a component that hosts the context value; children use `useContext` to read it (or the initial value if no provider):
+Context is a **component** for composition: it passes a value down the tree. Create it with `createContext(initialValue)`; the result is a component you use with a `value` prop. Children read the value via `useContext(context)` (or the initial value if no context component is above them).
+
+**Context does not trigger any reactivity.** It is purely a way to supply a value to descendants. For reactive state, put **signals** (or objects containing signals) in the context value; consumers then observe those signals and update accordingly.
 
 ```tsx
 import { createContext, useContext } from "kiru"
@@ -397,18 +397,20 @@ import { createContext, useContext } from "kiru"
 const ThemeContext = createContext<"light" | "dark">("light")
 
 function App() {
-  return () => (
-    <ThemeContext.Provider value="dark">
+  return (
+    <ThemeContext value="dark">
       <Child />
-    </ThemeContext.Provider>
+    </ThemeContext>
   )
 }
 
 function Child() {
   const theme = useContext(ThemeContext)
-  return () => <div>Theme: {theme}</div>
+  return <div>Theme: {theme}</div>
 }
 ```
+
+Example with reactive state: put a signal (or an object with signals) in the context value and use it in children so only the subscribing nodes update.
 
 ## Portal
 
@@ -418,7 +420,7 @@ Render children into another DOM node (e.g. modals, tooltips):
 import { Portal } from "kiru"
 
 function App() {
-  return () => (
+  return (
     <div>
       <h1>My App</h1>
       <Portal container={() => document.getElementById("portal-root")!}>
@@ -501,9 +503,7 @@ import { lazy } from "kiru"
 const Heavy = lazy(() => import("./Heavy"))
 
 function App() {
-  return () => (
-    <Heavy fallback={<div>Loading...</div>} />
-  )
+  return <Heavy fallback={<div>Loading...</div>} />
 }
 ```
 
