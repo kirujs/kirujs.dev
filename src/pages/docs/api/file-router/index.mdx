@@ -1,8 +1,9 @@
+import { Derive } from "kiru"
 import { Head } from "kiru/router"
 import { CodePreview } from "$/components/CodePreview"
-import { fileRouterTypePreview } from "$/components/previews/FileRouter.type.preview"
 import { pagePropsTypePreview } from "$/components/previews/PageProps.type.preview"
 import { linkTypePreview } from "$/components/previews/link.type.preview"
+import { fileRouterTypePreview } from "$/components/previews/FileRouter.type.preview"
 import { useFileRouterTypePreview } from "$/components/previews/useFileRouter.type.preview"
 import { siteCodeLang } from "$/state"
 import { ExternalLink } from "$/components/atoms/ExternalLink"
@@ -86,7 +87,9 @@ data from APIs, databases, or any async source.
 Export a `config` object from your page component using `definePageConfig`:
 
 <CopyInnerText>
-{siteCodeLang.value === "js" ? <ExamplePagesIndex /> : <ExamplePagesIndexTs />}
+  <Derive from={siteCodeLang}>
+    {lang => lang === "js" ? <ExamplePagesLayout /> : <ExamplePagesLayoutTs />}
+  </Derive>
 </CopyInnerText>
 
 The `loader.load` function receives a context object with:
@@ -158,7 +161,9 @@ Your page component receives the loaded data through <CodePreview data={pageProp
 For dynamic routes, access route parameters in your loader:
 
 <CopyInnerText>
-{siteCodeLang.value === "js" ? <ExamplePagesIdIndex /> : <ExamplePagesIdIndexTs />}
+  <Derive from={siteCodeLang}>
+    {lang => lang === "js" ? <ExamplePagesIdIndex /> : <ExamplePagesIdIndexTs />}
+  </Derive>
 </CopyInnerText>
 
 </DocsSection>
@@ -261,7 +266,9 @@ and applied based on your file structure.
 Create a layout by adding a `layout.tsx` file in any directory:
 
 <CopyInnerText>
-{siteCodeLang.value === "js" ? <ExamplePagesLayout /> : <ExamplePagesLayoutTs />}
+  <Derive from={siteCodeLang}>
+    {lang => lang === "js" ? <ExamplePagesLayout /> : <ExamplePagesLayoutTs />}
+  </Derive>
 </CopyInnerText>
 
 ### Nested Layouts
@@ -284,7 +291,7 @@ Kiru's FileRouter mirrors Cloudflare Pages' 404 and SPA fallback behavior:
 - If a matching page isn't found, FileRouter will look for the nearest `404` page by walking up the directory tree (for example, `pages/docs/404/index.tsx` then `pages/404/index.tsx`).
 - If you don't provide a top-level `pages/404/index.tsx` in a CSR setup, deep links will render the root route and your app can handle a client-side 404 — similar to Cloudflare's SPA rendering mode, which maps unmatched URLs to the root when no top-level `404.html` exists.
 
-Reference: <ExternalLink href="https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering">Cloudflare Pages – SPA rendering and 404 behavior</ExternalLink>.
+Reference: <ExternalLink href="https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering">Cloudflare Pages - SPA rendering and 404 behavior</ExternalLink>.
 
 ### Recommended setup
 

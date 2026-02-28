@@ -1,3 +1,4 @@
+import { Derive } from "kiru"
 import { Head } from "kiru/router"
 import { ExternalLink } from "$/components/atoms/ExternalLink"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
@@ -101,7 +102,9 @@ import { match } from "lit-match"
   
   <div className="not-prose">
     <CopyInnerText>
-      {siteCodeLang.value === "js" ? <MountCode /> : <MountCodeTS />}
+      <Derive from={siteCodeLang}>
+        {lang => lang === "js" ? <MountCode /> : <MountCodeTS />}
+      </Derive>
     </CopyInnerText>
   </div>
 

@@ -30,20 +30,9 @@ type DocSectionLink = {
   isNew?: DocItemStatus
 }
 
-const STATUS_MAP: Record<string, DocItemStatus> = {
-  fileRouterApi: {
-    type: "new",
-    since: "0.50.0",
-  },
-  deriveApi: {
-    type: "new",
-    since: "0.53.0",
-  },
-  errorBoundary: {
-    type: "new",
-    since: "0.53.0",
-  },
-} as const
+// const STATUS_MAP: Record<string, DocItemStatus> = {
+
+// } as const
 
 export const docMeta: DocItem[] = [
   {
@@ -94,13 +83,11 @@ export const docMeta: DocItem[] = [
         title: "Derive",
         href: "/docs/api/derive",
         tags: ["derive", "promise", "fallback", "mode", "signals"],
-        status: STATUS_MAP.deriveApi,
       },
       {
         title: "ErrorBoundary",
         href: "/docs/api/error-boundary",
         tags: ["error handling", "error boundary"],
-        status: STATUS_MAP.errorBoundary,
       },
       {
         title: "Lazy",
@@ -140,7 +127,6 @@ export const docMeta: DocItem[] = [
         title: "File Router",
         href: "/docs/api/file-router",
         tags: ["FileRouter", "Link", "SSG", "useFileRouter", "404"],
-        status: STATUS_MAP.fileRouterApi,
         sections: [
           {
             id: "general-usage",
@@ -200,12 +186,10 @@ export const docMeta: DocItem[] = [
           {
             id: "two-way-binding",
             title: "Two Way Binding",
-            isNew: STATUS_MAP.elementBindings,
           },
           {
             id: "for-component",
             title: "For",
-            isNew: STATUS_MAP.ForComponent,
           },
         ],
       },

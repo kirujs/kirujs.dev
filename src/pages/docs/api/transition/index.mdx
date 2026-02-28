@@ -1,3 +1,4 @@
+import { Derive } from "kiru"
 import { Head } from "kiru/router"
 import { CodePreview } from "$/components/CodePreview"
 import { TransitionStateTypePreview } from "$/components/previews/TransitionState.type.preview"
@@ -28,5 +29,7 @@ import { CopyInnerText } from "$/components/CopyInnerText"
 ### Example
 
 <CopyInnerText>
-{siteCodeLang.value === "ts" ? <ExampleCodeTS /> : <ExampleCode />}
+  <Derive from={siteCodeLang}>
+    {(lang) => lang === "ts" ? <ExampleCodeTS /> : <ExampleCode />}
+  </Derive>
 </CopyInnerText>

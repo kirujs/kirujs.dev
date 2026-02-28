@@ -1,10 +1,10 @@
 ```ts
 () => {
   state: {
-    pathname: string
-    hash: string
-    params: Record<string, string>
-    query: Record<string, string>
+    pathname: Kiru.Signal<string>
+    hash: Kiru.Signal<string>
+    params: Kiru.Signal<Record<string, string>>
+    query: Kiru.Signal<Record<string, string>>
     signal: AbortSignal
   }
   navigate: (path: string, options?: { replace?: boolean; transition?: boolean }) => void

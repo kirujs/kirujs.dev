@@ -20,14 +20,14 @@ function App() {
         onTransitionEnd={(state) => console.log("Transition ended", state)}
         element={(state) => {
           if (state === "exited") return null
-          return <DetailsView opacity={state === "entered" ? "1" : "0"} />
+          return <DetailsView opacity={state === "entered" ? 1 : 0} />
         }}
       />
     </div>
   )
 }
 
-function DetailsView({ opacity }: { opacity: string }) {
+function DetailsView({ opacity }: { opacity: number }) {
   return (
     <p style={{ transition: "all .3s ease", opacity }}>
       Some more information 🧠

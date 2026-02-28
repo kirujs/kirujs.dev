@@ -1,3 +1,4 @@
+import { Derive } from "kiru"
 import { Head } from "kiru/router"
 import { CodePreview } from "$/components/CodePreview"
 import { CopyInnerText } from "$/components/CopyInnerText"
@@ -100,7 +101,9 @@ Computed signals also receive the previous value as an argument to the getter fu
 This can be useful for cleaning up previous resources, or for creating a new resource 
 based on the previous value.
 
-{siteCodeLang.value === "js" ? <ExampleComputedPrev /> : <ExampleComputedPrevTs />}
+<Derive from={siteCodeLang}>
+  {lang => lang === "js" ? <ExampleComputedPrev /> : <ExampleComputedPrevTs />}
+</Derive>
 
 <CalloutBlock variant="info">
   We've also snuck a quality-of-life feature in here - signals 
