@@ -2,9 +2,9 @@
 
 ## Overview
 
-Kiru is a batteries-included, easy-to-use rendering library with a tiny footprint. It is a lightweight framework designed to empower developers to build applications with expressivity and customizability. Kiru offers routing, state management via signals, responsive forms, and more — all in one framework without requiring additional dependencies.
+Kiru is a batteries-included, easy-to-use rendering library with a tiny footprint. It is a lightweight framework designed to empower developers to build applications with expressivity and customizability. Kiru offers routing, state management via signals, asynchronous state, and more — all in one framework without requiring additional dependencies.
 
-**Important: Kiru is NOT React-like.** State is managed with **signals** and **computed** values. When a component needs **local state**, it must **return a render function** (a function that returns JSX) so that state created in the component body is persisted across renders. The component body runs once (setup); the returned function is invoked for each render and closes over that state. This lets you build features and functionalities as individual units.
+**Important: Kiru is NOT a React-like framework.** State & reactivity is managed with **signals** and **computed** values. When a component needs **local state**, it must **return a render function** (a function that returns JSX) so that state created in the component body is persisted across renders. The component body runs once (setup); the returned function is invoked for each render and closes over that state. This lets you build features and functionalities as individual units.
 
 **Key Characteristics:**
 - **Performance**: Fine-grained reactivity — only the DOM nodes that observe a signal update when it changes
@@ -107,7 +107,7 @@ With props, the render function receives them:
 ```tsx
 const Greeter: Kiru.FC<{ name: string }> = (initialProps) => {
   const greeted = signal(false)
-  
+
   return (currentProps) => (
     <div>
       <p>Hello, {currentProps.name}!</p>
