@@ -11,9 +11,13 @@ import { navDrawerOpen } from "../state"
 export function NavDrawer() {
   const router = useFileRouter()
 
-  //effect(() => (open && setOpen(false), void 0), [router.state.pathname])
+  effect([router.state.pathname], () => {
+    if (navDrawerOpen.peek()) {
+      navDrawerOpen.value = false
+    }
+  })
 
-  return (
+  return () => (
     <Transition
       in={navDrawerOpen}
       duration={{
@@ -26,7 +30,6 @@ export function NavDrawer() {
             side="left"
             state={state}
             close={() => (navDrawerOpen.value = false)}
-            sender={event}
           >
             <div className="p-4 text-lg">
               <div className="flex gap-1 mb-5">
@@ -51,14 +54,14 @@ export function NavDrawer() {
                     <Link
                       key={link.href}
                       to={link.href}
-                      className={`inline-flex items-center gap-1 text-base font-medium ${isLinkActive(link.activePath ?? link.href, router.state.pathname) ? "" : "text-muted"}`}
+                      className={`inline-flex items-center gap-1 text-base font-medium ${isLinkActive(link.activePath ?? link.href, router.state.pathname.peek()) ? "" : "text-muted"}`}
                     >
                       {link.title}
                     </Link>
                   )
                 )}
               </div>
-              {router.state.pathname.startsWith("/docs") && (
+              {router.state.pathname.value.startsWith("/docs") && (
                 <>
                   <hr className="my-6 mx-2 border-white border-opacity-10" />
                   <div className="flex flex-col gap-2 text-base xs:text-base px-2 ">

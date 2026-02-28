@@ -30,7 +30,11 @@ export function CommandPallete() {
     }
   })
 
-  //effect(() => (commandPalleteOpen && setOpen(false), void 0), [router.state.pathname])
+  effect([router.state.pathname], () => {
+    if (commandPalleteOpen.peek()) {
+      commandPalleteOpen.value = false
+    }
+  })
 
   function focusSender() {
     const el = prevActiveElement.current
@@ -221,7 +225,7 @@ function CommandPalleteItem({
       className="w-full text-muted bg-white/1 border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5"
       to={item.href}
       onclick={() =>
-        isLinkActive(item.href, router.state.pathname) &&
+        isLinkActive(item.href, router.state.pathname.peek()) &&
         (commandPalleteOpen.value = false)
       }
     >

@@ -38,7 +38,7 @@ export function CodePreview({
 
   return () => (
     <>
-      {isLinkActive(data.link.href, router.state.pathname) ? (
+      {isLinkActive(data.link.href, router.state.pathname.value) ? (
         <button
           className="preview-button"
           ariaLabel="Show code preview"

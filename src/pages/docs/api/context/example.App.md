@@ -1,12 +1,22 @@
 ```jsx
-import { ThemeContextProvider } from "./ThemeContextProvider"
+import { ThemeContext } from "./ThemeContext"
 import { Button } from "./Button"
 
 function App() {
-  return (
-    <ThemeContextProvider>
-      <Button />
-    </ThemeContextProvider>
+  const theme = signal("light")
+  const toggle = () => {
+    theme.value = theme.value === "light" ? "dark" : "light"
+  }
+
+  return () => (
+    <ThemeContext
+      value={{
+        theme,
+        toggle,
+      }}
+    >
+      {children}
+    </ThemeContext>
   )
 }
 ```

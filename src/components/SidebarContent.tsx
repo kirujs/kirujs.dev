@@ -42,7 +42,10 @@ export function SidebarContent() {
           {data.pages && (
             <LinkList>
               {data.pages.map((page) => {
-                const isActive = isLinkActive(page.href, router.state.pathname)
+                const isActive = isLinkActive(
+                  page.href,
+                  router.state.pathname.peek()
+                )
                 let hasNewSection = false
                 if (page.status?.type !== "new") {
                   hasNewSection = !!page.sections?.some((s) => s.isNew)
@@ -62,8 +65,10 @@ export function SidebarContent() {
                         key={page.href}
                         to={page.href}
                         onclick={() =>
-                          isLinkActive(page.href, router.state.pathname) &&
-                          (navDrawerOpen.value = false)
+                          isLinkActive(
+                            page.href,
+                            router.state.pathname.peek()
+                          ) && (navDrawerOpen.value = false)
                         }
                         isActive={isActive}
                       >

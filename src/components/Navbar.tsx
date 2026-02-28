@@ -58,7 +58,7 @@ export function Navbar() {
                 className={`text-md flex items-center h-full ${
                   isLinkActive(
                     link.activePath ?? link.href,
-                    router.state.pathname
+                    router.state.pathname.value
                   )
                     ? "text-light"
                     : "text-muted hover:text-light"

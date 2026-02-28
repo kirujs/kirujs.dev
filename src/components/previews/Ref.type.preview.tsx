@@ -5,6 +5,6 @@ export const refTypePreview = {
   element: RefType,
   link: {
     text: "Ref",
-    href: "/docs/hooks/useRef",
+    href: "/docs/api/ref",
   },
 } satisfies CodePreviewData
