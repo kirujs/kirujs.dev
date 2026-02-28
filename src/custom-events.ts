@@ -1,5 +1,5 @@
-export const customEvents = {
-  scrollHashChangeEvent: ("window" in globalThis
+export const CustomEvents = {
+  ScrollHashChangeEvent: ("window" in globalThis
     ? createCustomHashChangeEventClass()
     : null) as ReturnType<typeof createCustomHashChangeEventClass>,
 }
