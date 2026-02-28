@@ -31,7 +31,7 @@ Children of the context can use `useContext()` to access the provider's current 
 <div>
   <div className="not-prose">
     <TabGroup
-      items={["App", "ThemeContext", "Button"]}
+      items={["ThemeContext", "App", "Button"]}
       onSelect={(value) => (selectedTab.value = value)}
       value={selectedTab.value}
       itemSuffix={(item) => `.${siteCodeLang.value}${item === "ThemeContext" ? "" : "x"}`}

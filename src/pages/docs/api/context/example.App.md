@@ -9,13 +9,8 @@ function App() {
   }
 
   return () => (
-    <ThemeContext
-      value={{
-        theme,
-        toggle,
-      }}
-    >
-      {children}
+    <ThemeContext value={{ theme, toggle }}>
+      <Button />
     </ThemeContext>
   )
 }

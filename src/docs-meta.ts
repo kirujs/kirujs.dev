@@ -108,6 +108,31 @@ export const docMeta: DocItem[] = [
         tags: ["code-splitting"],
       },
       {
+        title: "Lifecycles",
+        href: "/docs/api/lifecycles",
+        tags: [
+          "onMount",
+          "onBeforeMount",
+          "onCleanup",
+          "useEffect",
+          "useLayoutEffect",
+        ],
+        sections: [
+          {
+            id: "onMount",
+            title: "onMount",
+          },
+          {
+            id: "onBeforeMount",
+            title: "onBeforeMount",
+          },
+          {
+            id: "onCleanup",
+            title: "onCleanup",
+          },
+        ],
+      },
+      {
         title: "Portal",
         href: "/docs/api/portal",
       },
@@ -188,6 +213,25 @@ export const docMeta: DocItem[] = [
         title: "Transition",
         href: "/docs/api/transition",
         tags: ["transitions", "animation"],
+      },
+      {
+        title: "ViewTransitions",
+        href: "/docs/api/view-transitions",
+        tags: ["view transitions", "animation", "batching", "AbortSignal"],
+        sections: [
+          {
+            id: "run",
+            title: "run",
+          },
+          {
+            id: "abort",
+            title: "Cancelling with AbortSignal",
+          },
+          {
+            id: "stop",
+            title: "stop",
+          },
+        ],
       },
     ],
   },

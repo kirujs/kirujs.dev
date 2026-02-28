@@ -146,7 +146,7 @@ function CommandPalleteDisplay() {
           <CloseIcon width="1em" height="1em" />
         </button>
       </DialogHeader>
-      <DialogBody className="bg-black/10 border border-white/5 rounded-sm max-h-[400px] overflow-y-auto scroll-py-20">
+      <DialogBody className="bg-black/10 border border-white/5 rounded-sm max-h-100 overflow-y-auto scroll-py-20">
         <div className="flex flex-col gap-2">
           <For each={filteredGroups}>
             {(group) => <CommandPalleteGroup key={group.title} {...group} />}

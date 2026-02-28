@@ -44,7 +44,7 @@ export function SidebarContent() {
               {data.pages.map((page) => {
                 const isActive = isLinkActive(
                   page.href,
-                  router.state.pathname.peek()
+                  router.state.pathname.value
                 )
                 let hasNewSection = false
                 if (page.status?.type !== "new") {

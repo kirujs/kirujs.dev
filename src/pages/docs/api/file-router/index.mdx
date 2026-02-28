@@ -284,7 +284,7 @@ Kiru's FileRouter mirrors Cloudflare Pages' 404 and SPA fallback behavior:
 - If a matching page isn't found, FileRouter will look for the nearest `404` page by walking up the directory tree (for example, `pages/docs/404/index.tsx` then `pages/404/index.tsx`).
 - If you don't provide a top-level `pages/404/index.tsx` in a CSR setup, deep links will render the root route and your app can handle a client-side 404 — similar to Cloudflare's SPA rendering mode, which maps unmatched URLs to the root when no top-level `404.html` exists.
 
-Reference: [Cloudflare Pages – SPA rendering and 404 behavior](https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering).
+Reference: <ExternalLink href="https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering">Cloudflare Pages – SPA rendering and 404 behavior</ExternalLink>.
 
 ### Recommended setup
 
