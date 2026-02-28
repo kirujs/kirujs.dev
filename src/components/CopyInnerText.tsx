@@ -7,11 +7,7 @@ type CopyInnerTextProps = {
   importsOverride?: string
 }
 
-export function CopyInnerText({
-  children,
-  prefix = "",
-  importsOverride = "",
-}: CopyInnerTextProps) {
+export const CopyInnerText: Kiru.FC<CopyInnerTextProps> = () => {
   const copied = signal(false)
   const elRef = ref<HTMLDivElement>(null)
   const copiedTimeout = ref(-1)
@@ -20,7 +16,10 @@ export function CopyInnerText({
     copiedTimeout.current !== -1 && window.clearTimeout(copiedTimeout.current)
   })
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = async ({
+    prefix,
+    importsOverride,
+  }: CopyInnerTextProps) => {
     if (copiedTimeout.current !== -1) {
       window.clearTimeout(copiedTimeout.current!)
     }
@@ -41,15 +40,15 @@ export function CopyInnerText({
     )
   }
 
-  return () => (
+  return (props) => (
     <div ref={elRef} className="relative code-copy-wrapper">
-      {children}
+      {props.children}
       <div className="absolute top-0 right-0">
         <div className="flex justify-end">
           <button
             ariaLabel="Copy to clipboard"
             className="text-[#aaa] opacity-30 hover:opacity-60 focus:opacity-60 p-2"
-            onclick={copyToClipboard}
+            onclick={() => copyToClipboard(props)}
           >
             <CopyIcon />
           </button>
