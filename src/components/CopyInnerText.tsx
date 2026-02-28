@@ -1,4 +1,4 @@
-import { useSignal, useRef, useEffect, useCallback, Derive } from "kiru"
+import { signal, Derive, ref, onCleanup } from "kiru"
 import { CopyIcon } from "./icons/CopyIcon"
 
 type CopyInnerTextProps = {
@@ -7,28 +7,24 @@ type CopyInnerTextProps = {
   importsOverride?: string
 }
 
-export function CopyInnerText({
-  children,
-  prefix = "",
-  importsOverride = "",
-}: CopyInnerTextProps) {
-  const copied = useSignal(false)
-  const ref = useRef<HTMLDivElement>(null)
-  const copiedTimeout = useRef(-1)
+export const CopyInnerText: Kiru.FC<CopyInnerTextProps> = () => {
+  const copied = signal(false)
+  const elRef = ref<HTMLDivElement>(null)
+  const copiedTimeout = ref(-1)
 
-  useEffect(
-    () => () =>
-      copiedTimeout.current !== -1 &&
-      window.clearTimeout(copiedTimeout.current),
-    []
-  )
+  onCleanup(() => {
+    copiedTimeout.current !== -1 && window.clearTimeout(copiedTimeout.current)
+  })
 
-  const copyToClipboard = useCallback(async () => {
+  const copyToClipboard = async ({
+    prefix,
+    importsOverride,
+  }: CopyInnerTextProps) => {
     if (copiedTimeout.current !== -1) {
       window.clearTimeout(copiedTimeout.current!)
     }
 
-    const allLines = (prefix + ref.current!.textContent!).split("\n")
+    const allLines = (prefix + elRef.current!.textContent!).split("\n")
     let toWrite = allLines
     if (importsOverride) {
       toWrite = allLines.map((line) =>
@@ -42,17 +38,17 @@ export function CopyInnerText({
       () => (copied.value = false),
       1500
     )
-  }, [])
+  }
 
-  return (
-    <div ref={ref} className="relative code-copy-wrapper">
-      {children}
+  return (props) => (
+    <div ref={elRef} className="relative code-copy-wrapper">
+      {props.children}
       <div className="absolute top-0 right-0">
         <div className="flex justify-end">
           <button
             ariaLabel="Copy to clipboard"
             className="text-[#aaa] opacity-30 hover:opacity-60 focus:opacity-60 p-2"
-            onclick={copyToClipboard}
+            onclick={() => copyToClipboard(props)}
           >
             <CopyIcon />
           </button>

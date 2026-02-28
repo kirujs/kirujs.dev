@@ -1,4 +1,4 @@
-import type { ElementProps } from "kiru"
+import { unwrap, type ElementProps } from "kiru"
 import { className as cls } from "kiru/utils"
 
 interface ContainerProps extends ElementProps<"div"> {
@@ -17,7 +17,7 @@ export function Container({
       className={cls(
         mobilePadding && "px-4",
         breakpoint === "sm" ? "sm:px-8" : "md:px-8",
-        `max-w-[var(--content-width)] mx-auto ${className}`
+        `max-w-(--content-width) mx-auto ${unwrap(className)}`
       )}
     >
       {children}

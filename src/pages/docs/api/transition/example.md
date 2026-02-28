@@ -1,12 +1,13 @@
 ```jsx
-import { useState, Transition } from "kiru"
+import { signal, Transition } from "kiru"
 
 function App() {
-  const [expanded, setExpanded] = useState(false)
+  const expanded = signal(false)
+  const toggleExpanded = () => (expanded.value = !expanded.value)
 
-  return (
+  return () => (
     <div className="flex flex-col">
-      <button onclick={() => setExpanded((prev) => !prev)}>Show More</button>
+      <button onclick={toggleExpanded}>Show More</button>
 
       <Transition
         in={expanded}
@@ -19,7 +20,7 @@ function App() {
         onTransitionEnd={(state) => console.log("Transition ended", state)}
         element={(state) => {
           if (state === "exited") return null
-          return <DetailsView opacity={state === "entered" ? "1" : "0"} />
+          return <DetailsView opacity={state === "entered" ? 1 : 0} />
         }}
       />
     </div>

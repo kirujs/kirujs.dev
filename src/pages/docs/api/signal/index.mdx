@@ -1,10 +1,11 @@
+import { Derive } from "kiru"
 import { Head } from "kiru/router"
 import { CodePreview } from "$/components/CodePreview"
 import { CopyInnerText } from "$/components/CopyInnerText"
-import { siteCodeLang } from "$/state/siteCodeLang"
+import { siteCodeLang } from "$/state"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 import { ExternalLink } from "$/components/atoms/ExternalLink"
-import { watchEffectTypePreview } from "$/components/previews/WatchEffect.type.preview"
+import { effectTypePreview } from "$/components/previews/Effect.type.preview"
 import { DocsSection } from "$/components/DocsSection"
 import ExampleComputedPrev from "./example.computedPrev.md"
 import ExampleComputedPrevTs from "./example.computedPrev.ts.md"
@@ -100,7 +101,9 @@ Computed signals also receive the previous value as an argument to the getter fu
 This can be useful for cleaning up previous resources, or for creating a new resource 
 based on the previous value.
 
-{siteCodeLang.value === "js" ? <ExampleComputedPrev /> : <ExampleComputedPrevTs />}
+<Derive from={siteCodeLang}>
+  {lang => lang === "js" ? <ExampleComputedPrev /> : <ExampleComputedPrevTs />}
+</Derive>
 
 <CalloutBlock variant="info">
   We've also snuck a quality-of-life feature in here - signals 
@@ -109,27 +112,27 @@ implement `toString()` so they can be used in strings!
 
 </DocsSection>
 
-<DocsSection id="signal-effects" title="Watch">
-Use `watch` create a <CodePreview data={watchEffectTypePreview} /> that 
+<DocsSection id="signal-effects" title="Effect">
+Use `effect` create a <CodePreview data={effectTypePreview} /> that 
 will fire the callback whenever `observed` signals change.
 ```ts
-import { watch } from "kiru"
+import {effect } from "kiru"
 
-const watcher = watch(() => console.log(`Greeting has been updated: ${userGreeting}`))
+const effectHandle = effect(() => console.log(`Greeting has been updated: ${userGreeting}`))
 
-watcher.stop()
-watcher.start()
+effectHandle.stop()
+effectHandle.start()
 ```
-The callback provided to `watch` will fire immediately. 
+The callback provided to `effect` will fire immediately. 
 When a signal that it `observes` changes, it will be queued to fire again 
 within a <ExternalLink href="https://developer.mozilla.org/en-US/docs/Web/API/Window/queueMicrotask">microtask</ExternalLink>. 
 This allows us to automatically "batch" execution of callbacks.
 
-You can also explicitly pass a list of signals to `watch` to observe.
+You can also explicitly pass a list of signals to `effect` to observe.
 Their values will be passed to the callback in the order they were passed.
 
 ```ts
-const watcher = watch([userName, userGreeting], (newName, newGreeting) => {
+const handle = effect([userName, userGreeting], (newName, newGreeting) => {
   console.log(`Name has been updated: ${newName}`)
   console.log(`Greeting has been updated: ${newGreeting}`)
 })
@@ -199,23 +202,25 @@ and the `value` attribute of our input.
 
 ### Using local signals
 
-`signal`, `computed`, and `watch` can all be created locally in Kiru 
-components via the `useSignal`, `useComputed`, and `useWatch` hooks. 
+`signal`, `computed`, and `effect` can all be created locally in Kiru 
+components by creating them within the setup scope. 
 This will allow them to be persisted across renders and automatically 
 disposed of when the component unmounts.
 
 
 <CopyInnerText>
 ```tsx
-import { useSignal, useComputed, useWatch } from "kiru"
+import { signal, computed, effect } from "kiru"
 
 function App() {
-  const userName = useSignal("bob")
-  const userGreeting = useComputed(() => `Hello, ${userName}!`)
+  // Create a local signal
+  const userName = signal("bob")
+  const userGreeting = computed(() => `Hello, ${userName}!`)
 
-  useWatch([userName], console.log)
+  effect([userName], console.log)
 
-  return (
+  // return a render function 
+  return () => (
     <div>
       <h1>{userGreeting}</h1>
       <input 
@@ -235,14 +240,14 @@ The `bind:` prefix can be used to create two-way binding for any property
 that changes via user interaction. When the signal changes, the property 
 is updated, and vice versa.
 
-<CopyInnerText prefix={`import { useSignal, useWatch } from "kiru"\n\n`}>
+<CopyInnerText prefix={`import { signal, effect } from "kiru"\n\n`}>
 ```tsx
 function App() {
-  const userName = useSignal("bob")
+  const userName = signal("bob")
 
-  useWatch(() => console.log(userName.value))
+  effect(() => console.log(userName.value))
 
-  return (
+  return () => (
     <div>
       <input type="text" bind:value={userName} /> 
     </div>
@@ -258,15 +263,15 @@ list with fine-grained reactivity. This is a great optimization tool for when yo
 use `signal.value.map((item) => ...)` in JSX, causing the component that renders
 it to update whenever the signal changes.
 
-<CopyInnerText importsOverride={`import { useSignal, useComputed, For } from "kiru"`}>
+<CopyInnerText importsOverride={`import { signal, computed, For } from "kiru"`}>
 ```tsx
 import { For } from "kiru"
 
 function App() {
-  const items = useSignal([0, 1, 2, 3, 4])
-  const doubledItems = useComputed(() => items.value.map((i) => i * 2))
+  const items = signal([0, 1, 2, 3, 4])
+  const doubledItems = computed(() => items.value.map((i) => i * 2))
 
-  return (
+  return () => (
     <div>
       <ul>
         <For each={doubledItems} fallback={<i>No items</i>}>

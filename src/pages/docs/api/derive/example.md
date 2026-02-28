@@ -1,12 +1,12 @@
 ```jsx
-import { useSignal, useComputed, Derive } from "kiru"
+import { signal, computed, Derive } from "kiru"
 
 function App() {
-  const name = useSignal("bob")
-  const age = useSignal(42)
-  const person = useComputed(() => ({ name: name.value, age: age.value }))
+  const name = signal("bob")
+  const age = signal(42)
+  const person = computed(() => ({ name: name.value, age: age.value }))
 
-  return (
+  return () => (
     <div>
       <input bind:value={name} />
       <input type="number" bind:value={age} />
@@ -29,4 +29,3 @@ function App() {
   )
 }
 ```
-

@@ -1,4 +1,4 @@
-import { For, useSignal } from "kiru"
+import { For, signal } from "kiru"
 import { CodeDemo } from "../CodeDemo"
 import { DemoComponentWrapper } from "../DemoComponentWrapper"
 import TodoList from "./TodoList.md"
@@ -7,14 +7,14 @@ import styles from "./TodoList.module.css"
 import { Todo } from "./types"
 
 export function TodoListDemo() {
-  const inputText = useSignal(""),
-    todos = useSignal<Todo[]>([
+  const inputText = signal(""),
+    todos = signal<Todo[]>([
       { id: crypto.randomUUID(), text: "Kiru" },
       { id: crypto.randomUUID(), text: "Is" },
       { id: crypto.randomUUID(), text: "Awesome!" },
     ])
 
-  const handleSubmit = (e: Event) => {
+  const handleSubmit = (e: Kiru.FormEvent) => {
     e.preventDefault()
     const id = crypto.randomUUID(),
       text = inputText.peek(),
@@ -30,9 +30,9 @@ export function TodoListDemo() {
 
   console.log("Hello from Kiru! This component never rerenders 😉")
 
-  return (
+  return () => (
     <CodeDemo name="App" mode={"jsx"} code={{ js: TodoList, ts: TodoListTS }}>
-      <DemoComponentWrapper className="max-w-[340px] flex flex-col gap-4">
+      <DemoComponentWrapper className="max-w-85 flex flex-col gap-4">
         <form className={styles["form"]} onsubmit={handleSubmit}>
           <input
             className={styles["form-input"]}

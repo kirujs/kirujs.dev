@@ -1,0 +1,83 @@
+import { Derive } from "kiru"
+import { Head, Link } from "kiru/router"
+import { CopyInnerText } from "$/components/CopyInnerText"
+import { CalloutBlock } from "$/components/atoms/CalloutBlock"
+import { DocsSection } from "$/components/DocsSection"
+import { ExternalLink } from "$/components/atoms/ExternalLink"
+import { siteCodeLang } from "$/state"
+import ExampleCode from "./example.md"
+import ExampleCodeTS from "./example.ts.md"
+import ExampleAbort from "./example.abort.md"
+import ExampleAbortTS from "./example.abort.ts.md"
+
+<Head.Content>
+  <title>Kiru - ViewTransitions</title>
+  <meta name="keywords" content="ViewTransitions, view transitions, animation, run, stop, AbortSignal, batching" />
+  <meta name="description" content="Learn how to use the ViewTransitions API in Kiru to animate state changes with the browser's native View Transitions API, with automatic batching and queue management." />
+</Head.Content>
+
+# ViewTransitions
+
+`ViewTransitions` is a namespace that wraps the browser's native
+<ExternalLink href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API">View Transitions API</ExternalLink>,
+adding automatic **batching** and **queue management** so that rapid successive calls
+are coalesced into a single transition rather than overlapping.
+
+<CalloutBlock>
+  When the View Transitions API is not supported by the browser, `ViewTransitions.run`
+  falls back to executing the callback directly — no polyfill required.
+</CalloutBlock>
+
+<DocsSection id="run" title="run">
+
+`ViewTransitions.run(callback, options?)` executes a state update inside a view transition
+and returns a `Promise` that resolves with the callback's return value.
+
+Multiple calls made in the same microtask tick are automatically batched into a single transition.
+
+<CopyInnerText importsOverride={`import { signal, ViewTransitions } from "kiru"`}>
+  <Derive from={siteCodeLang}>
+    {(lang) => lang === "ts" ? <ExampleCodeTS /> : <ExampleCode />}
+  </Derive>
+</CopyInnerText>
+
+**Options**
+
+- **signal** *(optional)*: An `AbortSignal`. If aborted before the transition starts, the job is
+  removed from the queue. If aborted while running, the current transition is skipped via
+  `skipTransition()`.
+
+</DocsSection>
+
+<DocsSection id="abort" title="Cancelling with AbortSignal">
+
+Pass an `AbortSignal` to cancel a pending or in-progress transition.
+This is useful when triggering rapid navigation — abort the previous signal before
+issuing the next call so stale transitions never play.
+
+<CopyInnerText importsOverride={`import { signal, ViewTransitions } from "kiru"`}>
+  <Derive from={siteCodeLang}>
+    {(lang) => lang === "ts" ? <ExampleAbortTS /> : <ExampleAbort />}
+  </Derive>
+</CopyInnerText>
+
+</DocsSection>
+
+<DocsSection id="stop" title="stop">
+
+`ViewTransitions.stop()` immediately skips the active transition, clears the entire job queue,
+and resets internal state. Use this when you need to tear down transitions entirely —
+for example, when unmounting a section of the UI.
+
+```js
+ViewTransitions.stop()
+```
+
+</DocsSection>
+
+### Related
+
+<ul>
+  <li><Link to="/docs/api/signal">`signal`</Link></li>
+  <li><Link to="/docs/api/lifecycles">`onMount` / `onCleanup`</Link></li>
+</ul>

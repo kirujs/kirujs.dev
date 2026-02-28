@@ -1,4 +1,3 @@
-import { useCallback, useMemo } from "kiru"
 import "./TabGroup.css"
 
 interface TabGroupProps<T extends string[]> {
@@ -32,16 +31,11 @@ type TabItemProps = {
   itemSuffix?: string | ((item: string) => string)
 }
 function TabItem({ active, itemSuffix, item, onSelect }: TabItemProps) {
-  const suffix = useMemo(() => {
-    if (typeof itemSuffix === "function") {
-      return itemSuffix(item)
-    }
-    return typeof itemSuffix === "string" ? itemSuffix : ""
-  }, [itemSuffix, item])
-  const handleClick = useCallback(
-    () => !active && onSelect(item),
-    [item, active]
-  )
+  const suffix =
+    typeof itemSuffix === "function" ? itemSuffix(item) : itemSuffix
+
+  const handleClick = () => !active && onSelect(item)
+
   return (
     <li className={active ? "active" : ""}>
       <button ariaLabel={item} onclick={handleClick}>

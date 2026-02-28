@@ -1,8 +1,8 @@
+import { Derive } from "kiru"
 import { Head } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
-import { siteCodeLang } from "$/state/siteCodeLang"
+import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
-import ExampleCodeTS from "./example.ts.md"
 
 <Head.Content>
   <title>Kiru - ErrorBoundary</title>
@@ -22,6 +22,6 @@ returns JSX. Additionally, you can use the `onError` prop to handle errors (e.g.
 ### Example
 
 <CopyInnerText>
-{siteCodeLang.value === "js" ? <ExampleCode /> : <ExampleCodeTS />}
+  <ExampleCode />
 </CopyInnerText>
 

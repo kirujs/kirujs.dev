@@ -1,0 +1,57 @@
+import { Derive } from "kiru"
+import { Head, Link } from "kiru/router"
+import { siteCodeLang } from "$/state"
+import { CopyInnerText } from "$/components/CopyInnerText"
+import { DocsSection } from "$/components/DocsSection"
+import ExampleOnMount from "./example.onMount.md"
+import ExampleOnBeforeMount from "./example.onBeforeMount.md"
+import ExampleOnCleanup from "./example.onCleanup.md"
+import ExampleOnCleanupTS from "./example.onCleanup.ts.md"
+
+<Head.Content>
+  <title>Kiru - Lifecycles</title>
+  <meta name="keywords" content="lifecycle, onMount, onBeforeMount, onCleanup, useEffect, useLayoutEffect" />
+  <meta name="description" content="Learn how to use lifecycle hooks in Kiru — onMount, onBeforeMount, and onCleanup — to run side effects and clean up resources in your components." />
+</Head.Content>
+
+# Lifecycles
+
+Kiru provides three lifecycle hooks for running side effects inside components.
+All hooks must be called synchronously during component initialization.
+
+<DocsSection id="onMount" title="onMount">
+`onMount` runs a callback **after** the component is first painted to the DOM.
+
+<CopyInnerText importsOverride={`import { signal, onMount, onCleanup } from "kiru"`}>
+  <ExampleOnMount />
+</CopyInnerText>
+</DocsSection>
+
+<DocsSection id="onBeforeMount" title="onBeforeMount">
+
+`onBeforeMount` runs a callback **before** the component is painted — synchronously,
+after the DOM nodes are created but before the browser has had a chance to render.
+
+Use this when you need to read layout or make DOM mutations that should be invisible to the user.
+
+<CopyInnerText importsOverride={`import { signal, onBeforeMount, onCleanup } from "kiru"`}>
+  <ExampleOnBeforeMount />
+</CopyInnerText>
+</DocsSection>
+<DocsSection id="onCleanup" title="onCleanup">
+
+`onCleanup` registers a teardown function that runs when the component is unmounted.
+It can be called inside any lifecycle hook, or at the top level of a component.
+
+<CopyInnerText importsOverride={`import { signal, onMount, onCleanup } from "kiru"`}>
+  <Derive from={siteCodeLang}>
+    {(lang) => lang === "js" ? <ExampleOnCleanup /> : <ExampleOnCleanupTS />}
+  </Derive>
+</CopyInnerText>
+</DocsSection>
+### Related
+
+<ul>
+  <li><Link to="/docs/api/signal">`signal`</Link></li>
+  <li><Link to="/docs/api/computed">`computed`</Link></li>
+</ul>

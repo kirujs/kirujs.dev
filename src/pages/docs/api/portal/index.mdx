@@ -1,7 +1,8 @@
+import { Derive } from "kiru"
 import { Head } from "kiru/router"
 import { TabGroup } from "$/components/TabGroup"
 import { selectedTab } from "./selectedTab"
-import { siteCodeLang } from "$/state/siteCodeLang"
+import { siteCodeLang } from "$/state"
 import ExampleApp from "./example.App.md"
 import ExampleAppTS from "./example.App.ts.md"
 import ExampleIndex from "./example.index.md"
@@ -30,9 +31,13 @@ container.
       itemSuffix={(item) => item === "App" ? `.${siteCodeLang.value}x` : ""}
     />
     <CopyInnerText>
-    {selectedTab.value === "App" ?
-      siteCodeLang.value === "js" ?(<ExampleApp />) : (<ExampleAppTS />) 
-    : (<ExampleIndex />)}
+      <Derive from={{selectedTab, siteCodeLang}}>
+        {({selectedTab, siteCodeLang}) => {
+          return selectedTab === "App" ? 
+            siteCodeLang === "js" ? (<ExampleApp />) : (<ExampleAppTS />)
+            : (<ExampleIndex />)
+        }}
+      </Derive>
     </CopyInnerText>
   </div>
 </div>

@@ -3,7 +3,7 @@ export function LandingSection() {
     <div className="flex flex-wrap gap-8 justify-center">
       <LandingSectionCard
         iconSrc="/signal.svg"
-        text="Global state via blazingly fast signals & stores"
+        text="Signal-based state management with zero overhead"
       />
       <LandingSectionCard
         iconSrc="/route.svg"

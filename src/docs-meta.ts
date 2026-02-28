@@ -30,24 +30,9 @@ type DocSectionLink = {
   isNew?: DocItemStatus
 }
 
-const STATUS_MAP: Record<string, DocItemStatus> = {
-  fileRouterApi: {
-    type: "new",
-    since: "0.50.0",
-  },
-  deriveApi: {
-    type: "new",
-    since: "0.53.0",
-  },
-  errorBoundary: {
-    type: "new",
-    since: "0.53.0",
-  },
-  usePromiseHook: {
-    type: "new",
-    since: "0.53.0",
-  },
-} as const
+// const STATUS_MAP: Record<string, DocItemStatus> = {
+
+// } as const
 
 export const docMeta: DocItem[] = [
   {
@@ -98,13 +83,11 @@ export const docMeta: DocItem[] = [
         title: "Derive",
         href: "/docs/api/derive",
         tags: ["derive", "promise", "fallback", "mode", "signals"],
-        status: STATUS_MAP.deriveApi,
       },
       {
         title: "ErrorBoundary",
         href: "/docs/api/error-boundary",
         tags: ["error handling", "error boundary"],
-        status: STATUS_MAP.errorBoundary,
       },
       {
         title: "Lazy",
@@ -112,8 +95,29 @@ export const docMeta: DocItem[] = [
         tags: ["code-splitting"],
       },
       {
-        title: "Memo",
-        href: "/docs/api/memo",
+        title: "Lifecycles",
+        href: "/docs/api/lifecycles",
+        tags: [
+          "onMount",
+          "onBeforeMount",
+          "onCleanup",
+          "useEffect",
+          "useLayoutEffect",
+        ],
+        sections: [
+          {
+            id: "onMount",
+            title: "onMount",
+          },
+          {
+            id: "onBeforeMount",
+            title: "onBeforeMount",
+          },
+          {
+            id: "onCleanup",
+            title: "onCleanup",
+          },
+        ],
       },
       {
         title: "Portal",
@@ -123,7 +127,6 @@ export const docMeta: DocItem[] = [
         title: "File Router",
         href: "/docs/api/file-router",
         tags: ["FileRouter", "Link", "SSG", "useFileRouter", "404"],
-        status: STATUS_MAP.fileRouterApi,
         sections: [
           {
             id: "general-usage",
@@ -160,26 +163,6 @@ export const docMeta: DocItem[] = [
         ],
       },
       {
-        title: "Form",
-        href: "/docs/api/form",
-        tags: ["useForm", "form", "validation", "Field", "Subscribe"],
-        status: STATUS_MAP.formApi,
-        sections: [
-          {
-            id: "basic-usage",
-            title: "Basic Usage",
-          },
-          {
-            id: "validation",
-            title: "Validation",
-          },
-          {
-            id: "form-components",
-            title: "Form Components",
-          },
-        ],
-      },
-      {
         title: "Signal",
         href: "/docs/api/signal",
         tags: ["state", "computed", "effect", "two way binding", "For"],
@@ -194,7 +177,7 @@ export const docMeta: DocItem[] = [
           },
           {
             id: "signal-effects",
-            title: "Watch",
+            title: "Effect",
           },
           {
             id: "usage-in-components",
@@ -203,37 +186,10 @@ export const docMeta: DocItem[] = [
           {
             id: "two-way-binding",
             title: "Two Way Binding",
-            isNew: STATUS_MAP.elementBindings,
           },
           {
             id: "for-component",
             title: "For",
-            isNew: STATUS_MAP.ForComponent,
-          },
-        ],
-      },
-      {
-        title: "Store",
-        href: "/docs/api/store",
-        tags: ["createStore", "useStore", "MethodFactory", "state"],
-      },
-      {
-        title: "SWR",
-        href: "/docs/api/swr",
-        tags: ["swr", "useSWR", "fetcher", "mutate", "revalidate", "cache"],
-        status: STATUS_MAP.swrApi,
-        sections: [
-          {
-            id: "basic-usage",
-            title: "Basic Usage",
-          },
-          {
-            id: "mutations",
-            title: "Mutations",
-          },
-          {
-            id: "caching",
-            title: "Caching",
           },
         ],
       },
@@ -242,81 +198,24 @@ export const docMeta: DocItem[] = [
         href: "/docs/api/transition",
         tags: ["transitions", "animation"],
       },
-    ],
-  },
-  {
-    title: "Hooks",
-    pages: [
       {
-        title: "useAsync",
-        href: "/docs/hooks/useAsync",
-      },
-      {
-        title: "useCallback",
-        href: "/docs/hooks/useCallback",
-      },
-      {
-        title: "useContext",
-        href: "/docs/hooks/useContext",
-      },
-      {
-        title: "useEffect",
-        href: "/docs/hooks/useEffect",
-      },
-      {
-        title: "useEffectEvent",
-        href: "/docs/hooks/useEffectEvent",
-      },
-      {
-        title: "useId",
-        href: "/docs/hooks/useId",
-      },
-      {
-        title: "useLayoutEffect",
-        href: "/docs/hooks/useLayoutEffect",
-      },
-      {
-        title: "useMemo",
-        href: "/docs/hooks/useMemo",
-      },
-      {
-        title: "usePromise",
-        href: "/docs/hooks/usePromise",
-        tags: ["promise", "async", "Derive"],
-        status: STATUS_MAP.usePromiseHook,
-      },
-      {
-        title: "useReducer",
-        href: "/docs/hooks/useReducer",
-      },
-      {
-        title: "useRef",
-        href: "/docs/hooks/useRef",
-        tags: ["Ref"],
-      },
-      {
-        title: "useState",
-        href: "/docs/hooks/useState",
-      },
-      {
-        title: "useSyncExternalStore",
-        href: "/docs/hooks/useSyncExternalStore",
-        tags: ["state", "global state"],
-      },
-      {
-        title: "useViewTransition",
-        href: "/docs/hooks/useViewTransition",
-        tags: ["view transition", "animation"],
-        status: STATUS_MAP.useViewTransition,
-      },
-      {
-        title: "Dependency arrays",
-        href: "/docs/hooks/dependency-arrays",
-      },
-      {
-        title: "Custom hooks",
-        href: "/docs/hooks/custom-hooks",
-        tags: ["useHook"],
+        title: "ViewTransitions",
+        href: "/docs/api/view-transitions",
+        tags: ["view transitions", "animation", "batching", "AbortSignal"],
+        sections: [
+          {
+            id: "run",
+            title: "run",
+          },
+          {
+            id: "abort",
+            title: "Cancelling with AbortSignal",
+          },
+          {
+            id: "stop",
+            title: "stop",
+          },
+        ],
       },
     ],
   },

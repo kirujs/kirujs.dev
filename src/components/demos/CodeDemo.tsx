@@ -1,5 +1,5 @@
-import { siteCodeLang } from "$/state/siteCodeLang"
-import { Derive, useComputed } from "kiru"
+import { siteCodeLang } from "$/state"
+import { Derive, computed } from "kiru"
 
 type CodeDemoProps = {
   name: string
@@ -12,11 +12,11 @@ type CodeDemoProps = {
 }
 
 export function CodeDemo({ name, mode, code, children }: CodeDemoProps) {
-  const CodeBlock = useComputed(() => {
+  const CodeBlock = computed(() => {
     if (siteCodeLang.value === "ts" && code.ts) return code.ts
     return code.js
   })
-  return (
+  return () => (
     <div className="grid md:grid-cols-5">
       <div className="not-prose flex flex-col md:col-span-3 md:rounded-2xl glass-container text-light overflow-hidden z-10 shadow-[#0006] shadow-lg">
         <span className="text-sm px-4 py-2 text-stone-200 opacity-80">

@@ -1,5 +1,5 @@
 import { signal } from "kiru"
 
-export const selectedTab = signal<
-  "App" | "ThemeContext" | "ThemeContextProvider" | "Button"
->("App")
+export const selectedTab = signal<"App" | "ThemeContext" | "Button">(
+  "ThemeContext"
+)

@@ -1,8 +1,8 @@
+import { Derive } from "kiru"
 import { Head, Link } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
-import { siteCodeLang } from "$/state/siteCodeLang"
+import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
-import ExampleCodeTS from "./example.ts.md"
 import ExamplePromiseCode from "./example.promise.md"
 import ExamplePromiseCodeTS from "./example.promise.ts.md"
 
@@ -18,20 +18,22 @@ Similar to <Link to="/docs/api/signal#for-component">{"<For>"}</Link>, `Derive` 
 The `<Derive>` component produces a JSX element that automatically updates whenever the 
 provided `from` signal changes. 
 
-<CopyInnerText importsOverride={`import { useSignal, useComputed, Derive } from "kiru"`}>
-{siteCodeLang.value === "js" ? <ExampleCode /> : <ExampleCodeTS />}
+<CopyInnerText importsOverride={`import { signal, computed, Derive } from "kiru"`}>
+  <ExampleCode />
 </CopyInnerText>
 
 ## Promise Support
 
-`<Derive />` also supports promises created by the `usePromise` hook. When deriving from a promise,
+`<Derive />` also supports promises created by `statefulPromise`. When deriving from a promise,
 you can use the `fallback` prop to show content while the promise is pending, and the render function
 receives an `isStale` parameter that indicates whether the data is stale (i.e., a new request is in progress).
 
 You can use multiple promises with `<Derive />`, or mix promises and signals:
 
 <CopyInnerText>
-{siteCodeLang.value === "js" ? <ExamplePromiseCode /> : <ExamplePromiseCodeTS />}
+<Derive from={siteCodeLang}>
+  {(lang) => lang === "js" ? <ExamplePromiseCode /> : <ExamplePromiseCodeTS />}
+</Derive>
 </CopyInnerText>
 
 If any entry in the `from` prop is a promise, you can use the `fallback` prop. By default, `<Derive />` uses 
@@ -43,5 +45,4 @@ it to `"fallback"` will render the fallback whenever the data is stale.
 
 <ul>
   <li><Link to="/docs/api/signal#for-component">`<For />`</Link></li>
-  <li><Link to="/docs/hooks/usePromise">usePromise</Link></li>
 </ul>

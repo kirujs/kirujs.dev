@@ -2,20 +2,18 @@ import { LogoIcon } from "./icons/LogoIcon"
 import { MenuIcon } from "./icons/MenuIcon"
 import { GithubIcon } from "./icons/GithubIcon"
 import { CommandKeyIcon } from "./icons/keys/CommandKeyIcon"
-import { useNavDrawer } from "$/state/navDrawer"
 import { DISCORD_LINK, OS, SITE_LINKS } from "$/constants"
 import { isLinkActive } from "$/utils"
-import { useCommandPallete } from "$/state/commandPallete"
 import { DiscordIcon } from "./icons/DiscordIcon"
 import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
 import { SiteLangToggle } from "./SiteLangToggle"
-import { useCallback, useLayoutEffect, useSignal } from "kiru"
 import { match } from "lit-match"
 import { SearchIcon } from "./icons/SearchIcon"
 import { Link, useFileRouter } from "kiru/router"
+import { commandPalleteOpen, navDrawerOpen } from "../state"
+import { onBeforeMount, signal } from "kiru"
 
 export function Navbar() {
-  const { setOpen } = useNavDrawer()
   const router = useFileRouter()
 
   return (
@@ -23,7 +21,7 @@ export function Navbar() {
       <div className="flex items-center gap-4 h-full">
         <button
           ariaLabel="Show menu"
-          onclick={(e) => setOpen(true, e)}
+          onclick={() => (navDrawerOpen.value = true)}
           type="button"
           className="sm:hidden flex items-center justify-center h-full"
         >
@@ -60,7 +58,7 @@ export function Navbar() {
                 className={`text-md flex items-center h-full ${
                   isLinkActive(
                     link.activePath ?? link.href,
-                    router.state.pathname
+                    router.state.pathname.value
                   )
                     ? "text-light"
                     : "text-muted hover:text-light"
@@ -100,11 +98,16 @@ export function Navbar() {
 }
 
 function SearchButton() {
-  const { setOpen } = useCommandPallete()
-  const os = useSignal<null | "mac" | "other">(null)
-  useLayoutEffect(() => ((os.value = OS), void 0), [])
-  const handleClick = useCallback((e: MouseEvent) => setOpen(true, e), [])
-  return (
+  const os = signal<null | "mac" | "other">(null)
+  onBeforeMount(() => {
+    os.value = OS
+  })
+
+  const handleClick = () => {
+    commandPalleteOpen.value = true
+  }
+
+  return () => (
     <button
       ariaLabel="Search documentation"
       type="button"

@@ -1,10 +1,9 @@
-import { siteCodeLang } from "$/state/siteCodeLang"
-import { useCallback } from "kiru"
+import { siteCodeLang } from "../state"
 
 export function SiteLangToggle() {
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     siteCodeLang.value = siteCodeLang.value === "js" ? "ts" : "js"
-  }, [])
+  }
 
   const isJs = siteCodeLang.value === "js"
 

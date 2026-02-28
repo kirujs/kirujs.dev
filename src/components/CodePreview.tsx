@@ -1,9 +1,9 @@
 import { CodePreviewData } from "$/types"
 import { isLinkActive } from "$/utils"
-import { Portal, Transition, useCallback, useRef, useState } from "kiru"
+import { Portal, Transition, ref, signal } from "kiru"
 import { Link, useFileRouter } from "kiru/router"
 
-function clearTimeoutRef(timeoutRef: Kiru.MutableRefObject<number>) {
+function clearTimeoutRef(timeoutRef: Kiru.RefObject<number>) {
   if (timeoutRef.current !== -1) {
     window.clearTimeout(timeoutRef.current)
     timeoutRef.current = -1
@@ -18,27 +18,27 @@ export function CodePreview({
   text?: string
 }) {
   const router = useFileRouter()
-  const linkRef = useRef<any>(null)
-  const linkBounds = useRef<DOMRect | null>(null)
-  const [open, setOpen] = useState(false)
-  const previewHovered = useRef(false)
-  const hideTimeout = useRef(-1)
+  const linkRef = ref<any>(null)
+  const linkBounds = ref<DOMRect | null>(null)
+  const open = signal(false)
+  const previewHovered = ref(false)
+  const hideTimeout = ref(-1)
 
-  const handleOpen = useCallback(() => {
+  const handleOpen = () => {
     clearTimeoutRef(hideTimeout)
     linkBounds.current = linkRef.current?.getBoundingClientRect() || null
-    setOpen(true)
-  }, [])
+    open.value = true
+  }
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     if (previewHovered.current) return
     clearTimeoutRef(hideTimeout)
-    hideTimeout.current = window.setTimeout(() => setOpen(false), 250)
-  }, [])
+    hideTimeout.current = window.setTimeout(() => (open.value = false), 250)
+  }
 
-  return (
+  return () => (
     <>
-      {isLinkActive(data.link.href, router.state.pathname) ? (
+      {isLinkActive(data.link.href, router.state.pathname.value) ? (
         <button
           className="preview-button"
           ariaLabel="Show code preview"
