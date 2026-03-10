@@ -1,6 +1,8 @@
+import { javascript } from "@codemirror/lang-javascript"
 import { effect, ref, signal } from "kiru"
 import { compile } from "./esbuild"
 import { TabGroup } from "../TabGroup"
+import { CodeMirror } from "./CodeMirror"
 
 export default function Sandbox() {
   const activeTab = signal<string>("app.tsx")
@@ -29,6 +31,7 @@ export const count = signal(0)
       iframeRef.current?.contentWindow?.postMessage({ type: "run", code }, "*")
     })
   })
+  const extensions = [javascript({ jsx: true, typescript: true })]
   return () => (
     <>
       <TabGroup
@@ -36,11 +39,28 @@ export const count = signal(0)
         value={activeTab.value}
         onSelect={(x) => (activeTab.value = x)}
       />
-      <textarea
-        bind:value={activeTab.value === "app.tsx" ? appTsx : stateTs}
-        className="w-full min-h-80"
-      />
-      <iframe ref={iframeRef} srcdoc={sandboxHTML} />
+      <div className="grid grid-cols-2">
+        <CodeMirror
+          extensions={extensions}
+          initialContent={
+            activeTab.value === "app.tsx" ? appTsx.value : stateTs.value
+          }
+          onContentChanged={(content) => {
+            if (activeTab.value === "app.tsx") {
+              appTsx.value = content
+            } else {
+              stateTs.value = content
+            }
+          }}
+          key={activeTab.value}
+          className="grow h-full"
+        />
+        <iframe
+          ref={iframeRef}
+          srcdoc={sandboxHTML}
+          className="grow h-full w-full"
+        />
+      </div>
     </>
   )
 }

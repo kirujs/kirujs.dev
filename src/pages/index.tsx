@@ -40,6 +40,9 @@ export default function Page() {
         <div className="p-4">
           <CodeSandbox />
         </div>
+        <div className="p-4">
+          <CodeSandbox />
+        </div>
         <div className="flex flex-col gap-20 py-20">
           <section>
             <Container className="pb-6">

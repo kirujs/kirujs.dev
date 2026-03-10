@@ -13,9 +13,7 @@ mount(<App />, document.body)
 const initPromise = signal<Promise<void> | null>(null)
 let idb: IDBDatabase | null = null
 export async function compile(files: Record<string, string>): Promise<string> {
-  if (!initPromise.peek()) {
-    await (initPromise.value = initialize())
-  }
+  await (initPromise.value ??= initialize())
 
   const allFiles = {
     ...Object.fromEntries(

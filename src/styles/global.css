@@ -283,3 +283,8 @@ pre.shiki span.line.diff.add:before {
   /* background-color: #ffffff07 !important; */
   padding: 0.5rem !important;
 }
+
+.cm-editor {
+  width: 100%;
+  height: 100%;
+}
