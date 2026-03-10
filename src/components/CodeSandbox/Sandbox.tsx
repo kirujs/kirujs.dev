@@ -1,12 +1,14 @@
 import { effect, ref, signal } from "kiru"
 import { compile } from "./esbuild"
+import { TabGroup } from "../TabGroup"
 
 export default function Sandbox() {
+  const activeTab = signal<string>("app.tsx")
   const iframeRef = ref<HTMLIFrameElement>(null)
-  const raw = signal(`
-import { signal } from "kiru"
-const count = signal(0)
-const App = () => (
+  const appTsx = signal(`
+import { count } from "./state"
+
+export const App = () => (
   <div>
     <h1>Hello from Kiru!</h1>
     <button onclick={() => count.value++}>count: {count}</button>
@@ -14,14 +16,30 @@ const App = () => (
 )
 `)
 
+  const stateTs = signal(`
+import { signal } from "kiru"
+export const count = signal(0)
+`)
+
   effect(() => {
-    compile(raw.value).then((code) => {
+    compile({
+      "./app.tsx": appTsx.value,
+      "./state.ts": stateTs.value,
+    }).then((code) => {
       iframeRef.current?.contentWindow?.postMessage({ type: "run", code }, "*")
     })
   })
   return () => (
     <>
-      <textarea bind:value={raw} className="w-full min-h-80" />
+      <TabGroup
+        items={["app.tsx", "state.tsx"]}
+        value={activeTab.value}
+        onSelect={(x) => (activeTab.value = x)}
+      />
+      <textarea
+        bind:value={activeTab.value === "app.tsx" ? appTsx : stateTs}
+        className="w-full min-h-80"
+      />
       <iframe ref={iframeRef} srcdoc={sandboxHTML} />
     </>
   )
@@ -50,7 +68,7 @@ const sandboxHTML = `<!DOCTYPE html>
     <script type="importmap">
       {
         "imports": {
-          "kiru": "https://esm.sh/kiru"
+          "kiru": "https://esm.sh/kiru?bundle"
         }
       }
     </script>

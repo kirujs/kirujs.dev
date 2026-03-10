@@ -3,37 +3,108 @@ import { signal } from "kiru"
 
 const CDN = "https://esm.sh"
 
+const MAIN_TS = `
+import { createElement as _jsx, Fragment as _jsxFragment, mount } from "kiru"
+import { App } from "./app.tsx"
+window.__kiru?.apps.forEach(app => app.unmount())
+mount(<App />, document.body)
+`
+
 const initPromise = signal<Promise<void> | null>(null)
 let idb: IDBDatabase | null = null
-
-export async function compile(code: string): Promise<string> {
+export async function compile(files: Record<string, string>): Promise<string> {
   if (!initPromise.peek()) {
     await (initPromise.value = initialize())
   }
 
-  const result = await esbuild.build({
-    stdin: {
-      contents: `
-import { createElement as _jsx, Fragment as _jsxFragment, mount } from "kiru"
-window.__kiru?.apps.forEach(app => app.unmount())
-${code}
+  const allFiles = {
+    ...Object.fromEntries(
+      Object.entries(files).map(([k, v]) => [
+        k,
+        `import { createElement as _jsx, Fragment as _jsxFragment } from "kiru";
+${v}`,
+      ])
+    ),
+    "./main.tsx": MAIN_TS, // injected last so users can't override it
+  }
 
-mount(<App />, document.body)
-`,
-      loader: "tsx",
-      sourcefile: "index.tsx",
-    },
+  const result = await esbuild.build({
+    entryPoints: ["./main.tsx"],
     bundle: true,
     write: false,
+    minify: false,
+    //keepNames: true,
     format: "esm",
     platform: "browser",
     jsx: "transform",
     jsxFactory: "_jsx",
     jsxFragment: "_jsxFragment",
-    plugins: [npmPlugin()],
+    plugins: [localFilesPlugin(allFiles), npmPlugin()],
   })
 
   return result.outputFiles[0].text
+}
+
+function localFilesPlugin(files: Record<string, string>): esbuild.Plugin {
+  const normalizedFiles: Record<string, string> = {}
+  for (const [k, v] of Object.entries(files)) {
+    const key = k.startsWith("./") ? k : `./${k}`
+    normalizedFiles[key] = v
+  }
+
+  return {
+    name: "local-files",
+    setup(build) {
+      build.onResolve({ filter: /^\.+\// }, (args) => {
+        if (args.importer.startsWith("http")) return null
+
+        const resolvedKey = resolveRelative(args.importer, args.path)
+        const key = findFile(normalizedFiles, resolvedKey)
+
+        if (key) return { path: key, namespace: "local" }
+        return null
+      })
+
+      build.onLoad({ filter: /.*/, namespace: "local" }, (args) => {
+        const contents = normalizedFiles[args.path]
+        if (contents == null)
+          return { errors: [{ text: `File not found: ${args.path}` }] }
+
+        return { contents, loader: inferLoader(args.path) }
+      })
+    },
+  }
+}
+
+/** Resolve a relative import path against the current file's path */
+function resolveRelative(importer: string, importPath: string): string {
+  if (!importer || importer === "<stdin>") return importPath
+
+  const importerDir = importer.includes("/")
+    ? importer.slice(0, importer.lastIndexOf("/") + 1)
+    : "./"
+
+  const url = new URL(importPath, `file://${importerDir.replace(/^\./, "")}`)
+  return "." + url.pathname
+}
+
+/** Try to find a file key, adding extensions if needed */
+function findFile(files: Record<string, string>, path: string): string | null {
+  if (files[path] != null) return path
+
+  for (const ext of [".tsx", ".ts", ".jsx", ".js"]) {
+    if (files[path + ext] != null) return path + ext
+  }
+
+  return null
+}
+
+function inferLoader(path: string): esbuild.Loader {
+  if (path.endsWith(".tsx")) return "tsx"
+  if (path.endsWith(".ts")) return "ts"
+  if (path.endsWith(".jsx")) return "jsx"
+  if (path.endsWith(".css")) return "css"
+  return "js"
 }
 
 async function initialize(): Promise<void> {
@@ -47,25 +118,21 @@ function npmPlugin(): esbuild.Plugin {
   return {
     name: "npm-plugin",
     setup(build) {
-      // Resolve relative imports inside fetched modules
       build.onResolve({ filter: /^\.+\// }, (args) => ({
         path: new URL(args.path, args.importer).href,
         namespace: "http",
       }))
 
-      // Resolve absolute-path imports from esm.sh (e.g. "/pkg@1.0.0/file.mjs")
       build.onResolve({ filter: /^\/[^/]/ }, (args) => ({
         path: new URL(args.path, CDN).href,
         namespace: "http",
       }))
 
-      // Resolve bare npm imports
       build.onResolve({ filter: /^[^./].*/ }, (args) => ({
         path: `${CDN}/${args.path}`,
         namespace: "http",
       }))
 
-      // Load remote modules with in-memory + IDB caching
       build.onLoad({ filter: /.*/, namespace: "http" }, async (args) => {
         if (cache.has(args.path)) return cache.get(args.path)!
 
