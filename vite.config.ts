@@ -7,6 +7,7 @@ import {
   transformerNotationHighlight,
   transformerNotationDiff,
 } from "@shikijs/transformers"
+import { esbuildWasmPlugin } from "./vite/plugin-esbuild-wasm"
 
 export default defineConfig({
   resolve: {
@@ -18,6 +19,7 @@ export default defineConfig({
     sourcemap: false,
   },
   plugins: [
+    esbuildWasmPlugin(),
     {
       enforce: "pre",
       ...mdx({
