@@ -72,7 +72,3 @@ button.reset {
 .text-shadow {
   text-shadow: 1px 1px 3px #0007;
 }
-
-.glass-container {
-  @apply border border-white/5 bg-white/5 shadow-lg backdrop-blur-md;
-}
