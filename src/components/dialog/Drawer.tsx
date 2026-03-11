@@ -1,18 +1,30 @@
 import { ref, onMount, type TransitionState } from "kiru"
 import { Backdrop } from "./Backdrop"
-import { isClickEventFromKeyboard, trapFocus } from "$/utils"
+import { trapFocus } from "$/utils"
 
 type DrawerProps = {
   state: TransitionState
   close: () => void
   side: "bottom" | "left" | "right"
-  sender?: Event | null
   children: JSX.Children
 }
 
-export const Drawer: Kiru.FC<DrawerProps> = () => {
+export const Drawer: Kiru.FC<DrawerProps> = ({ close }) => {
   const wrapperRef = ref<HTMLDivElement>(null)
-  return ({ state, close, side, sender, children }) => {
+
+  onMount(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault()
+        return close()
+      }
+      trapFocus(wrapperRef.current!, e)
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  })
+
+  return ({ state, close, side, children }) => {
     if (state == "exited") return null
 
     const opacity = state === "entered" ? "1" : "0"
@@ -28,40 +40,10 @@ export const Drawer: Kiru.FC<DrawerProps> = () => {
           : 0
     const translateY = side === "bottom" ? (state === "entered" ? 0 : 100) : 0
 
-    const handleClose = () => {
-      if (sender && sender.target && sender.target instanceof HTMLElement)
-        sender.target.focus()
-      close()
-    }
-
-    onMount(() => {
-      // if the drawer was opened via keyboard 'click', focus the first internal element
-      if (sender && isClickEventFromKeyboard(sender)) {
-        const firstFocussable = wrapperRef.current!.querySelector(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        )
-
-        if (firstFocussable && firstFocussable instanceof HTMLElement) {
-          firstFocussable.focus()
-        }
-      }
-
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
-          e.preventDefault()
-          handleClose()
-        }
-        wrapperRef.current && trapFocus(wrapperRef.current, e)
-      }
-
-      window.addEventListener("keydown", handleKeyDown)
-      return () => window.removeEventListener("keydown", handleKeyDown)
-    })
-
     return (
       <Backdrop
         ref={wrapperRef}
-        onclick={(e) => e.target === wrapperRef.current && handleClose()}
+        onclick={(e) => e.target === wrapperRef.current && close()}
         style={{ opacity }}
       >
         <div

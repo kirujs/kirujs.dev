@@ -22,9 +22,17 @@ const groupData: Record<string, DocPageLink[]> = {
 export function CommandPalette() {
   const router = useFileRouter()
 
-  const prevActiveElement = ref<Element | null>(null)
-
   onMount(() => {
+    function handleKeyboardEvent(e: KeyboardEvent) {
+      if (
+        e.key.toLowerCase() === "k" &&
+        (OS === "mac" ? e.metaKey : e.ctrlKey)
+      ) {
+        e.preventDefault()
+        commandPaletteOpen.value = !commandPaletteOpen.value
+      }
+    }
+
     document.addEventListener("keydown", handleKeyboardEvent)
     return () => {
       document.removeEventListener("keydown", handleKeyboardEvent)
@@ -36,27 +44,6 @@ export function CommandPalette() {
       commandPaletteOpen.value = false
     }
   })
-
-  function focusSender() {
-    const el = prevActiveElement.current
-    if (el && el instanceof HTMLElement) el.focus()
-  }
-
-  function handleKeyboardEvent(e: KeyboardEvent) {
-    const isHandled =
-      e.key.toLowerCase() === "k" && (OS === "mac" ? e.metaKey : e.ctrlKey)
-    if (!isHandled) return
-
-    e.preventDefault()
-
-    if (!commandPaletteOpen.value) {
-      prevActiveElement.current = document.activeElement
-    } else {
-      focusSender()
-    }
-
-    commandPaletteOpen.value = !commandPaletteOpen.value
-  }
 
   return () => (
     <Transition
@@ -70,10 +57,8 @@ export function CommandPalette() {
           <Modal
             state={state}
             close={() => {
-              //focusSender()
               commandPaletteOpen.value = false
             }}
-            sender={event}
             className="max-w-[min(400px,100vw)]"
           >
             <CommandPaletteDisplay />
