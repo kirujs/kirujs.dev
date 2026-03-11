@@ -11,7 +11,7 @@ import { match } from "lit-match"
 import { SearchIcon } from "./icons/SearchIcon"
 import { Link, useFileRouter } from "kiru/router"
 import { commandPaletteOpen, navDrawerOpen } from "../state"
-import { onBeforeMount, signal } from "kiru"
+import { onMount, signal } from "kiru"
 
 export function Navbar() {
   const router = useFileRouter()
@@ -99,7 +99,7 @@ export function Navbar() {
 
 function SearchButton() {
   const os = signal<null | "mac" | "other">(null)
-  onBeforeMount(() => {
+  onMount(() => {
     os.value = OS
   })
 

@@ -5,7 +5,6 @@ import PackageJSONKiru from "$/components/landing-page/package-json.kiru.mdx"
 import PackageJSONReact from "$/components/landing-page/package-json.react.mdx"
 import { Arrow } from "$/components/landing-page/Arrow"
 import { Head, Link } from "kiru/router"
-import { CodeSandbox } from "../components/CodeSandbox"
 
 export default function Page() {
   return (
@@ -37,12 +36,6 @@ export default function Page() {
             <LandingSection />
           </Container>
         </section>
-        <div className="p-4">
-          <CodeSandbox />
-        </div>
-        <div className="p-4">
-          <CodeSandbox />
-        </div>
         <div className="flex flex-col gap-20 py-20">
           <section>
             <Container className="pb-6">

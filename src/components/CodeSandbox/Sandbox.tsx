@@ -1,56 +1,70 @@
 import { javascript } from "@codemirror/lang-javascript"
-import { effect, ref, signal } from "kiru"
+import { computed, effect, ref, signal } from "kiru"
 import { compile } from "./esbuild"
 import { TabGroup } from "../TabGroup"
 import { CodeMirror } from "./CodeMirror"
+import { notifier } from "../../utils"
+import { UndoIcon } from "../icons/UndoIcon"
+import { ExpandIcon } from "../icons/ExpandIcon"
 
-export default function Sandbox() {
-  const activeTab = signal<string>("app.tsx")
+interface SandboxProps {
+  files: Record<string, string>
+}
+
+const Sandbox: Kiru.FC<SandboxProps> = ({ files: initialFiles }) => {
+  const contentResetNotifier = notifier<string>()
+  const files = signal({ ...initialFiles })
+  const filePaths = computed<string[]>((prev) => {
+    const current = Object.keys(files.value)
+    if (
+      prev &&
+      prev.length === current.length &&
+      prev.every((k) => current.includes(k))
+    )
+      return prev
+    return current
+  })
+  const activeTab = computed(() => filePaths.value[0])
   const iframeRef = ref<HTMLIFrameElement>(null)
-  const appTsx = signal(`
-import { count } from "./state"
-
-export const App = () => (
-  <div>
-    <h1>Hello from Kiru!</h1>
-    <button onclick={() => count.value++}>count: {count}</button>
-  </div>
-)
-`)
-
-  const stateTs = signal(`
-import { signal } from "kiru"
-export const count = signal(0)
-`)
 
   effect(() => {
-    compile({
-      "./app.tsx": appTsx.value,
-      "./state.ts": stateTs.value,
-    }).then((code) => {
+    compile(files.value).then((code) => {
       iframeRef.current?.contentWindow?.postMessage({ type: "run", code }, "*")
     })
   })
   const extensions = [javascript({ jsx: true, typescript: true })]
+
+  const reset = () => {
+    files.value = { ...initialFiles }
+    contentResetNotifier.notify(files.value[activeTab.value])
+  }
+
   return () => (
     <>
-      <TabGroup
-        items={["app.tsx", "state.tsx"]}
-        value={activeTab.value}
-        onSelect={(x) => (activeTab.value = x)}
-      />
+      <TabGroup items={filePaths.value} tab={activeTab}>
+        <button
+          title="Open in modal"
+          onclick={reset}
+          className="text-neutral-400 hover:bg-white/10 hover:text-white"
+        >
+          <ExpandIcon className="pointer-none" />
+        </button>
+        <button
+          title="Reset"
+          onclick={reset}
+          className="text-neutral-400 hover:bg-white/10 hover:text-white"
+        >
+          <UndoIcon className="pointer-none" />
+        </button>
+      </TabGroup>
       <div className="grid grid-cols-2">
         <CodeMirror
+          contentUpdatedNotifier={contentResetNotifier}
           extensions={extensions}
-          initialContent={
-            activeTab.value === "app.tsx" ? appTsx.value : stateTs.value
-          }
+          initialContent={files.value[activeTab.value]}
           onContentChanged={(content) => {
-            if (activeTab.value === "app.tsx") {
-              appTsx.value = content
-            } else {
-              stateTs.value = content
-            }
+            files.value[activeTab.value] = content
+            files.notify()
           }}
           key={activeTab.value}
           className="grow h-full"
@@ -65,6 +79,8 @@ export const count = signal(0)
   )
 }
 
+export default Sandbox
+
 const sandboxHTML = `<!DOCTYPE html>
 <html>
   <head>
@@ -75,7 +91,7 @@ const sandboxHTML = `<!DOCTYPE html>
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        background-color: #111;
+        background-color: #080508;
         color: #fff;
         padding: 1rem;
       }

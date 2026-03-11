@@ -1,3 +1,21 @@
+export interface Notifier<T> {
+  subscribe: (callback: (value: T) => void) => () => void
+  notify: (value: T) => void
+}
+// prettier-ignore
+export const notifier = <T,>(): Notifier<T> => {
+  const subs = new Set<(value: T) => void>()
+  return {
+    subscribe(callback) {
+      subs.add(callback)
+      return () => subs.delete(callback)
+    },
+    notify: (value) => {
+      subs.forEach((callback) => callback(value))
+    },
+  }
+}
+
 export function isLinkActive(href: string, urlPath: string) {
   return (
     href.split("#")[0] === urlPath ||

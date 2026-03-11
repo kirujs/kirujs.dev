@@ -2,7 +2,7 @@ import { siteCodeLang } from "$/state"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { TabGroup } from "$/components/TabGroup"
 import { match } from "lit-match"
-import { signal } from "kiru"
+import { Derive, signal } from "kiru"
 import ExampleDocument from "./example.document.md"
 import ExampleViteConfig from "./example.vite.config.md"
 import ConfigInfo from "./setting-up.ssg-config-info.md"
@@ -22,17 +22,20 @@ export function SettingUpSSG() {
       </div>
       <TabGroup
         items={["vite.config", "src/pages/document"] as const}
-        onSelect={(value) => (selectedTab.value = value)}
-        value={selectedTab.value}
+        tab={selectedTab}
         itemSuffix={(item) =>
           `.${siteCodeLang.value}${item === "src/pages/document" ? "x" : ""}`
         }
       />
       <CopyInnerText>
-        {match(selectedTab.value)
-          .with("src/pages/document", () => <ExampleDocument />)
-          .with("vite.config", () => <ExampleViteConfig />)
-          .exhaustive()}
+        <Derive from={selectedTab}>
+          {(tab) =>
+            match(tab)
+              .with("src/pages/document", () => <ExampleDocument />)
+              .with("vite.config", () => <ExampleViteConfig />)
+              .exhaustive()
+          }
+        </Derive>
       </CopyInnerText>
       <CalloutBlock variant="info">
         SSG requires that you create a <code>document</code> file. This replaces

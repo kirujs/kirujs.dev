@@ -1,5 +1,9 @@
 .tab-group {
   --active: #b42641;
+  background-color: #141314;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
 
   ul {
     display: flex;
@@ -7,7 +11,7 @@
     list-style: none;
     margin: 0;
     overflow-x: auto;
-    background-color: #0e0e0ea3;
+
     border-radius: .35rem .35rem 0 0;
     padding: 0 1rem;
     border-bottom: 1px solid #1e1e1e;

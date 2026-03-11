@@ -26,8 +26,7 @@ container.
   <div className="not-prose">
     <TabGroup
       items={["App", "index.html"]}
-      onSelect={(value) => (selectedTab.value = value)}
-      value={selectedTab.value}
+      tab={selectedTab}
       itemSuffix={(item) => item === "App" ? `.${siteCodeLang.value}x` : ""}
     />
     <CopyInnerText>

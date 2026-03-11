@@ -287,11 +287,11 @@ pre.shiki span.line.diff.add:before {
 .cm-editor {
   width: 100%;
   height: 100%;
-  background: transparent;
+  background: #fff1;
 }
 
 .cm-gutters {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: #fff1 !important;
 }
 
 .glass-container {

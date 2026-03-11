@@ -6,6 +6,7 @@ import { TabGroup } from "$/components/TabGroup"
 import { createContextPreview } from "$/components/previews/createContext.preview"
 import { contextTypePreview } from "$/components/previews/Context.type.preview"
 import { CopyInnerText } from "$/components/CopyInnerText"
+import { CodeSandbox } from "$/components/CodeSandbox"
 import ExampleApp from "./example.App.md"
 import ExampleButton from "./example.Button.md"
 import ExampleThemeContext from "./example.ThemeContext.md"
@@ -39,35 +40,50 @@ const theme = useContext(ThemeContext)
 
 If no matching context exists in the component tree, `useContext` returns the default value passed to `createContext`.
 
-### Example
+<CodeSandbox files={{
+      "./app.tsx": `import { signal } from "kiru"
+import { ThemeContext } from "./theme-context"
+import { Button } from "./button"
 
-<div>
-  <div className="not-prose">
-    <TabGroup
-      items={["ThemeContext", "App", "Button"]}
-      onSelect={(value) => (selectedTab.value = value)}
-      value={selectedTab.value}
-      itemSuffix={(item) => `.${siteCodeLang.value}${item === "ThemeContext" ? "" : "x"}`}
-    />
-    <CopyInnerText>
-      <Derive from={{siteCodeLang, selectedTab}}>
-        {({siteCodeLang, selectedTab}) => {
-          return match(siteCodeLang)
-            .with("js", () => { 
-              return match(selectedTab)
-                .with("App", () => <ExampleApp />)
-                .with("ThemeContext", () => <ExampleThemeContext />)
-                .else(() => <ExampleButton />)
-            })
-            .else(() => {
-              return match(selectedTab)
-                .with("App", () => <ExampleApp />)
-                .with("ThemeContext", () => <ExampleThemeContextTS />)
-                .else(() => <ExampleButton />)
-            })
-        }}
-      </Derive>
-    </CopyInnerText>
-  </div>
-</div>
+export function App() {
+    const theme = signal<"light" | "dark">("light")
+    const toggle = () => {
+      theme.value = theme.value === "light" ? "dark" : "light"
+    }
+    const themeState = { theme, toggle }
 
+    theme.subscribe((value) => console.log("Theme changed to", value))
+    
+    return () => (
+      <ThemeContext value={themeState}>
+        <Button />
+      </ThemeContext>
+    )
+}`,
+"./theme-context.ts": `import { createContext, useContext } from "kiru"
+
+interface ThemeContextValue {
+    theme: Kiru.Signal<"light" | "dark">
+    toggle: () => void
+}
+export const ThemeContext = createContext<ThemeContextValue>(null!)
+
+export const useTheme = () => useContext(ThemeContext)`,
+      "./button.tsx": `import { computed } from "kiru"
+import { useTheme } from "./theme-context"
+
+export function Button() {
+    const { theme, toggle } = useTheme()
+    const backgroundColor = computed(() => 
+      theme.value === "light" ? "black" : "white"
+    )
+    const color = computed(() => 
+      theme.value === "light" ? "white" : "black"
+    )
+    return () => (
+      <button onclick={toggle} style={{ backgroundColor, color }}>
+        Toggle theme
+      </button>
+    )
+}`
+}} />

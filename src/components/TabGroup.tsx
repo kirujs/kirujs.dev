@@ -2,9 +2,9 @@ import "./TabGroup.css"
 
 interface TabGroupProps<T extends string[]> {
   items: T
-  value: T[number]
-  onSelect: (value: T[number]) => void
+  tab: Kiru.Signal<T[number] | undefined>
   itemSuffix?: string | ((item: T[number]) => string)
+  children?: JSX.Children
 }
 
 export function TabGroup<T extends string[]>(props: TabGroupProps<T>) {
@@ -14,31 +14,28 @@ export function TabGroup<T extends string[]>(props: TabGroupProps<T>) {
         {props.items.map((item) => (
           <TabItem
             key={item}
-            active={item === props.value}
+            current={props.tab}
             item={item}
-            onSelect={props.onSelect}
             itemSuffix={props.itemSuffix}
           />
         ))}
       </ul>
+      {props.children && <div className="flex gap-4 p-4">{props.children}</div>}
     </div>
   )
 }
 type TabItemProps = {
-  active: boolean
-  item: string
-  onSelect: (item: string) => void
+  current: Kiru.Signal<string | undefined>
   itemSuffix?: string | ((item: string) => string)
+  item: string
 }
-function TabItem({ active, itemSuffix, item, onSelect }: TabItemProps) {
+function TabItem({ itemSuffix, current, item }: TabItemProps) {
   const suffix =
     typeof itemSuffix === "function" ? itemSuffix(item) : itemSuffix
 
-  const handleClick = () => !active && onSelect(item)
-
   return (
-    <li className={active ? "active" : ""}>
-      <button ariaLabel={item} onclick={handleClick}>
+    <li className={current.value === item ? "active" : ""}>
+      <button ariaLabel={item} onclick={() => (current.value = item)}>
         {item}
         {suffix || ""}
       </button>

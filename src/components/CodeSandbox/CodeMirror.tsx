@@ -1,7 +1,8 @@
+import { ElementProps, onMount, ref } from "kiru"
 import { EditorState, type Extension } from "@codemirror/state"
 import { oneDark } from "@codemirror/theme-one-dark"
 import { EditorView, basicSetup } from "codemirror"
-import { ElementProps, onMount, ref } from "kiru"
+import { Notifier } from "../../utils"
 
 interface CodeMirrorProps extends ElementProps<"div"> {
   readonly?: boolean
@@ -10,6 +11,7 @@ interface CodeMirrorProps extends ElementProps<"div"> {
   /** @default true */
   includeBasicExtensions?: boolean
   extensions?: Extension[]
+  contentUpdatedNotifier?: Notifier<string>
 }
 export const CodeMirror: Kiru.FC<CodeMirrorProps> = ({
   initialContent,
@@ -17,6 +19,7 @@ export const CodeMirror: Kiru.FC<CodeMirrorProps> = ({
   includeBasicExtensions = true,
   extensions: userExtensions,
   readonly,
+  contentUpdatedNotifier,
   ...props
 }) => {
   const divRef = ref<HTMLDivElement>(null)
@@ -40,6 +43,12 @@ export const CodeMirror: Kiru.FC<CodeMirrorProps> = ({
         extensions,
       }),
       parent: divRef.current!,
+    })
+
+    contentUpdatedNotifier?.subscribe((content) => {
+      editor.dispatch({
+        changes: { from: 0, to: editor.state.doc.length, insert: content },
+      })
     })
 
     return () => editor.destroy()

@@ -12,9 +12,8 @@ export function SettingUpCSR() {
         all pages and layouts in your application.
       </i>
       <TabGroup
-        items={["src/main"] as const}
-        onSelect={() => {}}
-        value="src/main"
+        items={["src/main"]}
+        tab={{ value: "src/main" } as any as Kiru.Signal<string>}
         itemSuffix={(item) =>
           `.${siteCodeLang.value}${item === "src/main" ? "x" : ""}`
         }
