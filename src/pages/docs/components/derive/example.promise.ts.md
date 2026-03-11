@@ -1,5 +1,5 @@
 ```tsx
-import { signal, statefulPromise, Derive } from "kiru"
+import { signal, resource, Derive } from "kiru"
 
 type ProductsResponse = {
   products: Array<{
@@ -9,26 +9,31 @@ type ProductsResponse = {
 }
 
 function Page() {
-  const count = signal(0)
-  const data = statefulPromise<ProductsResponse>(async (signal) => {
-    const response = await fetch("https://dummyjson.com/products", { signal })
+  const search = signal("")
+  const data = resource(search, async (search, { signal }) => {
+    const response = await fetch(
+      `https://dummyjson.com/products/search?q=${search}`,
+      { signal }
+    )
     if (!response.ok) throw new Error(response.statusText)
-    return await response.json()
+    return response.json() as Promise<ProductsResponse>
   })
 
   return () => (
-    <Derive from={{ data, count }} fallback={<div>Loading...</div>}>
-      {({ data, count }, isStale) => (
-        <div className={isStale ? "opacity-50" : ""}>
-          <p>Count: {count}</p>
-          <ul>
-            {data.products.map((product) => (
-              <li key={product.id}>{product.title}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </Derive>
+    <>
+      <input bind:value={search} />
+      <Derive from={data} fallback={<div>Loading...</div>}>
+        {(data, isStale) => (
+          <div className={isStale ? "opacity-50" : ""}>
+            <ul>
+              {data.products.map((product) => (
+                <li key={product.id}>{product.title}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Derive>
+    </>
   )
 }
 ```

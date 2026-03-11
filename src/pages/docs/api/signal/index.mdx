@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head } from "kiru/router"
+import { Head, Link } from "kiru/router"
 import { CodePreview } from "$/components/CodePreview"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { siteCodeLang } from "$/state"
@@ -9,11 +9,13 @@ import { effectTypePreview } from "$/components/previews/Effect.type.preview"
 import { DocsSection } from "$/components/DocsSection"
 import ExampleComputedPrev from "./example.computedPrev.md"
 import ExampleComputedPrevTs from "./example.computedPrev.ts.md"
+import ExampleResource from "./example.resource.md"
+import ExampleResourceTs from "./example.resource.ts.md"
 
 <Head.Content>
   <title>Kiru - Signal</title>
-  <meta name="keywords" content="signal, state, global state, computed, effect, two way binding, For, Derive" />
-  <meta name="description" content="Learn about Signals in Kiru - reactive primitives for managing state with computed values, effects, two-way binding, and fine-grained reactivity in components." />
+  <meta name="keywords" content="signal, state, global state, computed, effect, two way binding, resource, async state" />
+  <meta name="description" content="Learn about Signals in Kiru - reactive primitives for managing state with computed values, resources, effects, two-way binding, and fine-grained reactivity in components." />
 </Head.Content>
 
 # Signal
@@ -316,4 +318,79 @@ function App() {
 }
 ```
 </CopyInnerText>
+</DocsSection>
+
+<DocsSection id="resource" title="Resource">
+Use `resource` to manage asynchronous data fetching with automatic caching, 
+refetching, and loading states. A `Resource` is a special signal that holds 
+the result of an async operation and tracks loading and error states.
+
+```ts
+import { resource } from "kiru"
+
+const userId = signal(1)
+const data = resource(userId, async (id, { signal }) => {
+  const response = await fetch(`/api/data?id=${id}`)
+  return response.json()
+})
+```
+
+The `resource` function takes:
+- **source**: A signal that triggers the resource to refetch when it changes
+- **callback**: An async function that receives the source value and a context object with an `AbortSignal`
+
+A `Resource` provides:
+- **value**: The resolved data (or `undefined` while loading)
+- **isPending**: A signal indicating if the resource is currently loading
+- **error**: A signal containing any error that occurred during fetching
+- **promise**: The underlying promise for the current fetch
+- **refetch()**: Manually trigger a refetch of the data
+
+<Derive from={siteCodeLang}>
+  {lang => lang === "js" ? <ExampleResource /> : <ExampleResourceTs />}
+</Derive>
+
+<CalloutBlock variant="info">
+  Resources can be created globally or locally within components. 
+  When created globally, they persist across component renders. 
+  When created locally, they are automatically disposed when the component unmounts.
+</CalloutBlock>
+
+### Using with Derive
+
+The `<Derive />` component is perfect for rendering resource data with fallback & pending states:
+
+```tsx
+<Derive from={data} fallback={<div>Loading...</div>}>
+  {(result, isStale) => (
+    <div className={isStale ? "opacity-50" : ""}>
+      {/* render result */}
+    </div>
+  )}
+</Derive>
+```
+
+The second parameter `isStale` indicates whether the resource is currently refetching 
+while displaying cached data.
+
+### Handling Errors
+
+Access the error state through the `error` signal:
+
+```tsx
+<Derive from={data.error}>
+  {(err) => err && <div className="error">{err.message}</div>}
+</Derive>
+```
+
+Or use an <Link to="/docs/components/error-boundary" >{"<ErrorBoundary>"}</Link>:
+```tsx
+<ErrorBoundary>
+  <Derive from={data}>
+    {/* render result */}
+  </Derive>
+</ErrorBoundary>
+```
+
+
 </DocsSection>

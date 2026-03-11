@@ -170,7 +170,7 @@ export const docMeta: DocItem[] = [
       {
         title: "Signal",
         href: "/docs/api/signal",
-        tags: ["state", "computed", "effect", "two way binding", "For"],
+        tags: ["state", "computed", "effect", "resource", "two way binding"],
         sections: [
           {
             id: "general-usage",
@@ -193,8 +193,9 @@ export const docMeta: DocItem[] = [
             title: "Two Way Binding",
           },
           {
-            id: "for-component",
-            title: "For",
+            id: "resource",
+            title: "Resource",
+            isNew: { type: "new", since: "1.3.0" },
           },
         ],
       },

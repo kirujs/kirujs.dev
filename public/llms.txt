@@ -457,17 +457,18 @@ Key points for `<Show>`:
 - `children`: either a `JSX.Element` or a function `(value: Truthy<T>) => JSX.Element`.
 - If `when` is a signal, `<Show>` creates a fine-grained reactive slice so only its subtree updates.
 
-## Async data: statefulPromise + Derive
+## Async data: Resource + Derive
 
-Use `statefulPromise` to create a promise that can be observed, and `<Derive from={...} fallback={...}>` to render it. Derive can show stale data while revalidating or show only the fallback until data is ready:
+Use `resource` to manage asynchronous data fetching, and `<Derive from={...} fallback={...}>` to render it. Derive can show stale data while revalidating or show only the fallback until data is ready:
 
 ```tsx
-import { signal, statefulPromise, Derive } from "kiru"
+import { signal, resource, Derive } from "kiru"
 
 function Page() {
   const count = signal(0)
-  const data = statefulPromise(async (signal) => {
-    const res = await fetch("https://api.example.com/data", { signal })
+  const search = signal("")
+  const data = resource(search, async (search, { signal }) => {
+    const res = await fetch(`https://api.example.com/data?q=${search}`, { signal })
     if (!res.ok) throw new Error(res.statusText)
     return res.json()
   })
@@ -691,7 +692,7 @@ export const config = definePageConfig({
 
 - **State model:** State is created with `signal()`/`computed()` in the component body; components that need state return a render function so that state persists.
 - **Reactivity:** Signal-based, fine-grained: only nodes that observe a signal update.
-- **Built-in:** Routing, context, transitions, portals, async via statefulPromise + Derive.
+- **Built-in:** Routing, context, transitions, portals, async rendering via resource + Derive.
 - **Two-way binding:** `bind:` for inputs.
 
 ### vs Svelte
@@ -711,7 +712,7 @@ export const config = definePageConfig({
 2. **Reactivity:** Prefer using signals directly in JSX (e.g. `{name}`) so only the dependent DOM nodes update.
 3. **Lists:** Use `<For each={signal}>` instead of `signal.value.map(...)` for reactive lists.
 4. **Derived UI:** Use `<Derive from={...}>` for parts of the tree that depend on one or a few signals.
-5. **Async:** Use `statefulPromise` + `<Derive from={...} fallback={...}>`.
+5. **Async:** Use `resource` + `<Derive from={...} fallback={...}>` for async data.
 6. **Shared state:** Use Context (createContext + useContext) or shared signals in modules.
 7. **Side effects and cleanup:** Use `onMount`/`onBeforeMount` and return a cleanup function, or `onCleanup`.
 8. **Features as units:** Extract logic into factories (like createHashChangeDispatcher) that return init/teardown and call them from `onMount` when needed.

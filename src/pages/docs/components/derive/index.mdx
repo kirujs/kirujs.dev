@@ -24,11 +24,11 @@ provided `from` signal changes.
 
 ## Promise Support
 
-`<Derive />` also supports promises created by `statefulPromise`. When deriving from a promise,
-you can use the `fallback` prop to show content while the promise is pending, and the render function
+`<Derive />` also supports resources. When deriving from a resource,
+you can use the `fallback` prop to show content while the data is loading, and the render function
 receives an `isStale` parameter that indicates whether the data is stale (i.e., a new request is in progress).
 
-You can use multiple promises with `<Derive />`, or mix promises and signals:
+You can use multiple resources with `<Derive />`, or mix resources and signals:
 
 <CopyInnerText>
 <Derive from={siteCodeLang}>
@@ -36,7 +36,7 @@ You can use multiple promises with `<Derive />`, or mix promises and signals:
 </Derive>
 </CopyInnerText>
 
-If any entry in the `from` prop is a promise, you can use the `fallback` prop. By default, `<Derive />` uses 
+If any entry in the `from` prop is a resource, you can use the `fallback` prop. By default, `<Derive />` uses 
 SWR-style behavior where stale data is shown while new data loads. If you never want to show stale content, 
 you can use the `mode` prop (accepted values: `"swr"` | `"fallback"`), which defaults to `"swr"`. Setting 
 it to `"fallback"` will render the fallback whenever the data is stale.
@@ -45,4 +45,5 @@ it to `"fallback"` will render the fallback whenever the data is stale.
 
 <ul>
   <li><Link to="/docs/components/for">`<For />`</Link></li>
+  <li><Link to="/docs/api/resource">Resource</Link></li>
 </ul>
