@@ -18,6 +18,7 @@
     backdrop-filter: blur(12px);
 
     li {
+      padding: 0;
       font-size: .85rem;
       border-bottom: 2px solid transparent;
       border-radius: .35rem .35rem 0 0;

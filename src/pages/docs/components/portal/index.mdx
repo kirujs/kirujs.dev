@@ -27,7 +27,7 @@ container.
     <TabGroup
       items={["App", "index.html"]}
       tab={selectedTab}
-      itemSuffix={(item) => item === "App" ? `.${siteCodeLang.value}x` : ""}
+      itemTransform={(item) => item === "App" ? `App.${siteCodeLang.value}x` : item}
     />
     <CopyInnerText>
       <Derive from={{selectedTab, siteCodeLang}}>

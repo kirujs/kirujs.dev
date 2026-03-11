@@ -14,8 +14,8 @@ export function SettingUpCSR() {
       <TabGroup
         items={["src/main"]}
         tab={{ value: "src/main" } as any as Kiru.Signal<string>}
-        itemSuffix={(item) =>
-          `.${siteCodeLang.value}${item === "src/main" ? "x" : ""}`
+        itemTransform={(item) =>
+          `${item}.${siteCodeLang.value}${item === "src/main" ? "x" : ""}`
         }
       />
       <CopyInnerText>

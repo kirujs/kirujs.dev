@@ -1,17 +1,23 @@
 import { javascript } from "@codemirror/lang-javascript"
-import { computed, effect, ref, signal } from "kiru"
+import { computed, effect, flushSync, ref, signal, ViewTransitions } from "kiru"
 import { compile } from "./esbuild"
 import { TabGroup } from "../TabGroup"
 import { CodeMirror } from "./CodeMirror"
 import { notifier } from "../../utils"
 import { UndoIcon } from "../icons/UndoIcon"
 import { ExpandIcon } from "../icons/ExpandIcon"
+import { ShrinkIcon } from "../icons/ShrinkIcon"
 
 interface SandboxProps {
+  id?: string
   files: Record<string, string>
 }
 
-const Sandbox: Kiru.FC<SandboxProps> = ({ files: initialFiles }) => {
+const Sandbox: Kiru.FC<SandboxProps> = ({
+  id = "sandbox",
+  files: initialFiles,
+}) => {
+  const overlayEnabled = signal(false)
   const contentResetNotifier = notifier<string>()
   const files = signal({ ...initialFiles })
   const filePaths = computed<string[]>((prev) => {
@@ -40,15 +46,19 @@ const Sandbox: Kiru.FC<SandboxProps> = ({ files: initialFiles }) => {
   }
 
   return () => (
-    <>
-      <TabGroup items={filePaths.value} tab={activeTab}>
-        <button
-          title="Open in modal"
-          onclick={reset}
-          className="text-neutral-400 hover:bg-white/10 hover:text-white"
-        >
-          <ExpandIcon className="pointer-none" />
-        </button>
+    <div
+      style={`view-transition-name:${id}`}
+      className={
+        overlayEnabled.value
+          ? "fixed inset-4 z-50 bg-neutral-950 flex flex-col"
+          : ""
+      }
+    >
+      <TabGroup
+        items={filePaths.value}
+        itemTransform={(item) => item.substring(2)}
+        tab={activeTab}
+      >
         <button
           title="Reset"
           onclick={reset}
@@ -56,8 +66,24 @@ const Sandbox: Kiru.FC<SandboxProps> = ({ files: initialFiles }) => {
         >
           <UndoIcon className="pointer-none" />
         </button>
+        <button
+          title="Toggle overlay mode"
+          onclick={() => {
+            ViewTransitions.run(() => {
+              overlayEnabled.value = !overlayEnabled.value
+              flushSync()
+            })
+          }}
+          className="text-neutral-400 hover:bg-white/10 hover:text-white"
+        >
+          {overlayEnabled.value ? (
+            <ShrinkIcon className="pointer-none" />
+          ) : (
+            <ExpandIcon className="pointer-none" />
+          )}
+        </button>
       </TabGroup>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 grow">
         <CodeMirror
           contentUpdatedNotifier={contentResetNotifier}
           extensions={extensions}
@@ -75,7 +101,7 @@ const Sandbox: Kiru.FC<SandboxProps> = ({ files: initialFiles }) => {
           className="grow h-full w-full"
         />
       </div>
-    </>
+    </div>
   )
 }
 

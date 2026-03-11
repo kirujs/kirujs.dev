@@ -23,8 +23,8 @@ export function SettingUpSSG() {
       <TabGroup
         items={["vite.config", "src/pages/document"] as const}
         tab={selectedTab}
-        itemSuffix={(item) =>
-          `.${siteCodeLang.value}${item === "src/pages/document" ? "x" : ""}`
+        itemTransform={(item) =>
+          `${item}.${siteCodeLang.value}${item === "src/pages/document" ? "x" : ""}`
         }
       />
       <CopyInnerText>
