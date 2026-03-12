@@ -147,8 +147,8 @@ const Sandbox: Kiru.FC<SandboxProps> = ({
   }
 
   const toggleShowConsole = () => {
-    showConsole.value = !showConsole.value
-    if (showConsole.value) {
+    const show = (showConsole.value = !showConsole.value)
+    if (show) {
       nextIdle(() => {
         logsContainerRef.current?.scrollTo(
           0,
@@ -156,6 +156,13 @@ const Sandbox: Kiru.FC<SandboxProps> = ({
         )
       })
     }
+  }
+
+  let changeQueuedTimeout: number | undefined
+  const onCodeMirrorContentChanged = (content: string) => {
+    files.value[activeTab.value] = content
+    window.clearTimeout(changeQueuedTimeout)
+    changeQueuedTimeout = window.setTimeout(() => files.notify(), 150)
   }
 
   return () => (
@@ -196,17 +203,16 @@ const Sandbox: Kiru.FC<SandboxProps> = ({
           )}
         </button>
       </TabGroup>
-      <div className="grid grid-rows-2 grid-cols-1 lg:grid-cols-2 grow">
+      <div
+        style={{ maxHeight: overlayEnabled.value ? "100%" : "300px" }}
+        className="grid grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 grow"
+      >
         <CodeMirror
           contentUpdatedNotifier={contentResetNotifier}
           extensions={extensions}
           initialContent={files.value[activeTab.value]}
-          onContentChanged={(content) => {
-            files.value[activeTab.value] = content
-            files.notify()
-          }}
+          onContentChanged={onCodeMirrorContentChanged}
           key={activeTab.value}
-          className="grow h-[300px] max-h-[300px]"
         />
         <div className="flex grow h-full w-full relative">
           <iframe
