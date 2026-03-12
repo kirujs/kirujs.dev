@@ -1,10 +1,12 @@
 import { Derive } from "kiru"
 import { Head, Link } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
+import { CodeSandbox } from "$/components/CodeSandbox"
 import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
 import ExamplePromiseCode from "./example.promise.md"
 import ExamplePromiseCodeTS from "./example.promise.ts.md"
+import { files_basic, files_resource } from "./sandbox"
 
 <Head.Content>
   <title>Kiru - Derive</title>
@@ -18,11 +20,9 @@ Similar to <Link to="/docs/components/for">{"<For>"}</Link>, `Derive` allows you
 The `<Derive>` component produces a JSX element that automatically updates whenever the 
 provided `from` signal changes. 
 
-<CopyInnerText importsOverride={`import { signal, computed, Derive } from "kiru"`}>
-  <ExampleCode />
-</CopyInnerText>
+<CodeSandbox id="sandbox:basic" files={files_basic} />
 
-## Promise Support
+## Usage with Resources
 
 `<Derive />` also supports resources. When deriving from a resource,
 you can use the `fallback` prop to show content while the data is loading, and the render function
@@ -30,11 +30,7 @@ receives an `isStale` parameter that indicates whether the data is stale (i.e., 
 
 You can use multiple resources with `<Derive />`, or mix resources and signals:
 
-<CopyInnerText>
-<Derive from={siteCodeLang}>
-  {(lang) => lang === "js" ? <ExamplePromiseCode /> : <ExamplePromiseCodeTS />}
-</Derive>
-</CopyInnerText>
+<CodeSandbox id="sandbox:resource" files={files_resource} />
 
 If any entry in the `from` prop is a resource, you can use the `fallback` prop. By default, `<Derive />` uses 
 SWR-style behavior where stale data is shown while new data loads. If you never want to show stale content, 

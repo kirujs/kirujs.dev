@@ -10,10 +10,58 @@ window.__kiru?.apps.forEach(app => app.unmount())
 mount(<App />, document.body)
 `
 
+export const loadingProgress = signal(0)
+
+export async function loadESBuild(): Promise<void> {
+  await (initPromise.value ??= actuallyLoadESBuild())
+}
+
+const actuallyLoadESBuild = async () => {
+  await initIDB()
+  loadingProgress.value = 10
+
+  const wasmURL = "/esbuild.wasm"
+  const response = await fetch(wasmURL)
+
+  if (!response.ok || !response.body) {
+    throw new Error(`Failed to fetch WASM: ${response.status}`)
+  }
+
+  const contentLength = response.headers.get("content-length")
+  const total = contentLength ? parseInt(contentLength, 10) : 0
+
+  let loaded = 0
+  const reader = response.body.getReader()
+  const chunks: Uint8Array[] = []
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+
+    chunks.push(value)
+    loaded += value.length
+
+    if (total > 0) {
+      loadingProgress.value = 10 + Math.floor((loaded / total) * 90)
+    }
+  }
+
+  const wasmBytes = new Uint8Array(loaded)
+  let offset = 0
+  for (const chunk of chunks) {
+    wasmBytes.set(chunk, offset)
+    offset += chunk.length
+  }
+
+  const wasmModule = await WebAssembly.compile(wasmBytes)
+  await esbuild.initialize({ wasmModule })
+  loadingProgress.value = 100
+}
+
 const initPromise = signal<Promise<void> | null>(null)
 let idb: IDBDatabase | null = null
 export async function compile(files: Record<string, string>): Promise<string> {
-  await (initPromise.value ??= initialize())
+  await (initPromise.value ??= actuallyLoadESBuild())
 
   const allFiles = {
     ...Object.fromEntries(
@@ -103,11 +151,6 @@ function inferLoader(path: string): esbuild.Loader {
   if (path.endsWith(".jsx")) return "jsx"
   if (path.endsWith(".css")) return "css"
   return "js"
-}
-
-async function initialize(): Promise<void> {
-  await initIDB()
-  await esbuild.initialize({ wasmURL: "/esbuild.wasm" })
 }
 
 function npmPlugin(): esbuild.Plugin {

@@ -5,3 +5,8 @@ export type CodePreviewData = {
     text: string
   }
 }
+
+export type RawViteImportMap = Record<
+  string,
+  () => Promise<{ default: string }>
+>

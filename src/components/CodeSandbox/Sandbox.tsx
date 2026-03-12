@@ -25,7 +25,7 @@ import { TriangleAlertIcon } from "../icons/TriangleAlertIcon"
 import { InfoIcon } from "../icons/InfoIcon"
 import { ChevronDownIcon } from "../icons/ChevronDownIcon"
 
-interface SandboxProps {
+export interface SandboxProps {
   id?: string
   files: Record<string, string>
 }

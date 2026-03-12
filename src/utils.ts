@@ -1,3 +1,5 @@
+import { RawViteImportMap } from "./types"
+
 export interface Notifier<T> {
   subscribe: (callback: (value: T) => void) => () => void
   notify: (value: T) => void
@@ -62,4 +64,14 @@ export function trapFocus(element: Element, e: KeyboardEvent) {
       }
     }
   }
+}
+
+export async function loadFileMap(
+  map: RawViteImportMap
+): Promise<Record<string, string>> {
+  const loadedEntries = await Promise.all(
+    Object.entries(map).map(async ([k, v]) => [k, (await v()).default])
+  )
+
+  return Object.fromEntries(loadedEntries)
 }
