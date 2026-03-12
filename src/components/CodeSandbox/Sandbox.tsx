@@ -204,8 +204,10 @@ const Sandbox: Kiru.FC<SandboxProps> = ({
         </button>
       </TabGroup>
       <div
-        style={{ maxHeight: overlayEnabled.value ? "100%" : "300px" }}
-        className="grid grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 grow"
+        className={cls(
+          "grid grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 grow",
+          overlayEnabled.value ? "max-h-full" : "max-h-[600px] lg:max-h-[300px]"
+        )}
       >
         <CodeMirror
           contentUpdatedNotifier={contentResetNotifier}
@@ -334,6 +336,15 @@ const sandboxHTML = `<!DOCTYPE html>
 <html>
   <head>
     <style>
+      * {
+        scrollbar-width: thin;
+        -ms-overflow-style: none;
+        scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+      }
+      *::-webkit-scrollbar, *::-moz-scrollbar, *::-ms-scrollbar, *::-o-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
       *, *::before, *::after { box-sizing: border-box; }
       * { margin: 0; }
       body {

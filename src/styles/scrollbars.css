@@ -1,6 +1,7 @@
 * {
   scrollbar-width: thin;
   -ms-overflow-style: none;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 *::-webkit-scrollbar {
