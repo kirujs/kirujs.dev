@@ -205,8 +205,8 @@ const Sandbox: Kiru.FC<SandboxProps> = ({
       </TabGroup>
       <div
         className={cls(
-          "grid grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 grow",
-          overlayEnabled.value ? "max-h-full" : "max-h-[600px] lg:max-h-[300px]"
+          "grid grid-rows-2 grid-cols-1 lg:grid-cols-5 lg:grid-rows-1 grow",
+          overlayEnabled.value ? "max-h-full" : "max-h-[600px] lg:max-h-[600px]"
         )}
       >
         <CodeMirror
@@ -215,8 +215,9 @@ const Sandbox: Kiru.FC<SandboxProps> = ({
           initialContent={files.value[activeTab.value]}
           onContentChanged={onCodeMirrorContentChanged}
           key={activeTab.value}
+          className="lg:col-span-3"
         />
-        <div className="flex grow h-full w-full relative">
+        <div className="flex grow h-full w-full relative lg:col-span-2">
           <iframe
             ref={iframeRef}
             srcdoc={sandboxHTML}
@@ -354,6 +355,10 @@ const sandboxHTML = `<!DOCTYPE html>
         background-color: #080508;
         color: #fff;
         padding: 1rem;
+      }
+      input {
+        background-color: #1115;
+        color: #eee;
       }
       img, picture, video, canvas, svg { display: block; max-width: 100%; }
       input, button, textarea, select { font: inherit; }
