@@ -21,7 +21,7 @@ export function App() {
       <input bind:value={search} />
       <Derive from={data} fallback={<div>Loading...</div>}>
         {(data, isStale) => (
-          <div className={isStale ? "opacity-50" : ""}>
+          <div style={{ opacity: isStale ? 0.5 : 1 }}>
             <ul>
               {data.products.map((product) => (
                 <li key={product.id}>{product.title}</li>

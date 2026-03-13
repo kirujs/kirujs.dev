@@ -1,7 +1,7 @@
 import * as esbuild from "esbuild-wasm"
 import { signal } from "kiru"
 
-const CDN = "https://esm.sh"
+const CDN = "https://esm.run"
 
 const MAIN_TS = `
 import { createElement as _jsx, Fragment as _jsxFragment, mount } from "kiru"

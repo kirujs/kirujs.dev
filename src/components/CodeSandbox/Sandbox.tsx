@@ -361,13 +361,7 @@ const sandboxHTML = `<!DOCTYPE html>
     </style>
   </head>
   <body>
-    <script type="importmap">
-      {
-        "imports": {
-          "kiru": "https://esm.sh/kiru?bundle"
-        }
-      }
-    </script>
+
     <script type="module">
       window.addEventListener("message", async (e) => {
         if (e.data?.type !== "run") return
