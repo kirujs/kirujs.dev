@@ -1,4 +1,4 @@
-import { signal, resource, Derive } from "kiru"
+import { signal, resource, Derive, computed } from "kiru"
 
 interface Product {
   id: number
@@ -7,9 +7,11 @@ interface Product {
 
 export function App() {
   const search = signal("")
-  const data = resource(search, async (search, { signal }) => {
+  const limit = signal("10")
+  const params = computed(() => ({ search: search.value, limit: limit.value }))
+  const data = resource(params, async (params, { signal }) => {
     const response = await fetch(
-      `https://dummyjson.com/products/search?q=${search}`,
+      `https://dummyjson.com/products/search?q=${params.search}&limit=${params.limit}`,
       { signal }
     )
     if (!response.ok) throw new Error(response.statusText)
@@ -18,7 +20,14 @@ export function App() {
 
   return () => (
     <>
-      <input bind:value={search} />
+      <div style="display: flex; gap: 1rem">
+        <input bind:value={search} />
+        <select bind:value={limit}>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+        </select>
+      </div>
       <Derive from={data} fallback={<div>Loading...</div>}>
         {(data, isStale) => (
           <div style={{ opacity: isStale ? 0.5 : 1 }}>
