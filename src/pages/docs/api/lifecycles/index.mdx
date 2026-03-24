@@ -4,6 +4,14 @@ import { siteCodeLang } from "$/state"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { DocsSection } from "$/components/DocsSection"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
+import ExampleSetup from "./example.setup.md"
+import ExampleSetupTS from "./example.setup.ts.md"
+import ExampleID from "./example.id.md"
+import ExampleIDTS from "./example.id.ts.md"
+import ExampleProps from "./example.props.md"
+import ExamplePropsTS from "./example.props.ts.md"
+import ExamplePropsWarning from "./example.props-warning.md"
+import ExamplePropsWarningTS from "./example.props-warning.ts.md"
 import ExampleOnMount from "./example.onMount.md"
 import ExampleOnBeforeMount from "./example.onBeforeMount.md"
 import ExampleOnCleanup from "./example.onCleanup.md"
@@ -42,27 +50,9 @@ only runs again when an explicitly observed signal or props change.
 The `setup` lifecycle exposes a helper function, `setup<Props>()`, that lets you derive props into signals
 or access a stable, deterministic `id` for the current position in the virtual DOM (equivalent to `useId` in React).
 
-```tsx
-interface CounterProps {
-  initialCount?: number
-}
-
-const Counter: Kiru.FC<CounterProps> = () => {
-  const { derive } = setup<CounterProps>()
-  // Alternatively, setup<typeof Counter>()
-
-  const count = derive((props) => props.initialCount ?? 0)
-  // When "initialCount" changes, count is updated.
-
-  return () => (
-    <>
-      <p>Count: {count}</p>
-      <button onclick={() => count.value++}>Increment</button>
-      <button onclick={() => count.value--}>Decrement</button>
-    </>
-  )
-}
-```
+<Derive from={siteCodeLang}>
+{lang => lang === "ts" ? <ExampleSetupTS /> : <ExampleSetup />}
+</Derive>
 
 `setup()` returns an object with:
 
@@ -72,61 +62,22 @@ const Counter: Kiru.FC<CounterProps> = () => {
 - **`id`**: a lazily-created `Signal<string>` that holds a deterministically generated
   id for _this_ spot in the virtual DOM. This is ideal for wiring `label`/`input` pairs:
 
-```tsx
-const Field: Kiru.FC = () => {
-  const { id } = setup()
-
-  return () => (
-    <>
-      <label htmlFor={id}>Name</label>
-      <input id={id} type="text" />
-    </>
-  )
-}
-```
+<Derive from={siteCodeLang}>
+{lang => lang === "ts" ? <ExampleIDTS /> : <ExampleID />}
+</Derive>
 
 You can also use the `props` object to access the latest props in event handlers or callbacks without deriving them into signals:
 
-```tsx
-interface AccordionTriggerProps {
-  onclick?: (e: Kiru.MouseEvent<HTMLButtonElement>) => void
-}
+<Derive from={siteCodeLang}>
+{lang => lang === "ts" ? <ExamplePropsTS /> : <ExampleProps />}
+</Derive>
 
-const AccordionTrigger: Kiru.FC<AccordionTriggerProps> = () => {
-  const $ = setup<AccordionTriggerProps>()
-
-  const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
-    // $.props always provides the latest prop values via a 'getter'
-    $.props.onclick?.(e)
-  }
-
-  return () => (
-    <button onclick={handleClick}>
-      Toggle
-    </button>
-  )
-}
-```
 <CalloutBlock variant="info" prose className="w-full max-w-full">
 **Important:** Do not destructure `props` from the setup object, as this breaks the getter behavior and captures the props at the time of destructuring:
 
-```tsx
-// ❌ Wrong - props will be stale
-const { props } = setup<AccordionTriggerProps>()
-
-const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
-  // props.onclick was captured during setup and will never update
-  props.onclick?.(e)
-}
-
-// ✅ Correct - always access via $.props
-const $ = setup<AccordionTriggerProps>()
-
-const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
-  // $.props.onclick is always the latest value
-  $.props.onclick?.(e)
-}
-```
+<Derive from={siteCodeLang}>
+{lang => lang === "ts" ? <ExamplePropsWarningTS /> : <ExamplePropsWarning />}
+</Derive>
 </CalloutBlock>
 
 </DocsSection>
