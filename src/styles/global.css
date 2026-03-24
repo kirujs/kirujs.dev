@@ -119,6 +119,13 @@ button {
   padding: .15rem .15rem;
 }
 
+.callout-block p {
+  margin: 0 !important;
+}
+
+.callout-block pre {
+  margin-top: 0.5rem;
+}
 
 .callout-block code {
   background-color: #0e0e0e63;

@@ -3,6 +3,7 @@ import { Head, Link } from "kiru/router"
 import { siteCodeLang } from "$/state"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { DocsSection } from "$/components/DocsSection"
+import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 import ExampleOnMount from "./example.onMount.md"
 import ExampleOnBeforeMount from "./example.onBeforeMount.md"
 import ExampleOnCleanup from "./example.onCleanup.md"
@@ -67,6 +68,7 @@ const Counter: Kiru.FC<CounterProps> = () => {
 
 - **`derive(selector)`**: takes a selector `(props) => value` and returns a `Signal`
   that is kept in sync with the latest props passed to the component.
+- **`props`**: an object that provides access to the latest props via a 'getter'. This is useful when you need to access props in event handlers or other callbacks without deriving them into signals.
 - **`id`**: a lazily-created `Signal<string>` that holds a deterministically generated
   id for _this_ spot in the virtual DOM. This is ideal for wiring `label`/`input` pairs:
 
@@ -82,6 +84,50 @@ const Field: Kiru.FC = () => {
   )
 }
 ```
+
+You can also use the `props` object to access the latest props in event handlers or callbacks without deriving them into signals:
+
+```tsx
+interface AccordionTriggerProps {
+  onclick?: (e: Kiru.MouseEvent<HTMLButtonElement>) => void
+}
+
+const AccordionTrigger: Kiru.FC<AccordionTriggerProps> = () => {
+  const $ = setup<AccordionTriggerProps>()
+
+  const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
+    // $.props always provides the latest prop values via a 'getter'
+    $.props.onclick?.(e)
+  }
+
+  return () => (
+    <button onclick={handleClick}>
+      Toggle
+    </button>
+  )
+}
+```
+<CalloutBlock variant="info" prose className="w-full max-w-full">
+**Important:** Do not destructure `props` from the setup object, as this breaks the getter behavior and captures the props at the time of destructuring:
+
+```tsx
+// ❌ Wrong - props will be stale
+const { props } = setup<AccordionTriggerProps>()
+
+const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
+  // props.onclick was captured during setup and will never update
+  props.onclick?.(e)
+}
+
+// ✅ Correct - always access via $.props
+const $ = setup<AccordionTriggerProps>()
+
+const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
+  // $.props.onclick is always the latest value
+  $.props.onclick?.(e)
+}
+```
+</CalloutBlock>
 
 </DocsSection>
 
