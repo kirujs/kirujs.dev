@@ -58,7 +58,7 @@ or access a stable, deterministic `id` for the current position in the virtual D
 
 - **`derive(selector)`**: takes a selector `(props) => value` and returns a `Signal`
   that is kept in sync with the latest props passed to the component.
-- **`props`**: an object that provides access to the latest props via a 'getter'. This is useful when you need to access props in event handlers or other callbacks without deriving them into signals.
+- **`props`**: a Proxy object that provides access to the latest props.
 - **`id`**: a lazily-created `Signal<string>` that holds a deterministically generated
   id for _this_ spot in the virtual DOM. This is ideal for wiring `label`/`input` pairs:
 
@@ -73,7 +73,7 @@ You can also use the `props` object to access the latest props in event handlers
 </Derive>
 
 <CalloutBlock variant="info" prose className="w-full max-w-full">
-**Important:** Do not destructure `props` from the setup object, as this breaks the getter behavior and captures the props at the time of destructuring:
+**Important:** Do not destructure values from the `props` object, as this breaks the Proxy behavior and captures the values at the time of destructuring:
 
 <Derive from={siteCodeLang}>
 {lang => lang === "ts" ? <ExamplePropsWarningTS /> : <ExamplePropsWarning />}

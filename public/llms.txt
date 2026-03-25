@@ -277,7 +277,7 @@ All lifecycle primitives must be called synchronously during component initializ
 
 - **setup<Props>()**: Returns a per-instance setup context with helpers:
   - `derive(selector)`: derive `Signal<T>` values from props and keep them in sync.
-  - `props`: an object that provides access to the latest props via getters. This is useful when you need to access props in event handlers or other callbacks without deriving them into signals. The props are always up-to-date when accessed. **Important:** Do not destructure `props` from the setup object (e.g., `const { props } = setup()`), as this breaks the getter behavior and captures props at the time of destructuring. Always access via `$.props.propName`.
+  - `props`: a Proxy object that provides access to the latest props. The props are always up-to-date when accessed. **Important:** Do not destructure values from `props` (e.g., `const { onclick } = props`), as this breaks the Proxy behavior and captures values at the time of destructuring. Always access via `props.propName`.
   - `id`: a lazily-created `Signal<string>` that holds a deterministic id for this VNode position (useful for `label`/`input` pairs, equivalent to React's "useId" hook).
 - **onMount(callback)**: Runs after the component is first painted. Return a function to clean up on unmount.
 - **onBeforeMount(callback)**: Runs before paint, after DOM nodes are created.
@@ -309,13 +309,13 @@ Example (using `props` to access latest prop values in event handlers):
 ```tsx
 import { setup } from "kiru"
 
-interface AccordionTriggerProps {
+interface MyButtonProps {
   onclick?: (e: Kiru.MouseEvent<HTMLButtonElement>) => void
 }
 
 const AccordionTrigger: Kiru.FC<AccordionTriggerProps> = () => {
   const $ = setup<AccordionTriggerProps>()
-  // Do NOT destructure: const { props } = setup() - this breaks the getter!
+  // Do NOT destructure: const { onclick } = props() - this captures the value and it will remain stale!
 
   const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
     // $.props always provides the latest prop values

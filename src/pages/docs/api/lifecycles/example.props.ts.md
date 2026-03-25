@@ -1,13 +1,13 @@
 ```tsx
-interface AccordionTriggerProps {
+interface MyButtonProps {
   onclick?: (e: Kiru.MouseEvent<HTMLButtonElement>) => void
 }
 
-const AccordionTrigger: Kiru.FC<AccordionTriggerProps> = () => {
-  const $ = setup<AccordionTriggerProps>()
+const MyButton: Kiru.FC<MyButtonProps> = () => {
+  const $ = setup<MyButtonProps>()
 
   const handleClick = (e: Kiru.MouseEvent<HTMLButtonElement>) => {
-    // $.props always provides the latest prop values via a 'getter'
+    // $.props always provides the latest prop values via a Proxy
     $.props.onclick?.(e)
   }
 

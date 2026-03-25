@@ -1,9 +1,9 @@
 ```jsx
-const AccordionTrigger = () => {
+const MyButton = () => {
   const $ = setup()
 
   const handleClick = (e) => {
-    // $.props always provides the latest prop values via a 'getter'
+    // $.props always provides the latest prop values via a Proxy
     $.props.onclick?.(e)
   }
 
