@@ -2,14 +2,17 @@ import type { DocItemStatus } from "$/docs-meta"
 
 type DocItemStatusProps = {
   status?: DocItemStatus
-  hasNewSection?: boolean
+  hasSectionChanged?: boolean
 }
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-export function DocItemStatus({ status, hasNewSection }: DocItemStatusProps) {
+export function DocItemStatus({
+  status,
+  hasSectionChanged,
+}: DocItemStatusProps) {
   if (status) {
     return (
       <span
@@ -20,5 +23,5 @@ export function DocItemStatus({ status, hasNewSection }: DocItemStatusProps) {
       </span>
     )
   }
-  return hasNewSection && <span className="badge p-0.5 px-1">Updated</span>
+  return hasSectionChanged && <span className="badge p-0.5 px-1">Updated</span>
 }

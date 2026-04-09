@@ -216,9 +216,9 @@ function CommandPaletteItem({
     )
   }
 
-  let hasNewSection = false
+  let hasSectionChanged = false
   if (item.status?.type !== "new") {
-    hasNewSection = !!item.sections?.some((s) => s.isNew)
+    hasSectionChanged = !!item.sections?.some((s) => s.status)
   }
 
   return (
@@ -234,7 +234,10 @@ function CommandPaletteItem({
         <span className="flex gap-1 items-center text-sm font-light">
           {item.title}{" "}
         </span>
-        <DocItemStatus status={item.status} hasNewSection={hasNewSection} />
+        <DocItemStatus
+          status={item.status}
+          hasSectionChanged={hasSectionChanged}
+        />
       </div>
       {item.tags && <CommandPalleteItemTags tags={item.tags} />}
     </Link>

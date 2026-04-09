@@ -1,6 +1,6 @@
 import { Derive, ElementProps, Fragment, onMount, signal, unwrap } from "kiru"
 import { className as cls } from "kiru/utils"
-import { docMeta } from "$/docs-meta"
+import { DocItemStatus as DocItemStatusType, docMeta } from "$/docs-meta"
 import { isLinkActive } from "$/utils"
 import { DocItemStatus } from "./DocItemStatus"
 import { Link, LinkProps, useFileRouter } from "kiru/router"
@@ -48,7 +48,7 @@ export function SidebarContent() {
                 )
                 let hasNewSection = false
                 if (page.status?.type !== "new") {
-                  hasNewSection = !!page.sections?.some((s) => s.isNew)
+                  hasNewSection = !!page.sections?.some((s) => s.status)
                 }
 
                 const Tag = page.sections ? "div" : Fragment
@@ -75,7 +75,7 @@ export function SidebarContent() {
                         {page.title}
                         <DocItemStatus
                           status={page.status}
-                          hasNewSection={hasNewSection}
+                          hasSectionChanged={hasNewSection}
                         />
                       </StyledLink>
                     )}
@@ -96,13 +96,8 @@ export function SidebarContent() {
                                 onclick={closeDrawer}
                               >
                                 {section.title}
-                                {section.isNew && (
-                                  <span
-                                    className="badge p-0.5 px-1"
-                                    title={`Since ${section.isNew.since}`}
-                                  >
-                                    New
-                                  </span>
+                                {section.status && (
+                                  <SectionStatusBadge status={section.status} />
                                 )}
                               </StyledLink>
                             ))}
@@ -132,6 +127,25 @@ export function SidebarContent() {
       ))}
     </>
   )
+}
+
+function SectionStatusBadge({ status }: { status: DocItemStatusType }) {
+  switch (status.type) {
+    case "deprecated":
+      return null
+    case "new":
+      return (
+        <span className="badge p-0.5 px-1" title={`Since ${status.since}`}>
+          New
+        </span>
+      )
+    case "updated":
+      return (
+        <span className="badge p-0.5 px-1" title={`In ${status.since}`}>
+          Updated
+        </span>
+      )
+  }
 }
 
 function Header({ children }: ElementProps<"div">) {

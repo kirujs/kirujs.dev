@@ -11,6 +11,10 @@ export type DocItemStatus =
       since: string
     }
   | {
+      type: "updated"
+      since: string
+    }
+  | {
       type: "deprecated"
       since: string
     }
@@ -27,7 +31,7 @@ export type DocPageLink = {
 type DocSectionLink = {
   title: string
   id: string
-  isNew?: DocItemStatus
+  status?: DocItemStatus
 }
 
 // const STATUS_MAP: Record<string, DocItemStatus> = {
@@ -195,7 +199,7 @@ export const docMeta: DocItem[] = [
           {
             id: "resource",
             title: "Resource",
-            isNew: { type: "new", since: "1.3.0" },
+            status: { type: "updated", since: "1.5.0" },
           },
         ],
       },

@@ -10,7 +10,10 @@ type ProductsResponse = {
 
 function Page() {
   const search = signal("")
-  const data = resource(search, async (search, { signal }) => {
+
+  // Without a source - relies entirely on auto-tracking
+  const data = resource(async ({ signal }) => {
+    // search is observed synchronously (before await) and will trigger refetches
     const response = await fetch(
       `https://dummyjson.com/products/search?q=${search}`,
       { signal }

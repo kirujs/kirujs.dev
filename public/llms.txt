@@ -486,7 +486,69 @@ Key points for `<Show>`:
 
 ## Async data: Resource + Derive
 
-Use `resource` to manage asynchronous data fetching, and `<Derive from={...} fallback={...}>` to render it. Derive can show stale data while revalidating or show only the fallback until data is ready:
+Use `resource` to manage asynchronous data fetching with automatic caching, refetching, and loading states. A `Resource` is a special signal that holds the result of an async operation and tracks loading and error states.
+
+### Resource API
+
+You can create a resource in three ways:
+
+**1. With a single source signal:**
+```tsx
+import { signal, resource } from "kiru"
+
+const userId = signal(1)
+const data = resource(userId, async (id, { signal }) => {
+  const response = await fetch(`/api/data?id=${id}`, { signal })
+  return response.json()
+})
+```
+
+**2. With multiple source signals (as an object):**
+```tsx
+const search = signal("")
+const limit = signal(10)
+const data = resource({ search, limit }, async (src, { signal }) => {
+  const response = await fetch(
+    `/api/data?q=${src.search}&limit=${src.limit}`,
+    { signal }
+  )
+  return response.json()
+})
+```
+
+**3. Without a source:**
+```tsx
+const search = signal("")
+const limit = signal(10)
+const data = resource(async ({ signal }) => {
+  // Signals observed synchronously are automatically tracked
+  const response = await fetch(
+    `/api/data?q=${search}&limit=${limit}`,
+    { signal }
+  )
+  return response.json()
+})
+```
+
+### Auto-tracking
+
+Resources automatically track any signals that are observed **synchronously** during the fetcher function's execution. This applies whether or not you provide a source parameter.
+
+**Important:** Only signals observed **before the first `await`** are tracked. Signals accessed after an `await` won't trigger refetches. If you need to observe signals later in the async flow, either provide them as a source or read their values at the start of the function.
+
+### Resource properties
+
+A `Resource` provides:
+- **value**: The resolved data (or `undefined` while loading)
+- **isPending**: A signal indicating if the resource is currently loading
+- **error**: A signal containing any error that occurred during fetching
+- **promise**: The underlying promise for the current fetch
+- **refetch()**: Manually trigger a refetch of the data
+- **dispose()**: Manually dispose of the resource
+
+### Using with Derive
+
+Use `<Derive from={...} fallback={...}>` to render resource data. Derive can show stale data while revalidating or show only the fallback until data is ready:
 
 ```tsx
 import { signal, resource, Derive } from "kiru"
@@ -494,7 +556,7 @@ import { signal, resource, Derive } from "kiru"
 function Page() {
   const count = signal(0)
   const search = signal("")
-  const data = resource(search, async (search, { signal }) => {
+  const data = resource(async ({ signal }) => {
     const res = await fetch(`https://api.example.com/data?q=${search}`, { signal })
     if (!res.ok) throw new Error(res.statusText)
     return res.json()
@@ -515,7 +577,7 @@ function Page() {
 }
 ```
 
-Use the `mode` prop on Derive: `"swr"` (default) or `"fallback"` to control whether stale data is shown.
+Use the `mode` prop on Derive: `"swr"` (default) or `"fallback"` to control whether stale data is shown. Resources can be created globally or locally within components. When created locally, they are automatically disposed when the component unmounts.
 
 ## Context
 
