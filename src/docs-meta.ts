@@ -84,6 +84,16 @@ export const docMeta: DocItem[] = [
         tags: ["createContext"],
       },
       {
+        title: "Ref",
+        href: "/docs/api/ref",
+        tags: ["ref", "RefObject", "RefCallback", "DOM ref", "Signal"],
+        sections: [
+          { id: "ref-object", title: "RefObject" },
+          { id: "ref-callback", title: "RefCallback" },
+          { id: "ref-signal", title: "Signal" },
+        ],
+      },
+      {
         title: "Utils",
         href: "/docs/api/utils",
         tags: ["className", "flushSync", "nextIdle", "onHmr", "unwrap"],
@@ -174,7 +184,14 @@ export const docMeta: DocItem[] = [
       {
         title: "Signal",
         href: "/docs/api/signal",
-        tags: ["state", "computed", "effect", "resource", "two way binding"],
+        tags: [
+          "state",
+          "computed",
+          "effect",
+          "untrack",
+          "resource",
+          "two way binding",
+        ],
         sections: [
           {
             id: "general-usage",
@@ -182,11 +199,15 @@ export const docMeta: DocItem[] = [
           },
           {
             id: "computed-signals",
-            title: "Computed",
+            title: "computed",
           },
           {
             id: "signal-effects",
-            title: "Effect",
+            title: "effect",
+          },
+          {
+            id: "untrack",
+            title: "untrack",
           },
           {
             id: "usage-in-components",
@@ -198,7 +219,7 @@ export const docMeta: DocItem[] = [
           },
           {
             id: "resource",
-            title: "Resource",
+            title: "resource",
             status: { type: "updated", since: "1.5.0" },
           },
         ],

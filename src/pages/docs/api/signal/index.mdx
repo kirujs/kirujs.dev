@@ -14,7 +14,7 @@ import ExampleResourceTs from "./example.resource.ts.md"
 
 <Head.Content>
   <title>Kiru - Signal</title>
-  <meta name="keywords" content="signal, state, global state, computed, effect, two way binding, resource, async state" />
+  <meta name="keywords" content="signal, state, global state, computed, effect, untrack, two way binding, resource, async state" />
   <meta name="description" content="Learn about Signals in Kiru - reactive primitives for managing state with computed values, resources, effects, two-way binding, and fine-grained reactivity in components." />
 </Head.Content>
 
@@ -85,7 +85,7 @@ unsubscribe()
 </CalloutBlock>
 
 
-<DocsSection id="computed-signals" title="Computed">
+<DocsSection id="computed-signals" title="computed">
   Use `computed` to create a `ComputedSignal`, which is derived from a getter function.
   A `ComputedSignal` is *lazily evaluated*, meaning that the getter function won't be called 
   until it is `observed` or subscribed to. Manually assigning a new value to it has no effect.
@@ -114,11 +114,11 @@ implement `toString()` so they can be used in strings!
 
 </DocsSection>
 
-<DocsSection id="signal-effects" title="Effect">
+<DocsSection id="signal-effects" title="effect">
 Use `effect` create a <CodePreview data={effectTypePreview} /> that 
 will fire the callback whenever `observed` signals change.
 ```ts
-import {effect } from "kiru"
+import { effect } from "kiru"
 
 const effectHandle = effect(() => console.log(`Greeting has been updated: ${userGreeting}`))
 
@@ -140,6 +140,29 @@ const handle = effect([userName, userGreeting], (newName, newGreeting) => {
 })
 ```
 
+</DocsSection>
+
+<DocsSection id="untrack" title="untrack">
+`untrack` runs a callback in an inert context, so reactive reads inside the callback
+do not create implicit subscriptions or side effects. It also returns the callback result.
+
+```ts
+import { effect, resource, signal, untrack } from "kiru"
+
+const id = signal(1)
+const loadUser = async () => fetch(`/users/${id.value}`)
+
+const user = resource(loadUser)
+
+effect(() => {
+  const userPromise = untrack(() => loadUser())
+  // Reading id.value here would normally subscribe this effect to "id".
+  // untrack prevents that implicit subscription.
+})
+```
+
+Use `untrack` when you intentionally need a one-off read in an `effect` or `computed`
+without wiring that read into reactivity.
 </DocsSection>
 
 <DocsSection id="usage-in-components" title="In Components">
@@ -265,6 +288,27 @@ function App() {
 }
 ```
 </CopyInnerText>
+
+### Signals as `ref`
+
+Signals can also be passed directly to the `ref` attribute. This gives you a reactive
+way to observe element attachment/detachment without creating a separate ref object.
+
+```tsx
+import { signal } from "kiru"
+
+function App() {
+  const buttonEl = signal<HTMLButtonElement | null>(null)
+
+  buttonEl.subscribe((el) => {
+    if (el) console.log("button mounted")
+  })
+
+  return () => <button ref={buttonEl}>Click me</button>
+}
+```
+
+For `RefObject` and callback patterns, see the <Link to="/docs/api/ref">`ref` docs</Link>.
 </DocsSection>
 
 <DocsSection id="two-way-binding" title="Two Way Binding">
@@ -289,7 +333,7 @@ function App() {
 </CopyInnerText>
 </DocsSection>
 
-<DocsSection id="resource" title="Resource">
+<DocsSection id="resource" title="resource">
 Use `resource` to manage asynchronous data fetching with automatic caching, 
 refetching, and loading states. A `Resource` is a special signal that holds 
 the result of an async operation and tracks loading and error states.

@@ -1,0 +1,81 @@
+import { Derive } from "kiru"
+import { Head, Link } from "kiru/router"
+import { CopyInnerText } from "$/components/CopyInnerText"
+import { DocsSection } from "$/components/DocsSection"
+import { CalloutBlock } from "$/components/atoms/CalloutBlock"
+import { siteCodeLang } from "$/state"
+import ExampleSignal from "./example.signal.md"
+import ExampleSignalTs from "./example.signal.ts.md"
+import ExampleRefObject from "./example.refObject.md"
+import ExampleRefObjectTs from "./example.refObject.ts.md"
+import ExampleRefCallback from "./example.refCallback.md"
+import ExampleRefCallbackTs from "./example.refCallback.ts.md"
+
+<Head.Content>
+  <title>Kiru - Ref</title>
+  <meta
+    name="keywords"
+    content="ref, RefObject, RefCallback, signal ref, DOM ref"
+  />
+  <meta
+    name="description"
+    content="Learn how to use ref values in Kiru with RefObject, RefCallback, or a signal for reactive DOM references."
+  />
+</Head.Content>
+
+# Ref
+
+`ref` lets you get access to DOM elements after they are mounted.
+In Kiru, the `ref` attribute accepts three forms:
+
+- a `RefObject<Element | null>` (created with `ref()`)
+- a `RefCallback<Element | null>`
+- a `Signal<Element | null>`
+
+<DocsSection id="ref-object" title="RefObject">
+Use `ref()` when you want an object with a stable `.current` property.
+This pattern is useful when you want to read the element during a lifecycle hook.
+
+<CopyInnerText>
+  <Derive from={siteCodeLang}>
+    {(lang) => lang === "js" ? <ExampleRefObject /> : <ExampleRefObjectTs />}
+  </Derive>
+</CopyInnerText>
+</DocsSection>
+
+<DocsSection id="ref-callback" title="RefCallback">
+Use a callback when you want direct control over how refs are handled.
+
+<CopyInnerText>
+  <Derive from={siteCodeLang}>
+    {(lang) => lang === "js" ? <ExampleRefCallback /> : <ExampleRefCallbackTs />}
+  </Derive>
+</CopyInnerText>
+</DocsSection>
+<DocsSection id="signal" title="signal">
+Passing a signal to `ref` works similarly to a ref object, but updates reactively.
+The signal receives `null` when detached and the element when attached.
+
+<CopyInnerText>
+  <Derive from={siteCodeLang}>
+    {(lang) => lang === "js" ? <ExampleSignal /> : <ExampleSignalTs />}
+  </Derive>
+</CopyInnerText>
+</DocsSection>
+
+<CalloutBlock variant="info">
+  Prefer a signal when you want reactive subscriptions to attachment/detachment,
+  `ref()` when you want a simple `.current` object, and callbacks when you need
+  custom imperative logic.
+</CalloutBlock>
+
+### Related
+
+<ul>
+  <li>
+    <Link to="/docs/api/lifecycles#onMount">`onMount`</Link>
+  </li>
+  <li>
+    <Link to="/docs/api/signal">`signal`</Link>
+  </li>
+</ul>
