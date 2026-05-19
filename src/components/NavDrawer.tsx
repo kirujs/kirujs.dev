@@ -11,7 +11,7 @@ import { navDrawerOpen } from "../state"
 export function NavDrawer() {
   const router = useRouter()
 
-  effect([router.state.pathname], () => {
+  effect([router.pathname], () => {
     if (navDrawerOpen.peek()) {
       navDrawerOpen.value = false
     }
