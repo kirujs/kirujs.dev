@@ -1,18 +1,17 @@
 import { Derive } from "kiru"
-import { Head } from "kiru/router"
+import { defineHeadContent } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
 import ExampleCodeTS from "./example.ts.md"
 
-<Head.Content>
-  <title>Kiru - Show</title>
-  <meta name="keywords" content="show, component, jsx, reactive, signal, conditional rendering" />
-  <meta
-    name="description"
-    content="Learn how to use the Show component in Kiru for conditional rendering with optional fallbacks and fine-grained reactivity when the condition is a signal."
-  />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Show",
+  extraMeta: [
+    { name: "keywords", content: "show, component, jsx, reactive, signal, conditional rendering" },
+  ],
+  description: "Learn how to use the Show component in Kiru for conditional rendering with optional fallbacks and fine-grained reactivity when the condition is a signal.",
+})
 
 # Show
 

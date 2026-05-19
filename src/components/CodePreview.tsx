@@ -1,7 +1,7 @@
 import { CodePreviewData } from "$/types"
 import { isLinkActive } from "$/utils"
 import { Portal, Transition, ref, signal } from "kiru"
-import { Link, useFileRouter } from "kiru/router"
+import { Link, useRouter } from "kiru/router"
 
 function clearTimeoutRef(timeoutRef: Kiru.RefObject<number>) {
   if (timeoutRef.current !== -1) {
@@ -17,7 +17,7 @@ export function CodePreview({
   data: CodePreviewData
   text?: string
 }) {
-  const router = useFileRouter()
+  const router = useRouter()
   const linkRef = ref<any>(null)
   const linkBounds = ref<DOMRect | null>(null)
   const open = signal(false)
@@ -38,7 +38,7 @@ export function CodePreview({
 
   return () => (
     <>
-      {isLinkActive(data.link.href, router.state.pathname.value) ? (
+      {isLinkActive(data.link.href, router.pathname.value) ? (
         <button
           className="preview-button"
           ariaLabel="Show code preview"

@@ -1,0 +1,63 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({ title: "Navigation" })
+
+# Navigation
+
+<DocsSection id="link" title="Link">
+  Use `Link` from `kiru/router` for in-app navigation. On SSG prerender, links are real `<a href>` elements (no SPA click handler in static HTML), which helps crawlers and no-JS users.
+
+  ```tsx
+  import { Link } from "kiru/router"
+
+  <Link href="/about">About</Link>
+  ```
+
+  **i18n:** pass `locale="fr"` to target another locale prefix, or `locale={false}` when `href` already includes the prefix (e.g. `href="/fr/about"`).
+
+  ```tsx
+  <Link href="/about" locale="fr">À propos</Link>
+  ```
+</DocsSection>
+
+<DocsSection id="useRouter" title="useRouter">
+  ```tsx
+  import { useRouter } from "kiru/router"
+
+  const router = useRouter()
+  const pathname = router.pathname.value
+  const params = router.params.value
+
+  router.navigate("/about")
+  router.navigate("/search?q=kiru", { replace: true })
+  ```
+
+  Signals (`pathname`, `params`, etc.) integrate with Kiru’s reactive model — read them inside `() => …` in JSX when you need fine-grained updates.
+
+  Use `useSearchParams()` when the active route loader defines `validation.query` — see [Loaders — Query validation](/v2/docs/router/loaders#validation).
+</DocsSection>
+
+<DocsSection id="resolveHref" title="resolveHref and setLocale">
+  ```ts
+  router.resolveHref("/about", { locale: "fr" }) // → "/fr/about"
+  router.setLocale("fr") // keeps current logical path, updates prefix
+  ```
+
+  With `localePrefix: "as-needed"` (default), the default locale has no URL prefix (`/about`, not `/en/about`).
+</DocsSection>
+
+<DocsSection id="beforeEnter" title="beforeEnter guards">
+  Declared on the route config — runs before navigation commits:
+
+  ```ts
+  r.page("/users/[id]", {
+    component: () => import("./pages/user.tsx"),
+    beforeEnter: (to) => {
+      if (to.params.id === "0") return "/about"
+    },
+  })
+  ```
+
+  SSR performs redirects on full page load; CSR aborts the navigation when a redirect is returned.
+</DocsSection>

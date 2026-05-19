@@ -4,22 +4,22 @@ import { LandingSection } from "$/components/landing-page/LandingSection"
 import PackageJSONKiru from "$/components/landing-page/package-json.kiru.mdx"
 import PackageJSONReact from "$/components/landing-page/package-json.react.mdx"
 import { Arrow } from "$/components/landing-page/Arrow"
-import { Head, Link } from "kiru/router"
+import { defineHeadContent, Link } from "kiru/router"
+
+export const head = defineHeadContent({
+  title: "Kiru",
+  extraMeta: [
+    {
+      name: "keywords",
+      content: "Kiru, KiruJS, Kiru JS, Typescript, Javascript, library, framework, frontend",
+    },
+  ],
+  description: "Kiru is a batteries-included, easy-to-use rendering library with a tiny footprint",
+})
 
 export default function Page() {
   return (
     <>
-      <Head.Content>
-        <title>Kiru</title>
-        <meta
-          name="keywords"
-          content="Kiru, KiruJS, Kiru JS, Typescript, Javascript, library, framework, frontend"
-        />
-        <meta
-          name="description"
-          content="A batteries-included, easy-to-use rendering library with a tiny footprint"
-        />
-      </Head.Content>
       <div className="w-full h-full overflow-x-hidden">
         <section>
           <Container className="min-h-screen flex flex-col items-center justify-center h-full pt-60">

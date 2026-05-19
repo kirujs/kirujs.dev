@@ -10,7 +10,7 @@ type DrawerProps = {
   children: JSX.Children
 }
 
-export const Drawer: Kiru.FC<DrawerProps> = () => {
+export const Drawer: Kiru.Component<DrawerProps> = () => {
   const wrapperRef = ref<HTMLDivElement>(null)
   return ({ state, close, side, sender, children }) => {
     if (state == "exited") return null

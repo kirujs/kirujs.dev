@@ -1,0 +1,242 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({
+  title: "Loaders",
+  description: "loader, serverLoader, staticLoader, clientLoader, fallbacks, and invalidate.",
+})
+
+# Loaders
+
+Loaders fetch data for a route. Export `load` from the page module and consume props with `PageProps<typeof load>`.
+
+<DocsSection id="matrix" title="Loader matrix">
+  | Helper | SSR first paint | SSG build | CSR navigation |
+  |--------|-----------------|-----------|----------------|
+  | `loader` | Yes | Yes | Yes |
+  | `serverLoader` | Yes | No | Via loader RPC to server |
+  | `staticLoader` | No | Yes (build only) | Yes (per-page payload) |
+  | `clientLoader` | No | No | Yes |
+
+  After mutations, call `router.invalidate()` (or targeted invalidation) to refetch active loaders.
+</DocsSection>
+
+<DocsSection id="loader" title="loader (universal)">
+  Runs on the server during SSR/SSG and in the browser on CSR navigations:
+
+  ```ts
+  import { loader, type PageProps } from "kiru/router"
+
+  export const load = loader(async () => ({
+    source: "universal",
+    message: "from loader",
+  }))
+
+  export default function Page({ data, error }: PageProps<typeof load>) {
+    return (
+      <p data-testid="loader-data">
+        {error ? error.message : `${data.source}:${data.message}`}
+      </p>
+    )
+  }
+  ```
+
+  Use `loader` when the same fetch logic should run everywhere the route is rendered. For CSR-only fetches after hydration, use `clientLoader` instead.
+</DocsSection>
+
+<DocsSection id="serverLoader" title="serverLoader">
+  Server-only data on first paint; client navigations call back to your SSR handler (`/?loader=` POST). Requires `kiru/router/ssr` and `createRenderer` — not available on pure CSR or SSG-only apps.
+
+  ```ts
+  import { defineHeadContent, serverLoader, type PageProps } from "kiru/router"
+
+  export const load = serverLoader({
+    load: async (ctx) => ({
+      source: "server",
+      pathname: ctx.url.pathname,
+      locale: ctx.locale ?? "",
+    }),
+    fallback: () => <p>Loading…</p>,
+  })
+
+  export const head = defineHeadContent<typeof load>((_ctx, { data, error }) => ({
+    title: error
+      ? `Error: ${error.message}`
+      : `${data!.source}@${data!.pathname}`,
+  }))
+
+  export default function Page({ data, error }: PageProps<typeof load>) {
+    return (
+      <p>
+        {error
+          ? error.message
+          : `${data.source}@${data.pathname}#${data.locale}`}
+      </p>
+    )
+  }
+  ```
+
+  **Loader context:** `ctx` includes `params`, `url`, `query`, and `context`. When i18n is configured, `locale`, `locales`, and `defaultLocale` are also available on `ctx`.
+
+  **Fallback:** While `load` runs (including on client navigations), `fallback` renders in place of the page component.
+
+  **Streaming SSR:** Enable `stream: true` on `createRenderer`. Use a **static** `defineHeadContent` so the first HTML chunk can ship a title immediately; the page still shows `fallback` until `load` resolves:
+
+  ```ts
+  export const load = serverLoader({
+    load: async (ctx) => {
+      await new Promise((r) => setTimeout(r, 1000))
+      return { source: "server", pathname: ctx.url.pathname }
+    },
+    fallback: () => <p>Loading…</p>,
+  })
+
+  // Static title in the first chunk — not derived from loader data
+  export const head = defineHeadContent({
+    title: "Server loader",
+  })
+  ```
+</DocsSection>
+
+<DocsSection id="staticLoader" title="staticLoader">
+  `staticLoader` runs **only at SSG build time**. The loader function is not shipped to the browser; prerendered data is baked into **each page module** for client navigations.
+
+  **Build pipeline**
+
+  1. During `vite build`, Kiru prerenders every static path and runs each page’s `staticLoader`.
+  2. Captured data is grouped per page file and emitted as `export const __kiruStaticLoaderPayload = { "/path": data, … }` on that module’s client chunk.
+  3. Prerendered HTML includes `<script k-page-data>…</script>` for the first paint / SEO.
+  4. The client bundle replaces `export const load = staticLoader(…)` with a stub that reads `__kiruStaticLoaderPayload[pathname + search]`.
+
+  On SPA navigation, the stub resolves props from the **same page module** — no global manifest, no network request, no re-running the loader.
+
+  ```ts
+  import { staticLoader, type PageProps } from "kiru/router"
+
+  export const load = staticLoader(async () => ({
+    source: "static",
+    message: "prerendered loader data",
+  }))
+
+  export default function Page({ data, error }: PageProps<typeof load>) {
+    return (
+      <p data-testid="loader-data">
+        {error ? error.message : `${data!.source}:${data!.message}`}
+      </p>
+    )
+  }
+  ```
+
+  Lookup keys are `pathname + search` (e.g. `/about`, `/fr/about` when locale prefixes are enabled). Dynamic static routes get one entry per `generateStaticParams` row.
+
+  **When to use `loader()` instead**
+
+  - Data that must change after deploy without rebuilding.
+  - CSR-only apps (no `router.ssg` — `__kiruStaticLoaderPayload` is not emitted).
+</DocsSection>
+
+<DocsSection id="clientLoader" title="clientLoader">
+  Runs only in the browser — after hydration and on CSR navigations. The server does not run this loader (useful for browser-only APIs or client-only secrets).
+
+  ```ts
+  import { clientLoader, type PageProps } from "kiru/router"
+
+  export const load = clientLoader(async () => ({
+    source: "client",
+    message: "from clientLoader",
+  }))
+
+  export default function Page({ data, error }: PageProps<typeof load>) {
+    return (
+      <p data-testid="loader-data">
+        {error ? error.message : `${data.source}:${data.message}`}
+      </p>
+    )
+  }
+  ```
+
+  Import the app from `kiru/router/csr` (or hydrate SSG with `createRouterApp`). `clientLoader` does not run on a direct SSR first paint — the page renders without loader data until the client runs.
+</DocsSection>
+
+<DocsSection id="validation" title="Query validation">
+  Loaders can validate and normalize URL search params before `load` runs. Invalid input can redirect, return 404, or apply defaults.
+
+  ```ts
+  import { loader, type PageProps } from "kiru/router"
+
+  const querySchema = {
+    parse(input: unknown) {
+      if (typeof input !== "object" || input === null || !("q" in input)) {
+        throw new Error("Invalid input")
+      }
+      const q = (input as { q: unknown }).q
+      if (typeof q !== "string") throw new Error("Invalid input")
+      return { q }
+    },
+  }
+
+  export const load = loader({
+    validation: {
+      query: querySchema,
+      queryDefaults: { q: "default" },
+      redirectToCanonical: true,
+      onInvalid: (c) => c.notFound(),
+    },
+    load: async ({ query }) => query,
+  })
+
+  export default function Page({ data }: PageProps<typeof load>) {
+    return <p>q={data?.q ?? "missing"}</p>
+  }
+  ```
+
+  Pair with `useSearchParams()` in the page for typed, reactive search state in the UI.
+</DocsSection>
+
+<DocsSection id="invalidate" title="invalidate and revalidate">
+  **Client refetch:** After a mutation, call `router.invalidate()` to re-run the active route’s loader (works with `serverLoader`, `loader`, and cached client loaders):
+
+  ```ts
+  import { useRouter, serverLoader, type PageProps } from "kiru/router"
+
+  export const load = serverLoader({
+    load: async () => ({ generation: Date.now() }),
+    fallback: () => <p>Loading…</p>,
+  })
+
+  export default function Page({ data }: PageProps<typeof load>) {
+    const router = useRouter()
+
+    async function onSaved() {
+      await saveToApi()
+      router.invalidate()
+    }
+
+    return (
+      <section>
+        <p>Generation: {data?.generation}</p>
+        <button type="button" onclick={onSaved}>
+          Save and refresh
+        </button>
+      </section>
+    )
+  }
+  ```
+
+  **ISR / on-demand regeneration:** On static or hybrid pages, export `isr` with `revalidate` (seconds) and optional `tags` for `revalidatePath` / `revalidateTag`:
+
+  ```ts
+  import { defineISR, loader } from "kiru/router"
+
+  export const isr = defineISR({
+    revalidate: 60,
+    tags: ["products"],
+  })
+
+  export const load = loader(async () => ({
+    products: await fetchProducts(),
+  }))
+  ```
+
+  Hybrid storage and multi-instance ISR depend on your deploy adapter; see [Deploy](/v2/docs/router/deploy).
+</DocsSection>

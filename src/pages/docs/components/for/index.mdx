@@ -1,16 +1,15 @@
-import { Head } from "kiru/router"
+import { defineHeadContent } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
 
-<Head.Content>
-  <title>Kiru - For</title>
-  <meta name="keywords" content="for, component, jsx, reactive, signal, array, iteration" />
-  <meta
-    name="description"
-    content="Learn how to use the For component in Kiru to render reactive lists with optional fallbacks and fine-grained updates when the backing value is a signal."
-  />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - For",
+  extraMeta: [
+    { name: "keywords", content: "for, component, jsx, reactive, signal, array, iteration" },
+  ],
+  description: "Learn how to use the For component in Kiru to render reactive lists with optional fallbacks and fine-grained updates when the backing value is a signal.",
+})
 
 # For
 

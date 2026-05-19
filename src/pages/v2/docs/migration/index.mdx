@@ -1,0 +1,129 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({
+  title: "Migrate from Kiru 1.x",
+  description: "Upgrade from FileRouter to Kiru 2.x defineRouteTree and router.* configuration.",
+})
+
+# Migrate from Kiru 1.x
+
+<DocsSection id="overview" title="Overview">
+  This guide upgrades **Kiru 1.x** apps that use `FileRouter` and `useFileRouter` to **Kiru 2.x**, which uses an explicit
+  `src/routes.ts`, mode-specific client bootstrap, and `vite-plugin-kiru` `router.*` configuration.
+
+  Install the latest packages before you begin:
+
+  ```bash
+  npm install kiru@latest
+  npm install -D vite-plugin-kiru@latest
+  ```
+
+  SSR and hybrid apps also need `@kirujs/adapter-node`. Legacy 1.x docs remain at [`/docs`](/docs/introduction).
+</DocsSection>
+
+<DocsSection id="route-definition" title="Route definition">
+  **Before (v1):** file-based discovery with `import.meta.glob` and `FileRouter`.
+
+  ```tsx
+  mount(
+    <FileRouter config={{ pages: pageGlob, layouts: layoutGlob }} />,
+    document.getElementById("app")!
+  )
+  ```
+
+  Where `pageGlob` / `layoutGlob` are `import.meta.glob(...)` results from Vite.
+
+  **After (v2):** `src/routes.ts` with `defineRouteTree`:
+
+  ```ts
+  import { defineRouteTree } from "kiru/router"
+
+  export const routes = defineRouteTree((r) =>
+    r.scope({
+      layout: () => import("./pages/layout.tsx"),
+      children: [
+        r.page("/", () => import("./pages/index.tsx")),
+        r.page("/todos", () => import("./pages/todos/index.tsx")),
+      ],
+    })
+  )
+  ```
+</DocsSection>
+
+<DocsSection id="bootstrap" title="Bootstrap">
+  - **CSR:** `kiru/router/csr` → `createRouterApp({ routes, container })`
+  - **SSG:** `kiru/router/ssg` → `createRouterApp({ routes, container })`
+  - **SSR:** `kiru/router/ssr` → `createRouterApp({ routes, container })`
+
+  ```tsx
+  import { createRouterApp } from "kiru/router/csr"
+  import { routes } from "./routes"
+
+  createRouterApp({
+    routes,
+    container: document.getElementById("app")!,
+  })
+  ```
+</DocsSection>
+
+<DocsSection id="html-shell" title="HTML shell">
+  **Before:** `src/pages/document.tsx` with `Head.Outlet` / `Body.Outlet`.
+
+  **After:** root `index.html` with template tokens:
+
+  ```html
+  <!doctype html>
+  <html lang="{{kiru_locale}}">
+    <head>
+      <meta charset="UTF-8" />
+      {{kiru_head}}
+    </head>
+    <body>
+      <div id="app">{{kiru_body}}</div>
+      <script type="module" async src="/src/client.tsx"></script>
+    </body>
+  </html>
+  ```
+
+  Use `lang="{{kiru_locale}}"` when i18n is enabled. Replace `<Head.Content>` with `export const head = defineHeadContent(…)` — see [Head & SEO](/v2/docs/router/head-seo).
+</DocsSection>
+
+<DocsSection id="vite-plugin" title="Vite plugin">
+  ```ts
+  // v1
+  kiru({ ssg: true })
+
+  // v2
+  kiru({ router: { ssg: true } })
+
+  // SSR
+  kiru({ router: { serverEntry: "./src/server.ts" } })
+  ```
+</DocsSection>
+
+<DocsSection id="navigation" title="Navigation">
+  - `useFileRouter()` → `useRouter()` from `kiru/router`
+  - `definePageConfig` loaders → export `loader`, `serverLoader`, `clientLoader`, or `staticLoader` from route modules
+  - `router.invalidate()` refreshes loader data after navigations or actions
+</DocsSection>
+
+<DocsSection id="ssr-apps" title="SSR apps">
+  Replace Vike-only setups with `createKiruHandler` from `@kirujs/adapter-node` and a `src/server.ts` entry referenced by `router.serverEntry`.
+  Hydrate with `createRouterApp` from `kiru/router/ssr` — not `RouterView` alone on SSR HTML.
+</DocsSection>
+
+<DocsSection id="checklist" title="Checklist">
+  1. Add `src/routes.ts` and wire every page with `r.page`.
+  2. Add `src/main.tsx` (or `client.tsx` for SSR) with the correct bootstrap import.
+  3. Add root `index.html` with `{{kiru_locale}}` (i18n is enabled), `{{kiru_head}}` and `{{kiru_body}}` for SSG/SSR.
+  4. Update `vite.config.ts` to `router.ssg` / `router.serverEntry`.
+  5. Replace `useFileRouter` with `useRouter` in layouts and nav.
+  6. Run `vite build` and verify prerendered HTML (SSG) or `node dist/server` (SSR).
+</DocsSection>
+
+<DocsSection id="limitations" title="Limitations">
+  - `serverLoader` on **client navigations** requires an SSR server and loader RPC (`/?loader=`).
+  - `CustomRequestContext` is **SSR-only** via `createRenderer({ context })`.
+  - Cloudflare Workers: no time-based ISR; use immutable prerender + SSR for dynamic routes.
+</DocsSection>

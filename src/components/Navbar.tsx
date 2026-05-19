@@ -9,12 +9,13 @@ import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
 import { SiteLangToggle } from "./SiteLangToggle"
 import { match } from "lit-match"
 import { SearchIcon } from "./icons/SearchIcon"
-import { Link, useFileRouter } from "kiru/router"
+import { Link, useRouter } from "kiru/router"
 import { commandPaletteOpen, navDrawerOpen } from "../state"
 import { onBeforeMount, signal } from "kiru"
+import { DocsVersionSwitcher } from "./DocsVersionSwitcher"
 
 export function Navbar() {
-  const router = useFileRouter()
+  const router = useRouter()
 
   return (
     <nav className="flex items-center justify-between py-3 gap-2 w-full">
@@ -58,7 +59,7 @@ export function Navbar() {
                 className={`text-md flex items-center h-full ${
                   isLinkActive(
                     link.activePath ?? link.href,
-                    router.state.pathname.value
+                    router.pathname.value
                   )
                     ? "text-light"
                     : "text-muted hover:text-light"
@@ -72,6 +73,7 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-4 h-full">
+        <DocsVersionSwitcher />
         <SiteLangToggle />
         <SearchButton />
         <div className="flex items-center gap-3 h-full">

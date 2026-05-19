@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head } from "kiru/router"
+import { defineHeadContent } from "kiru/router"
 import { CodePreview } from "$/components/CodePreview"
 import { TransitionStateTypePreview } from "$/components/previews/TransitionState.type.preview"
 import { siteCodeLang } from "$/state"
@@ -7,11 +7,13 @@ import ExampleCode from "./example.md"
 import ExampleCodeTS from "./example.ts.md"
 import { CopyInnerText } from "$/components/CopyInnerText"
 
-<Head.Content>
-  <title>Kiru - Transition</title>
-  <meta name="keywords" content="transition" />
-  <meta name="description" content="Learn how to use Transition component in Kiru to animate DOM elements procedurally, useful for modals, drawers, dialogs, and other animated UI components." />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Transition",
+  extraMeta: [
+    { name: "keywords", content: "transition, component, animation, coroutine" },
+  ],
+  description: "Learn how to use Transition component in Kiru to animate DOM elements procedurally, useful for modals, drawers, dialogs, and other animated UI components.",
+})
 
 # Transition
 

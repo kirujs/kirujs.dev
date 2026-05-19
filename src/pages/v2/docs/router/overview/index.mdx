@@ -1,0 +1,40 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({ title: "Router overview" })
+
+# Router overview
+
+Kiru 2 routing is explicit: one `defineRouteTree` export, mode-specific client bootstrap, and `vite-plugin-kiru` `router.*` flags. Rendering (signals, JSX, components) is unchanged from 1.x.
+
+<DocsSection id="modes" title="Rendering modes">
+  | Mode | Vite flags | Client entry | Server / build |
+  |------|------------|--------------|----------------|
+  | **CSR** | default | `createRouterApp` from `kiru/router/csr` | — |
+  | **SSG** | `router.ssg: true` | `createRouterApp` from `kiru/router/ssg` | Prerender at `vite build` |
+  | **SSR** | `router.serverEntry` | `createRouterApp` from `kiru/router/ssr` | `createKiruHandler` per request |
+  | **Hybrid** | `ssg` + `serverEntry` | Same as SSR | Static HTML on disk + SSR fallback |
+
+  Each mode has a dedicated setup guide: [CSR](/v2/docs/router/csr), [SSG](/v2/docs/router/ssg), [SSR](/v2/docs/router/ssr), and [Hybrid](/v2/docs/router/hybrid).
+</DocsSection>
+
+<DocsSection id="choose" title="Choosing a mode">
+  - **CSR:** dashboards, authenticated tools, no SEO requirement — [CSR setup](/v2/docs/router/csr).
+  - **SSG:** docs, marketing, blogs — fully static HTML per URL — [SSG](/v2/docs/router/ssg).
+  - **SSR:** personalized HTML, `serverLoader`, streaming — [SSR](/v2/docs/router/ssr).
+  - **Hybrid:** mostly static with a few dynamic routes (e.g. prerendered `/docs` + SSR `/users/[id]`) — [Hybrid](/v2/docs/router/hybrid).
+
+  Shared concepts: [Route tree](/v2/docs/router/route-tree), [Loaders](/v2/docs/router/loaders), [Head & SEO](/v2/docs/router/head-seo), [Navigation](/v2/docs/router/navigation).
+
+  Upgrading from Kiru 1.x `FileRouter`? See [Migration](/v2/docs/migration).
+</DocsSection>
+
+<DocsSection id="html-shell" title="HTML shell (SSG / SSR)">
+  Replace `document.tsx` + `Head.Outlet` with root `index.html` tokens:
+
+  - `{{kiru_head}}` — merged route + page metadata
+  - `{{kiru_body}}` — rendered app inside your mount element
+  - `{{kiru_locale}}` — active locale for `<html lang="…">` when using i18n
+
+  See [Head & SEO — HTML shell tokens](/v2/docs/router/head-seo#html-shell).
+</DocsSection>

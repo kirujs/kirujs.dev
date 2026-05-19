@@ -1,13 +1,15 @@
 import { Derive, ElementProps, Fragment, onMount, signal, unwrap } from "kiru"
 import { className as cls } from "kiru/utils"
+import type { DocItem } from "$/docs-meta"
 import { DocItemStatus as DocItemStatusType, docMeta } from "$/docs-meta"
 import { isLinkActive } from "$/utils"
 import { DocItemStatus } from "./DocItemStatus"
-import { Link, LinkProps, useFileRouter } from "kiru/router"
+import { Link, LinkProps, useRouter } from "kiru/router"
 import { navDrawerOpen } from "../state"
 
-export function SidebarContent() {
-  const router = useFileRouter()
+export function SidebarContent(props: { meta?: DocItem[] } = {}) {
+  const meta = props.meta ?? docMeta
+  const router = useRouter()
   const hash = signal(
     "window" in globalThis ? window.location.hash.substring(1) : ""
   )
@@ -28,7 +30,7 @@ export function SidebarContent() {
 
   return () => (
     <>
-      {docMeta.map((data) => (
+      {meta.map((data) => (
         <div key={data.title} className="px-1 mb-3">
           <Header>
             {data.href ? (
@@ -44,7 +46,7 @@ export function SidebarContent() {
               {data.pages.map((page) => {
                 const isActive = isLinkActive(
                   page.href,
-                  router.state.pathname.value
+                  router.pathname.value
                 )
                 let hasNewSection = false
                 if (page.status?.type !== "new") {
@@ -67,7 +69,7 @@ export function SidebarContent() {
                         onclick={() =>
                           isLinkActive(
                             page.href,
-                            router.state.pathname.peek()
+                            router.pathname.value
                           ) && (navDrawerOpen.value = false)
                         }
                         isActive={isActive}

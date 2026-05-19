@@ -1,19 +1,15 @@
-import { Head } from "kiru/router"
+import { defineHeadContent } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { DocsSection } from "$/components/DocsSection"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 
-<Head.Content>
-  <title>Kiru - Utils</title>
-  <meta
-    name="keywords"
-    content="unwrap, className, nextIdle, flushSync, onHmr, utilities"
-  />
-  <meta
-    name="description"
-    content="Utility helpers for working with signals, scheduling work, and integrating with Kiru's runtime."
-  />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Utils",
+  extraMeta: [
+    { name: "keywords", content: "unwrap, className, nextIdle, flushSync, onHmr, utilities" },
+  ],
+  description: "Utility helpers for working with signals, scheduling work, and integrating with Kiru's runtime.",
+})
 
 # Utils
 

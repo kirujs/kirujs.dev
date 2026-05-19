@@ -1,0 +1,75 @@
+# Kiru 2.x — declarative router (LLM reference)
+
+For Kiru 1.x (FileRouter) see https://kirujs.dev/llms.txt
+
+## Overview
+
+Kiru 2.x uses an explicit route tree (`defineRouteTree` in `src/routes.ts`), mode-specific client bootstrap, and `vite-plugin-kiru` `router.*` options. Human docs: https://kirujs.dev/v2/docs/
+
+Install: `npm install kiru` and `npm install -D vite-plugin-kiru`. SSR/hybrid: `npm install @kirujs/adapter-node`.
+
+## Route tree
+
+```ts
+import { defineRouteTree } from "kiru/router"
+
+export const routes = defineRouteTree((r) =>
+  r.scope({
+    layout: () => import("./pages/layout.tsx"),
+    notFound: () => import("./pages/not-found.tsx"),
+    children: [
+      r.page("/", () => import("./pages/index.tsx")),
+      r.page("/users/[id]", () => import("./pages/user.tsx")),
+    ],
+  })
+)
+```
+
+## Bootstrap by mode
+
+| Mode | Import | API |
+|------|--------|-----|
+| CSR | `kiru/router/csr` | `createRouterApp({ routes, container })` |
+| SSG client | `kiru/ssr/router` | `bootstrapSsgClient({ routes, container })` |
+| SSR client | `kiru/router/ssr` | `createRouterApp({ routes, container })` |
+
+## Vite plugin
+
+```ts
+kiru({ router: { ssg: true } })
+kiru({ router: { serverEntry: "./src/server.ts" } })
+kiru({ router: { ssg: true, serverEntry: "./src/server.ts" } }) // hybrid
+```
+
+SSG requires root `index.html` with `{{kiru_head}}` and `{{kiru_body}}`.
+
+## SSR server
+
+```ts
+import { createKiruHandler } from "@kirujs/adapter-node"
+import { routes } from "./routes"
+
+const kiru = createKiruHandler({ importMetaUrl: import.meta.url, routes, dev: true })
+export default { fetch: kiru.fetch }
+```
+
+## Navigation
+
+- `Link`, `useRouter()` from `kiru/router`
+- `useSearchParams()` when loader defines `validation.query`
+- `router.invalidate()` refetches loaders
+
+## Upgrading from Kiru 1.x
+
+- `FileRouter` + `import.meta.glob` → `defineRouteTree`
+- `useFileRouter` → `useRouter`
+- `kiru({ ssg: true })` → `kiru({ router: { ssg: true } })`
+- `document.tsx` → `index.html` template tokens
+
+Guide: https://kirujs.dev/v2/docs/migration
+
+## Limitations
+
+- `serverLoader` on CSR navigations needs SSR loader endpoint
+- `CustomRequestContext` is SSR-only
+- Cloudflare Workers: no time-based ISR

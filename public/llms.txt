@@ -1,4 +1,5 @@
-# Kiru Framework - AI/LLM Documentation
+# Kiru 1.x — AI/LLM Documentation (FileRouter)
+For Kiru 2.x (current declarative router) see https://kirujs.dev/v2/llms.txt
 
 ## Overview
 

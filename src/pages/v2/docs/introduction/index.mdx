@@ -1,0 +1,29 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({
+  title: "Kiru — Introduction",
+  description: "Kiru 2.x documentation: declarative router, CSR, SSG, SSR, and hybrid apps.",
+})
+
+# Introduction
+
+<DocsSection id="about-kiru-v2" title="About Kiru">
+  **Kiru 2** is the current major release. Routing is built around an explicit **route tree** (`defineRouteTree`),
+  first-class **CSR / SSG / SSR / hybrid** modes, and Vite integration through `vite-plugin-kiru` `router.*` options.
+
+  The rendering model you already know—signals, components, JSX—is unchanged. What changed is how routes, HTML shells,
+  and production deploys are configured.
+
+  Start with [Getting started](/v2/docs/getting-started) or, if you are upgrading an older app, the
+  [migration guide](/v2/docs/migration).
+</DocsSection>
+
+<DocsSection id="documentation-versions" title="Documentation versions">
+  This site section documents **Kiru 2.x** (`defineRouteTree`, `createRouterApp`, `kiru({ router: … })`).
+
+  **Kiru 1.x** documentation (FileRouter, `useFileRouter`, `kiru({ ssg: true })`) remains available for legacy apps at
+  [`/docs`](/docs/introduction). Use the version switcher in the header to move between them.
+
+  LLM-oriented reference for the current router: [/v2/llms.txt](/v2/llms.txt).
+</DocsSection>

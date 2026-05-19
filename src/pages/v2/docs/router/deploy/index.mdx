@@ -1,0 +1,70 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({ title: "Deploy" })
+
+# Deploy
+
+<DocsSection id="adapters" title="Runtime adapters">
+  All adapters expose a Web `fetch` handler from `createKiruHandler` (or platform-specific wrappers):
+
+  | Package | Use case |
+  |---------|----------|
+  | `@kirujs/adapter-node` | Node HTTP, hybrid ISR + `prerenderedHtmlDir` |
+  | `@kirujs/adapter-bun` | Same `fetch` handler on Bun |
+  | `@kirujs/adapter-cloudflare` | Workers; immutable prerender assets, no time-based ISR |
+
+  ```ts
+  import { createKiruHandler, toNodeListener } from "@kirujs/adapter-node"
+  import { createServer } from "node:http"
+
+  const kiru = createKiruHandler({ routes, importMetaUrl: import.meta.url })
+  createServer(toNodeListener(kiru)).listen(3000)
+  ```
+
+  **Framework integration:** use `createKiruResponder` and forward unmatched requests to the Kiru handler:
+
+  ```ts
+  import { createKiruResponder } from "@kirujs/adapter-node"
+  import { Hono } from "hono"
+
+  const kiru = createKiruResponder({
+    importMetaUrl: import.meta.url,
+    dev: import.meta.env.DEV,
+    routes,
+  })
+
+  const app = new Hono()
+  app.get("/api/health", (c) => c.json({ ok: true }))
+  app.all("*", async (c) => {
+    const out = await kiru.handle(c.req.raw)
+    if (out === null) return c.notFound()
+    return out
+  })
+  ```
+
+  The same pattern works with Express, Fastify, and Elysia adapters (`@kirujs/adapter-node`, `@kirujs/adapter-bun`).
+</DocsSection>
+
+<DocsSection id="ssg" title="Static SSG deploy">
+  Deploy the Vite `dist` folder: per-route `.html` files, assets, `sitemap.xml`, and `robots.txt`. Configure your CDN to map paths to `path.html` or trailing-slash rules as needed.
+
+  Do not point all URLs at a single `index.html` unless you intentionally want a SPA fallback — SSG output is already per-route HTML with `{{kiru_head}}` / `{{kiru_body}}` resolved.
+</DocsSection>
+
+<DocsSection id="hybrid" title="Hybrid SSR deploy">
+  Ship both:
+
+  - **Client assets** — JS/CSS from `dist/client`
+  - **Server bundle** — `dist/server` entry importing `createKiruHandler`
+  - **Prerendered HTML** — static routes under `dist/client/*.html`
+
+  The handler must receive `prerenderedHtmlDir` in production so static routes are served from disk. Dynamic routes always hit SSR.
+
+  `vite preview` serves static files only — use the Node (or other) server for hybrid production testing.
+</DocsSection>
+
+<DocsSection id="env" title="Environment">
+  - Set `NODE_ENV=production` for production behavior (disk prerender reads, etc.).
+  - In Vite, set `ssr: { external: ["kiru"] }` so the server bundle shares one `kiru` instance with your `actions` config.
+</DocsSection>

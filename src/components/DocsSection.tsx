@@ -7,7 +7,7 @@ type DocsSectionProps = {
   title: string
 }
 
-export const DocsSection: Kiru.FC<DocsSectionProps> = ({
+export const DocsSection: Kiru.Component<DocsSectionProps> = ({
   id,
 }: DocsSectionProps) => {
   const sectionRef = ref<HTMLDivElement>(null)

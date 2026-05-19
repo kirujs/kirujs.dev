@@ -7,7 +7,7 @@ type CopyInnerTextProps = {
   importsOverride?: string
 }
 
-export const CopyInnerText: Kiru.FC<CopyInnerTextProps> = () => {
+export const CopyInnerText: Kiru.Component<CopyInnerTextProps> = () => {
   const copied = signal(false)
   const elRef = ref<HTMLDivElement>(null)
   const copiedTimeout = ref(-1)

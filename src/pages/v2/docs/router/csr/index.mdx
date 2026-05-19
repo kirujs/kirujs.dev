@@ -1,0 +1,95 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({
+  title: "CSR setup",
+  description: "Client-only Kiru apps with createRouterApp and declarative head on navigation.",
+})
+
+# Client-side rendering (CSR)
+
+CSR ships a single client bundle. The server serves `index.html` once; all routing and rendering happen in the browser.
+
+<DocsSection id="vite" title="Vite plugin">
+  ```ts
+  // vite.config.ts
+  import { defineConfig } from "vite"
+  import kiru from "vite-plugin-kiru"
+
+  export default defineConfig({
+    plugins: [kiru()],
+  })
+  ```
+
+  Omit `router.ssg` and `router.serverEntry` for a client-only app.
+</DocsSection>
+
+<DocsSection id="html-shell" title="index.html">
+  A plain mount point is enough:
+
+  ```html
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+      <div id="app"></div>
+      <script type="module" src="/src/main.tsx"></script>
+    </body>
+  </html>
+  ```
+
+  No `{{kiru_head}}` / `{{kiru_body}}` tokens. Document title and meta still come from route `head` and page `defineHeadContent`; the router updates `document.head` on each navigation.
+</DocsSection>
+
+<DocsSection id="bootstrap" title="Bootstrap">
+  ```tsx
+  // src/main.tsx
+  import { createRouterApp } from "kiru/router/csr"
+  import i18n from "./i18n.js"
+  import { routes } from "./routes"
+
+  createRouterApp({
+    routes,
+    i18n,
+    container: document.getElementById("app")!,
+  })
+  ```
+
+  Import from `kiru/router/csr` — not `/ssr` or `kiru/ssr/router`.
+</DocsSection>
+
+<DocsSection id="routes" title="routes.ts">
+  Same `defineRouteTree` API as SSR/SSG — nested layouts, dynamic segments, and guards:
+
+  ```ts
+  import { defineRouteTree } from "kiru/router"
+
+  export const routes = defineRouteTree((r) =>
+    r.scope({
+      layout: () => import("./pages/layout.tsx"),
+      notFound: () => import("./pages/not-found.tsx"),
+      children: [
+        r.page("/", () => import("./pages/index.tsx")),
+        r.page("/about", () => import("./pages/about.tsx")),
+        r.page("/users/[id]", () => import("./pages/users/[id].tsx")),
+        r.page("/guarded", {
+          component: () => import("./pages/guarded.tsx"),
+          beforeEnter: () => "/about",
+        }),
+        r.page("/loaders/client", () => import("./pages/loaders/client.tsx")),
+        r.page("/loaders/universal", () => import("./pages/loaders/universal.tsx")),
+      ],
+    })
+  )
+  ```
+</DocsSection>
+
+<DocsSection id="loaders" title="Loaders on CSR">
+  - **`loader`:** runs on every navigation (and on SSR if you add a server later).
+  - **`clientLoader`:** runs only in the browser after hydration.
+
+  See [Loaders](/v2/docs/router/loaders) for full examples of each loader type.
+</DocsSection>

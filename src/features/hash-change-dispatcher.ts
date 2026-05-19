@@ -1,10 +1,10 @@
 import { signal } from "kiru"
-import type { FileRouterContextType } from "kiru/router"
+import type { Router } from "kiru/router"
 import { CustomEvents } from "$/custom-events"
 import { navEvent } from "$/state"
 
 let timeout: number | undefined
-function dispatchHashChange(newHash: string, router: FileRouterContextType) {
+function dispatchHashChange(newHash: string, router: Router) {
   clearTimeout(timeout)
   timeout = window.setTimeout(() => {
     const hash = newHash ? `#${newHash}` : ""
@@ -47,7 +47,7 @@ function findMostVisibleSection(sectionIds: string[]) {
 
 export function createHashChangeDispatcher(
   getSectionIds: () => string[],
-  router: FileRouterContextType
+  router: Router
 ) {
   const currentSection = signal("")
 

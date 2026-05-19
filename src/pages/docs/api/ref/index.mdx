@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head, Link } from "kiru/router"
+import { defineHeadContent, Link } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { DocsSection } from "$/components/DocsSection"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
@@ -11,17 +11,13 @@ import ExampleRefObjectTs from "./example.refObject.ts.md"
 import ExampleRefCallback from "./example.refCallback.md"
 import ExampleRefCallbackTs from "./example.refCallback.ts.md"
 
-<Head.Content>
-  <title>Kiru - Ref</title>
-  <meta
-    name="keywords"
-    content="ref, RefObject, RefCallback, signal ref, DOM ref"
-  />
-  <meta
-    name="description"
-    content="Learn how to use ref values in Kiru with RefObject, RefCallback, or a signal for reactive DOM references."
-  />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Ref",
+  extraMeta: [
+    { name: "keywords", content: "ref, RefObject, RefCallback, signal ref, DOM ref" },
+  ],
+  description: "Learn how to use ref values in Kiru with RefObject, RefCallback, or a signal for reactive DOM references.",
+})
 
 # Ref
 

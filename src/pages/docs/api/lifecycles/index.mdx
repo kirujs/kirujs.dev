@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head, Link } from "kiru/router"
+import { defineHeadContent, Link } from "kiru/router"
 import { siteCodeLang } from "$/state"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { DocsSection } from "$/components/DocsSection"
@@ -17,17 +17,13 @@ import ExampleOnBeforeMount from "./example.onBeforeMount.md"
 import ExampleOnCleanup from "./example.onCleanup.md"
 import ExampleOnCleanupTS from "./example.onCleanup.ts.md"
 
-<Head.Content>
-  <title>Kiru - Lifecycles</title>
-  <meta
-    name="keywords"
-    content="lifecycle, setup, onMount, onBeforeMount, onCleanup, onHmr"
-  />
-  <meta
-    name="description"
-    content="Learn how to use lifecycle primitives in Kiru — setup, onMount, onBeforeMount, onCleanup, and onHmr — to derive props, run side effects, and clean up resources in your components."
-  />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Lifecycles",
+  extraMeta: [
+    { name: "keywords", content: "lifecycle, setup, onMount, onBeforeMount, onCleanup, onHmr" },
+  ],
+  description: "Learn how to use lifecycle primitives in Kiru — setup, onMount, onBeforeMount, onCleanup, and onHmr — to derive props, run side effects, and clean up resources in your components.",
+})
 
 # Lifecycles
 

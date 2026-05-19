@@ -1,4 +1,4 @@
-import { Body, Head } from "kiru/router"
+// import { Body, Head } from "kiru/router"
 import "$/styles/global.css"
 
 export default function Document() {
@@ -44,9 +44,7 @@ export default function Document() {
         {/** https://www.opengraph.xyz */}
 
         <meta name="darkreader-lock" />
-        <Head.Outlet />
       </head>
-      <Body.Outlet />
     </html>
   )
 }

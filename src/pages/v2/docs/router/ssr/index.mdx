@@ -1,0 +1,166 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({
+  title: "SSR setup",
+  description:
+    "Server entry, createKiruHandler, HTML shell tokens, streaming, and hybrid static routes.",
+})
+
+# Server-side rendering (SSR)
+
+SSR renders HTML per request (or per prerendered static path in hybrid mode). The client hydrates the same route tree.
+
+<DocsSection id="vite" title="Vite plugin">
+  Point `router.serverEntry` at your server module. Hybrid apps also set `router.ssg: true` to prerender `static: true` routes at build time.
+
+  ```ts
+  // vite.config.ts
+  import { defineConfig } from "vite"
+  import kiru from "vite-plugin-kiru"
+
+  export default defineConfig({
+    plugins: [
+      kiru({
+        router: {
+          serverEntry: "./src/server.ts",
+          ssg: true, // optional: hybrid static paths
+        },
+      }),
+    ],
+  })
+  ```
+</DocsSection>
+
+<DocsSection id="html-shell" title="index.html">
+  Use all three shell tokens when i18n is enabled:
+
+  ```html
+  <!doctype html>
+  <html lang="{{kiru_locale}}">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      {{kiru_head}}
+    </head>
+    <body>
+      <div id="app">{{kiru_body}}</div>
+      <script type="module" async src="/src/client.tsx"></script>
+    </body>
+  </html>
+  ```
+
+  `async` on the client script is important for **streaming SSR** — without it, module scripts defer until the response closes. See [Head & SEO](/v2/docs/router/head-seo#html-shell).
+</DocsSection>
+
+<DocsSection id="server" title="Server entry">
+  ```ts
+  // src/server.ts
+  import { createKiruHandler } from "@kirujs/adapter-node"
+  import i18n from "./i18n.js"
+  import { routes } from "./routes"
+
+  const kiru = createKiruHandler({
+    importMetaUrl: import.meta.url,
+    dev: import.meta.env.DEV,
+    stream: true,
+    routes,
+    i18n,
+    getRequestContext: () => ({ user: { name: "Guest" } }),
+  })
+
+  export default { fetch: kiru.fetch }
+  ```
+
+  `createKiruHandler` builds a `fetch` handler used by Node (`toNodeListener`), Bun, Hono, etc. Options mirror `createRenderer`: `stream`, `i18n`, `actions`, `image`, and `getRequestContext` for `useRequestContext()` in pages.
+
+  In production, pass `prerenderedHtmlDir` (from your adapter’s static client directory) so **hybrid** apps serve build-time HTML for `static: true` routes before running SSR for dynamic paths.
+</DocsSection>
+
+<DocsSection id="client" title="Client entry">
+  ```tsx
+  // src/client.tsx
+  import { createRouterApp } from "kiru/router/ssr"
+  import i18n from "./i18n.js"
+  import { routes } from "./routes"
+
+  createRouterApp({
+    routes,
+    i18n,
+    container: document.getElementById("app")!,
+  })
+  ```
+
+  Use `kiru/router/ssr` (not `/csr`) so hydration matches server output and loader RPC works for `serverLoader` on client navigations.
+</DocsSection>
+
+<DocsSection id="routes" title="Route tree highlights">
+  Scope-level options apply to every child route:
+
+  ```ts
+  export const routes = defineRouteTree((r) =>
+    r.scope({
+      head: { description: "My SSR app." },
+      layout: () => import("./pages/layout.tsx"),
+      notFound: () => import("./pages/not-found.tsx"),
+      error: () => import("./pages/error-page.tsx"),
+      children: [
+        r.page("/", {
+          component: () => import("./pages/index.tsx"),
+          head: {
+            title: "Home",
+            jsonLd: {
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              name: "Home",
+            },
+          },
+        }),
+        r.page("/docs", {
+          static: true,
+          component: () => import("./pages/docs.tsx"),
+          head: { title: "Docs (static)" },
+        }),
+        r.page("/users/[id]", {
+          component: () => import("./pages/user.tsx"),
+          head: { title: "User {id}" },
+        }),
+      ],
+    })
+  )
+  ```
+
+  - **`static: true`:** prerendered at build when `router.ssg` is set; production serves `docs.html` from disk before SSR.
+  - **`beforeEnter`:** redirect before the page loads (SSR and CSR).
+  - **`error` / `notFound`:** scoped error and 404 modules.
+
+  Per-page SEO can also use `export const head = defineHeadContent(…)` — see [Head & SEO](/v2/docs/router/head-seo).
+</DocsSection>
+
+<DocsSection id="site-config" title="site.config.ts">
+  Hybrid SSR apps use `defineSiteConfig` for `sitemap.xml` and `robots.txt`:
+
+  ```ts
+  import { defineSiteConfig } from "kiru/router"
+
+  export const site = defineSiteConfig({
+    url: "https://example.com",
+    locales: { default: "en", prefixes: ["en", "fr"] },
+    sitemap: {
+      include: ["/users/[id]"],
+      exclude: ["/admin", "/debug"],
+    },
+    robots: true,
+  })
+  ```
+
+  The build includes prerendered static paths, param-less SSR routes, and dynamic paths from `sitemap.include`. Pages listed in `include` should export `generateSitemapParams` (same shape as `generateStaticParams`):
+
+  ```ts
+  import type { GenerateSitemapParamsContext } from "kiru/router"
+
+  export function generateSitemapParams(_ctx: GenerateSitemapParamsContext) {
+    return [{ id: "1" }, { id: "2" }]
+  }
+  ```
+</DocsSection>

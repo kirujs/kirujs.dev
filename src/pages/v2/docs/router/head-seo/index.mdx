@@ -1,0 +1,226 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({
+  title: "Head & SEO",
+  description:
+    "HTML shell tokens, route head, page exports, i18n locale, JSON-LD, and sitemap generation.",
+})
+
+# Head & SEO
+
+Kiru 2 manages document metadata declaratively. Route `head` merges down the tree; page modules can export `defineHeadContent` to override or extend it. SSR and SSG inject serialized head HTML into your `index.html` shell; CSR updates `document.head` on navigation without duplicating tags.
+
+<DocsSection id="html-shell" title="HTML shell tokens">
+  SSG, SSR, and hybrid apps use a root `index.html` with placeholders the renderer fills at build time or per request:
+
+  ```html
+  <!doctype html>
+  <html lang="{{kiru_locale}}">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      {{kiru_head}}
+    </head>
+    <body>
+      <div id="app">{{kiru_body}}</div>
+      <script type="module" async src="/src/client.tsx"></script>
+    </body>
+  </html>
+  ```
+
+  | Token | Purpose |
+  |-------|---------|
+  | `{{kiru_head}}` | Serialized `<title>`, meta, Open Graph, Twitter, `<link>`, and `application/ld+json` from merged route + page head |
+  | `{{kiru_body}}` | Rendered app markup (inside your mount element) |
+  | `{{kiru_locale}}` | Active locale string when `createRenderer({ i18n })` or client bootstrap passes `i18n` — use on `<html lang="…">` |
+
+  Both `{{kiru_head}}` and `{{kiru_body}}` are **required** in the template. `{{kiru_locale}}` is optional but recommended whenever i18n is enabled.
+
+  **i18n and `lang`:** With `createI18nConfig`, set `lang="{{kiru_locale}}"` instead of a fixed `lang="en"`. In development, Kiru warns if i18n is configured but the template omits `{{kiru_locale}}` or still uses a static `lang` attribute. Without `i18n`, the locale token is left unchanged and has no effect (you will get a dev warning if the token is present but unused).
+
+  Pure **CSR** apps use a normal empty shell (`<div id="app"></div>`) — no tokens required. Head still updates on the client via the same merge rules.
+
+  **Streaming SSR:** Add `async` on the client entry `<script type="module">`. Without `async`, module scripts defer until the response closes; with `async`, hydration can start while the stream is still open.
+</DocsSection>
+
+<DocsSection id="route-head" title="Head on the route tree">
+  Attach `head` to `r.scope` and `r.page`. Child routes and scopes **override** parent fields; `jsonLd` and `extraMeta` **merge** (arrays concatenate).
+
+  ```ts
+  import { defineRouteTree } from "kiru/router"
+
+  export const routes = defineRouteTree((r) =>
+    r.scope({
+      head: { description: "My app." },
+      layout: () => import("./pages/layout.tsx"),
+      children: [
+        r.page("/", {
+          component: () => import("./pages/index.tsx"),
+          head: {
+            title: "Home",
+            jsonLd: {
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              name: "Home",
+            },
+          },
+        }),
+        r.page("/users/[id]", {
+          component: () => import("./pages/user.tsx"),
+          head: {
+            title: "User {id}",
+            description: "Profile for user {id}.",
+          },
+        }),
+      ],
+    })
+  )
+  ```
+
+  Dynamic segments in `title`, `description`, `canonical`, `robots`, and Open Graph / Twitter fields support `{param}` placeholders — resolved from the active route params (e.g. `User 99` for `/users/99`).
+
+  **Title templates:** Set `titleTemplate: "%s | MyApp"` on a scope; the leaf `title` replaces `%s` in the final document title.
+</DocsSection>
+
+<DocsSection id="page-exports" title="Page module exports">
+  Any page module — `.tsx`, `.mdx`, etc. — can export head. The router reads `export const head` and merges it **on top of** route `head` (page wins on scalar fields).
+
+  **Static head** (known at build / first shell chunk):
+
+  ```ts
+  import { defineHeadContent } from "kiru/router"
+
+  export const head = defineHeadContent({
+    title: "About",
+    description: "About this site.",
+  })
+
+  export default function AboutPage() {
+    return <p>…</p>
+  }
+  ```
+
+  **MDX** uses the same export (this docs site sets titles per page this way):
+
+  ```mdx
+  import { defineHeadContent } from "kiru/router"
+
+  export const head = defineHeadContent({ title: "Navigation" })
+
+  # Navigation
+  ```
+
+  **Dynamic head** (after a loader resolves — SSR streaming and CSR navigation):
+
+  ```ts
+  import { defineHeadContent, serverLoader, type PageProps } from "kiru/router"
+
+  export const load = serverLoader({
+    load: async (ctx) => ({
+      source: "server",
+      pathname: ctx.url.pathname,
+    }),
+    fallback: () => <p>Loading…</p>,
+  })
+
+  export const head = defineHeadContent<typeof load>((_ctx, { data, error }) => ({
+    title: error ? `Error: ${error.message}` : `${data!.source}@${data!.pathname}`,
+  }))
+
+  export default function Page({ data, error }: PageProps<typeof load>) {
+    return <p>{error ? error.message : data.pathname}</p>
+  }
+  ```
+
+  For streaming SSR, use a **static** `defineHeadContent` for the first chunk and a separate loader-driven title when data arrives:
+
+  ```ts
+  export const load = serverLoader({
+    load: async (ctx) => {
+      await new Promise((r) => setTimeout(r, 1000))
+      return { pathname: ctx.url.pathname }
+    },
+    fallback: () => <p>Loading…</p>,
+  })
+
+  // Ships immediately in the first streamed chunk
+  export const head = defineHeadContent({ title: "My page" })
+
+  // Or derive from loader data once resolved:
+  // export const head = defineHeadContent<typeof load>((_ctx, { data }) => ({
+  //   title: data!.pathname,
+  // }))
+  ```
+
+  **Override route title:** A page export replaces the route definition — e.g. route `head: { title: "From route" }` + page `defineHeadContent({ title: "From page" })` → `From page` after navigation and in SSR output.
+</DocsSection>
+
+<DocsSection id="meta-fields" title="RouteHeadMeta fields">
+  | Field | Behavior |
+  |-------|----------|
+  | `title` | `<title>`; supports `{param}` and `titleTemplate` |
+  | `titleTemplate` | e.g. `"%s | MyApp"` applied on scopes |
+  | `description` | `<meta name="description">` |
+  | `robots` | `<meta name="robots">` |
+  | `canonical` | `<link rel="canonical">`; root-relative URLs absolutized when origin is known |
+  | `openGraph` | `og:title`, `og:description`, `og:image`, `og:url` (defaults to current URL) |
+  | `twitter` | Twitter card meta |
+  | `extraMeta` | Arbitrary `<meta>` rows via attribute map |
+  | `links` | `<link>` rows (preload fonts, icons, etc.) |
+  | `jsonLd` | One or more `application/ld+json` scripts; angle brackets escaped in payloads |
+
+  **Font preload** via `links`:
+
+  ```ts
+  head: defineHeadContent({
+    links: [
+      {
+        rel: "preload",
+        as: "font",
+        href: "/fonts/inter.woff2",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
+    ],
+  })
+  ```
+
+  SSR output wraps managed head markup in `<!-- kiru:head -->` … `<!-- /kiru:head -->` comments so the client can reconcile tags on hydration and subsequent navigations without duplicates.
+</DocsSection>
+
+<DocsSection id="csr-sync" title="CSR and client navigations">
+  On CSR and after SSR hydration, `syncDocumentHeadForPage` loads the active page module, resolves `defineHeadContent`, merges with route `head`, and updates existing `<title>` / meta nodes in place.
+
+  Implications:
+
+  - First paint on SSR/SSG already includes correct tags in HTML source (good for crawlers).
+  - Client-side route changes update head without a full reload.
+  - Removing a field from head drops the corresponding DOM node on the next sync.
+
+  Pure CSR apps never emit `{{kiru_head}}` in a served file; head is client-managed only.
+</DocsSection>
+
+<DocsSection id="site-artifacts" title="Sitemap and robots">
+  Add `src/site.config.ts` with `defineSiteConfig`. The Vite plugin writes `sitemap.xml` and `robots.txt` at build time.
+
+  ```ts
+  import { defineSiteConfig } from "kiru/router"
+
+  export const site = defineSiteConfig({
+    url: "https://example.com",
+    locales: { default: "en", prefixes: ["en", "fr"] },
+    sitemap: {
+      include: ["/users/[id]"],
+      exclude: ["/admin", "/debug"],
+    },
+    robots: true,
+  })
+  ```
+
+  - **SSG:** all prerendered static paths are included automatically.
+  - **SSR / hybrid:** param-less routes are included when `router.serverEntry` is set; dynamic paths listed in `sitemap.include` need `export function generateSitemapParams()` on the page module (same shape as `generateStaticParams`).
+  - **i18n:** public paths are expanded per locale prefix (e.g. `/about` and `/fr/about`).
+
+  **Hybrid example:** prerender `/docs` with `static: true` on the route, and list `/users/[id]` in `sitemap.include` with `generateSitemapParams` on the user page module (see [SSR — site.config](/v2/docs/router/ssr#site-config)).
+</DocsSection>

@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head } from "kiru/router"
+import { defineHeadContent } from "kiru/router"
 import { ExternalLink } from "$/components/atoms/ExternalLink"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 import { DocsSection } from "$/components/DocsSection"
@@ -20,11 +20,13 @@ import { siteCodeLang } from "$/state"
 import { DISCORD_LINK } from "$/constants"
 import { match } from "lit-match"
 
-<Head.Content>
-  <title>Kiru - Getting Started</title>
-  <meta name="keywords" content="getting started, installation, setup, npm, pnpm, yarn, bun, vite, Kiru" />
-  <meta name="description" content="Get started with Kiru by installing it in a new project or adding it to an existing project. Learn how to set up Kiru with your preferred package manager." />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Getting Started",
+  extraMeta: [
+    { name: "keywords", content: "getting started, installation, setup, npm, pnpm, yarn, bun, vite, Kiru" },
+  ],
+  description: "Get started with Kiru by installing it in a new project or adding it to an existing project. Learn how to set up Kiru with your preferred package manager.",
+})
 
 # Getting started
 

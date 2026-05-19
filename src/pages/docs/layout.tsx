@@ -1,16 +1,16 @@
 import { computed, effect, nextIdle, onMount, ref, signal } from "kiru"
-import { useFileRouter } from "kiru/router"
+import { useRouter } from "kiru/router"
 import { className as cls } from "kiru/utils"
 import { Container } from "$/components/atoms/Container"
 import { SidebarContent } from "$/components/SidebarContent"
 import { createHashChangeDispatcher } from "$/features/hash-change-dispatcher"
 import { DocItem, docMeta } from "$/docs-meta"
 
-const DocsLayout: Kiru.FC<{ children: JSX.Children }> = () => {
-  const router = useFileRouter()
+const DocsLayout: Kiru.Component<{ children: JSX.Children }> = () => {
+  const router = useRouter()
 
   const sectionIds = computed(() => {
-    const pathname = router.state.pathname.value
+    const pathname = router.pathname.value
 
     let pageData: DocItem | null = null
     for (const docItem of docMeta) {
@@ -55,7 +55,7 @@ const DocsLayout: Kiru.FC<{ children: JSX.Children }> = () => {
 export default DocsLayout
 
 function ActiveLinkTrackerSlidingThing() {
-  const router = useFileRouter()
+  const router = useRouter()
   const thingRef = ref<HTMLDivElement>(null)
   const currentEl = ref<Element | null>(null)
   const mounted = signal(false)
@@ -79,9 +79,7 @@ function ActiveLinkTrackerSlidingThing() {
     }
     setPos()
 
-    effect([router.state.pathname, router.state.hash], () =>
-      nextIdle(() => setPos())
-    )
+    effect([router.pathname, router.hash], () => nextIdle(setPos))
 
     window.addEventListener("resize", setPos)
     window.addEventListener("hashchange", setPos)

@@ -1,0 +1,116 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+
+export const head = defineHeadContent({
+  title: "Route tree",
+  description: "defineRouteTree, scopes, layouts, static flags, guards, and page module exports.",
+})
+
+# Route tree
+
+All Kiru 2 apps export a single route tree from `src/routes.ts`. The tree drives matching, layouts, loaders, head merging, prerender path discovery, and sitemap generation.
+
+<DocsSection id="defineRouteTree" title="defineRouteTree">
+  ```ts
+  import { defineRouteTree } from "kiru/router"
+
+  export const routes = defineRouteTree((r) =>
+    r.scope({
+      layout: () => import("./pages/layout.tsx"),
+      notFound: () => import("./pages/not-found.tsx"),
+      error: () => import("./pages/error-page.tsx"),
+      head: { titleTemplate: "%s | MyApp" },
+      children: [
+        r.page("/", () => import("./pages/index.tsx")),
+        r.page("/about", () => import("./pages/about.tsx")),
+        r.page("/users/[id]", {
+          component: () => import("./pages/user.tsx"),
+          head: { title: "User {id}" },
+          beforeEnter: (to) => {
+            if (to.params.id === "0") return "/about"
+          },
+        }),
+      ],
+    })
+  )
+  ```
+
+  `r.page(path, component)` and `r.page(path, config)` are equivalent when the second argument is a lazy `import()` or a config object.
+</DocsSection>
+
+<DocsSection id="scopes" title="Scopes and inheritance">
+  `r.scope({ …, children })` groups routes under shared options:
+
+  | Scope field | Effect on children |
+  |-------------|-------------------|
+  | `layout` | Wraps matched pages; receives `{ children }` |
+  | `head` | Merged into every descendant route head |
+  | `static: true` | Entire subtree is SSG-prerenderable |
+  | `error` | Error boundary module for render failures |
+  | `notFound` | 404 UI when no child matches |
+
+  Leaf `head` overrides scope fields; `jsonLd` and `extraMeta` merge across levels (see [Head & SEO](/v2/docs/router/head-seo#route-head)).
+</DocsSection>
+
+<DocsSection id="page-config" title="Page route config">
+  ```ts
+  r.page("/posts/[slug]", {
+    component: () => import("./pages/post.tsx"),
+    head: { title: "Post {slug}", description: "…" },
+    static: true,           // SSG / hybrid prerender
+    beforeEnter: (to) => "/login", // redirect URL or undefined
+    error: () => import("./pages/post-error.tsx"),
+  })
+  ```
+
+  **Page module exports** (co-located with the component) are discovered at runtime:
+
+  - `export const load` — `loader`, `serverLoader`, `staticLoader`, or `clientLoader`
+  - `export const head` — `defineHeadContent(…)`
+  - `export function generateStaticParams` — SSG path list
+  - `export function generateSitemapParams` — sitemap expansion for dynamic SSR routes
+  - `export const headers` — `defineRouteHeaders` for SSR response headers
+
+  MDX pages can export `head` the same way as `.tsx` files.
+</DocsSection>
+
+<DocsSection id="layouts" title="Layouts">
+  Layout modules default-export a component that renders `{ children }` where the active page appears. Nested scopes stack layouts from root to leaf:
+
+  ```tsx
+  import { Link } from "kiru/router"
+
+  export default function Layout({ children }: { children: JSX.Children }) {
+    return (
+      <main>
+        <nav>
+          <Link href="/">Home</Link>
+          {" | "}
+          <Link href="/about">About</Link>
+        </nav>
+        {children}
+      </main>
+    )
+  }
+  ```
+</DocsSection>
+
+<DocsSection id="static" title="Static routes">
+  - **SSG apps:** set `static: true` on the root scope or per page.
+  - **SSR hybrid:** `static: true` pages are prerendered at build (`router.ssg` + `router.serverEntry`); production serves `*.html` from disk before SSR.
+  - **CSR:** `static` has no build effect.
+
+  Dynamic segments require `generateStaticParams` on the page module.
+</DocsSection>
+
+<DocsSection id="guards" title="beforeEnter">
+  `beforeEnter` runs before a route commits. Return a path string to redirect (SSR returns 302; CSR aborts navigation). For example, send invalid user ids to another page:
+
+  ```ts
+  beforeEnter: (to) => {
+    if (to.params.id === "0") return "/about"
+  },
+  ```
+
+  Guards run on full document loads and client navigations.
+</DocsSection>

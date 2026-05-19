@@ -5,11 +5,11 @@ import { LogoIcon } from "./icons/LogoIcon"
 import { SidebarContent } from "./SidebarContent"
 import { isLinkActive } from "$/utils"
 import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
-import { Link, useFileRouter } from "kiru/router"
+import { Link, useRouter } from "kiru/router"
 import { navDrawerOpen } from "../state"
 
 export function NavDrawer() {
-  const router = useFileRouter()
+  const router = useRouter()
 
   effect([router.state.pathname], () => {
     if (navDrawerOpen.peek()) {
@@ -54,7 +54,7 @@ export function NavDrawer() {
                     <Link
                       key={link.href}
                       to={link.href}
-                      className={`inline-flex items-center gap-1 text-base font-medium ${isLinkActive(link.activePath ?? link.href, router.state.pathname.peek()) ? "" : "text-muted"}`}
+                      className={`inline-flex items-center gap-1 text-base font-medium ${isLinkActive(link.activePath ?? link.href, router.pathname.value) ? "" : "text-muted"}`}
                     >
                       {link.title}
                     </Link>

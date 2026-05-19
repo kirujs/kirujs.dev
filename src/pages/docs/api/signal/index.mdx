@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head, Link } from "kiru/router"
+import { defineHeadContent, Link } from "kiru/router"
 import { CodePreview } from "$/components/CodePreview"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { siteCodeLang } from "$/state"
@@ -12,11 +12,13 @@ import ExampleComputedPrevTs from "./example.computedPrev.ts.md"
 import ExampleResource from "./example.resource.md"
 import ExampleResourceTs from "./example.resource.ts.md"
 
-<Head.Content>
-  <title>Kiru - Signal</title>
-  <meta name="keywords" content="signal, state, global state, computed, effect, untrack, two way binding, resource, async state" />
-  <meta name="description" content="Learn about Signals in Kiru - reactive primitives for managing state with computed values, resources, effects, two-way binding, and fine-grained reactivity in components." />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Signal",
+  extraMeta: [
+    { name: "keywords", content: "signal, state, global state, computed, effect, untrack, two way binding, resource, async state" },
+  ],
+  description: "Learn about Signals in Kiru - reactive primitives for managing state with computed values, resources, effects, two-way binding, and fine-grained reactivity in components.",
+})
 
 # Signal
 

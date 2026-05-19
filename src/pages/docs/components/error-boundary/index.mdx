@@ -1,14 +1,16 @@
 import { Derive } from "kiru"
-import { Head } from "kiru/router"
+import { defineHeadContent } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
 
-<Head.Content>
-  <title>Kiru - ErrorBoundary</title>
-  <meta name="keywords" content="ErrorBoundary, error handling, error boundary" />
-  <meta name="description" content="Learn how to use ErrorBoundary in Kiru to catch and handle errors in component trees, preventing the entire application from crashing." />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - ErrorBoundary",
+  extraMeta: [
+    { name: "keywords", content: "ErrorBoundary, error handling, error boundary" },
+  ],
+  description: "Learn how to use ErrorBoundary in Kiru to catch and handle errors in component trees, preventing the entire application from crashing.",
+})
 
 # ErrorBoundary
 

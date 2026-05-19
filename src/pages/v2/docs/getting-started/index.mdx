@@ -1,0 +1,69 @@
+import { defineHeadContent } from "kiru/router"
+import { DocsSection } from "$/components/DocsSection"
+import { CalloutBlock } from "$/components/atoms/CalloutBlock"
+
+export const head = defineHeadContent({
+  title: "Getting started",
+  description: "Create a Kiru 2 app with create-kiru — CSR, SSG, or SSR.",
+})
+
+# Getting started
+
+<DocsSection id="start-a-new-project" title="Start a new project">
+  The fastest way to start is the CLI. It scaffolds a Vite app with `src/routes.ts`, the right client bootstrap, and
+  `vite-plugin-kiru` already configured:
+
+  ```bash
+  npx create-kiru@latest
+  ```
+
+  Pick **CSR**, **SSG**, or **SSR** when prompted. Each template targets Kiru **2.x** and the declarative router.
+
+  <CalloutBlock fontSize="normal">
+    SSR templates also install `@kirujs/adapter-node` for the production server entry.
+  </CalloutBlock>
+</DocsSection>
+
+<DocsSection id="add-to-existing" title="Add to an existing project">
+  Install the current packages:
+
+  ```bash
+  npm install kiru
+  npm install -D vite-plugin-kiru
+  ```
+
+  For SSR or hybrid apps, add the Node adapter:
+
+  ```bash
+  npm install @kirujs/adapter-node
+  ```
+
+  Enable the plugin and router options in `vite.config.ts`:
+
+  ```ts
+  import { defineConfig } from "vite"
+  import kiru from "vite-plugin-kiru"
+
+  export default defineConfig({
+    plugins: [
+      kiru({
+        router: {
+          // SSG: router: { ssg: true }
+          // SSR: router: { serverEntry: "./src/server.ts" }
+        },
+      }),
+    ],
+  })
+  ```
+
+  Add `src/routes.ts`, a client entry (`src/main.tsx` or `src/client.tsx`), and—for SSG/SSR—root `index.html` with
+  `{{kiru_head}}` and `{{kiru_body}}`. See [Route tree](/v2/docs/router/route-tree) and the mode guides under Router.
+</DocsSection>
+
+<DocsSection id="modes" title="Modes">
+  - **CSR:** `kiru()` + `createRouterApp` from `kiru/router/csr`
+  - **SSG:** `router.ssg: true` + `createRouterApp` from `kiru/router/ssg`
+  - **SSR:** `router.serverEntry` + `createRouterApp` from `kiru/router/ssr`
+
+  See [Router overview](/v2/docs/router/overview). Upgrading from Kiru 1? See [Migration](/v2/docs/migration).
+</DocsSection>

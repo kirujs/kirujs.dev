@@ -23,14 +23,21 @@
     "shiki": "^4.0.2",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "vite-plugin-kiru": "^1.2.3"
+    "vite-plugin-kiru": "file:/C:/repos/kiru/kiru/packages/vite-plugin-kiru"
+  },
+  "pnpm": {
+    "overrides": {
+      "@kirujs/adapter-node": "file:/C:/repos/kiru/kiru/packages/adapter-node",
+      "@kirujs/runtime": "file:/C:/repos/kiru/kiru/packages/runtime",
+      "@kirujs/adapter-contract": "file:/C:/repos/kiru/kiru/packages/adapter-contract"
+    }
   },
   "dependencies": {
     "@mdx-js/mdx": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@shikijs/rehype": "^3.22.0",
     "@shikijs/transformers": "^3.22.0",
-    "kiru": "^1.5.0",
+    "kiru": "file:/C:/repos/kiru/kiru/packages/lib",
     "lit-match": "^1.0.3",
     "vite": "^7.3.1"
   }

@@ -26,6 +26,8 @@ export default defineConfig({
         jsx: false,
         jsxImportSource: "kiru",
         jsxRuntime: "automatic",
+        // Match production JSX output during dev SSR + client hydrate (avoid jsxDEV-only trees).
+        development: false,
         rehypePlugins: [
           [
             shiki,
@@ -41,16 +43,10 @@ export default defineConfig({
       }),
     },
     kiru({
-      ssg: {
-        page: "index.{tsx,mdx}",
-        sitemap: {
-          domain: "https://kirujs.dev",
-          overrides: {
-            "/": {
-              changefreq: "daily",
-              priority: 0.9,
-            },
-          },
+      router: {
+        ssg: {
+          routes: "./src/routes.ts",
+          siteModule: "./src/site.config.ts",
         },
       },
     }),

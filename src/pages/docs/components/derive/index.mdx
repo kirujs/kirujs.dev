@@ -1,16 +1,18 @@
 import { Derive } from "kiru"
-import { Head, Link } from "kiru/router"
+import { defineHeadContent, Link } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { siteCodeLang } from "$/state"
 import ExampleCode from "./example.md"
 import ExamplePromiseCode from "./example.promise.md"
 import ExamplePromiseCodeTS from "./example.promise.ts.md"
 
-<Head.Content>
-  <title>Kiru - Derive</title>
-  <meta name="keywords" content="derive, component, jsx, reactive, signal, promise" />
-  <meta name="description" content="Learn how to use Derive in Kiru for creating fine-grained reactivity in JSX." />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Derive",
+  extraMeta: [
+    { name: "keywords", content: "derive, component, jsx, reactive, signal, promise" },
+  ],
+  description: "Learn how to use Derive in Kiru for creating fine-grained reactivity in JSX.",
+})
 
 # Derive
 

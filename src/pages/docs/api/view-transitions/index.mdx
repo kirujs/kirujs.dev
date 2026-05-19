@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head, Link } from "kiru/router"
+import { defineHeadContent, Link } from "kiru/router"
 import { CopyInnerText } from "$/components/CopyInnerText"
 import { CalloutBlock } from "$/components/atoms/CalloutBlock"
 import { DocsSection } from "$/components/DocsSection"
@@ -10,11 +10,13 @@ import ExampleCodeTS from "./example.ts.md"
 import ExampleAbort from "./example.abort.md"
 import ExampleAbortTS from "./example.abort.ts.md"
 
-<Head.Content>
-  <title>Kiru - ViewTransitions</title>
-  <meta name="keywords" content="ViewTransitions, view transitions, animation, run, stop, AbortSignal, batching" />
-  <meta name="description" content="Learn how to use the ViewTransitions API in Kiru to animate state changes with the browser's native View Transitions API, with automatic batching and queue management." />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - ViewTransitions",
+  extraMeta: [
+    { name: "keywords", content: "ViewTransitions, view transitions, animation, run, stop, AbortSignal, batching" },
+  ],
+  description: "Learn how to use the ViewTransitions API in Kiru to animate state changes with the browser's native View Transitions API, with automatic batching and queue management.",
+})
 
 # ViewTransitions
 

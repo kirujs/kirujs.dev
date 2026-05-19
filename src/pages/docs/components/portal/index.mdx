@@ -1,5 +1,5 @@
 import { Derive } from "kiru"
-import { Head } from "kiru/router"
+import { defineHeadContent } from "kiru/router"
 import { TabGroup } from "$/components/TabGroup"
 import { selectedTab } from "./selectedTab"
 import { siteCodeLang } from "$/state"
@@ -8,11 +8,13 @@ import ExampleAppTS from "./example.App.ts.md"
 import ExampleIndex from "./example.index.md"
 import { CopyInnerText } from "$/components/CopyInnerText"
 
-<Head.Content>
-  <title>Kiru - Portal</title>
-  <meta name="keywords" content="portal" />
-  <meta name="description" content="Learn how to use Portal component in Kiru to render children outside the application DOM tree, useful for modals, tooltips, and overlays." />
-</Head.Content>
+export const head = defineHeadContent({
+  title: "Kiru - Portal",
+  extraMeta: [
+    { name: "keywords", content: "portal, component, modal, tooltip, overlay" },
+  ],
+  description: "Learn how to use Portal component in Kiru to render children outside the application DOM tree, useful for modals, tooltips, and overlays.",
+})
 
 # Portal
 

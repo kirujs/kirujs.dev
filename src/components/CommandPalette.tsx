@@ -10,7 +10,7 @@ import { CloseIcon } from "./icons/CloseIcon"
 import { isLinkActive } from "$/utils"
 import { ExternalLinkIcon } from "./icons/ExternalLinkIcon"
 import { DocItemStatus } from "./DocItemStatus"
-import { Link, useFileRouter } from "kiru/router"
+import { Link, useRouter } from "kiru/router"
 import { commandPaletteOpen } from "../state"
 
 const groupData: Record<string, DocPageLink[]> = {
@@ -20,7 +20,7 @@ const groupData: Record<string, DocPageLink[]> = {
 }
 
 export function CommandPalette() {
-  const router = useFileRouter()
+  const router = useRouter()
 
   const prevActiveElement = ref<Element | null>(null)
 
@@ -31,7 +31,7 @@ export function CommandPalette() {
     }
   })
 
-  effect([router.state.pathname], () => {
+  effect([router.pathname], () => {
     if (commandPaletteOpen.peek()) {
       commandPaletteOpen.value = false
     }
@@ -186,7 +186,7 @@ function CommandPaletteItem({
   item: DocPageLink
   external?: boolean
 }) {
-  const router = useFileRouter()
+  const router = useRouter()
 
   if (item.disabled) {
     return (
@@ -226,7 +226,7 @@ function CommandPaletteItem({
       className="w-full text-muted bg-white/1 border border-white/5 p-2 rounded-sm focus:bg-white/5 hover:bg-white/5"
       to={item.href}
       onclick={() =>
-        isLinkActive(item.href, router.state.pathname.peek()) &&
+        isLinkActive(item.href, router.pathname.value) &&
         (commandPaletteOpen.value = false)
       }
     >
